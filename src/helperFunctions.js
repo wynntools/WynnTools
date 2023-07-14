@@ -4,7 +4,6 @@ const { set } = require('lodash');
 const mkdirp = require('mkdirp');
 const moment = require('moment');
 
-
 const getDirName = require('path').dirname;
 
 function getCurrentTime() {

@@ -8,11 +8,12 @@ const mojangCache = new nodeCache(); // Cached Keys will never get removed (shou
 
 async function validateUUID(uuid) {
   // Check if the uuid has dashes in it
+  var regex;
   if (uuid.includes('-')) {
-    var regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
+    regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
     return regex.test(uuid);
   } else {
-    var regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
+    regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
     return regex.test(uuid);
   }
 }
