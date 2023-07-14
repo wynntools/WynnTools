@@ -1,0 +1,8 @@
+config.json
+node_modules/
+package-lock.json
+data/
+exports/
+a.js
+b.js
+test.js

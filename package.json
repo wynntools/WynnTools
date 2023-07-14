@@ -1,0 +1,33 @@
+{
+  "name": "wynntools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node deploy-commands.js && node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix",
+    "prettier": "npx prettier --check .",
+    "prettier:fix": "npx prettier --write ."
+  },
+  "keywords": [],
+  "author": "kathund",
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.41",
+    "canvas": "^2.11.2",
+    "cli-color": "^2.0.3",
+    "discord.js": "^14.11.0",
+    "fs-extra": "^11.1.1",
+    "moment": "^2.29.4",
+    "node-cache": "^5.1.2",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^3.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0",
+    "eslint-plugin-import": "^2.27.5",
+    "prettier": "2.8.8"
+  }
+}
