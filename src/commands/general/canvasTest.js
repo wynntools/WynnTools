@@ -1,12 +1,10 @@
-const { generateDate, writeAt, getRelativeTime } = require('../../helperFunctions.js');
+const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { generateDate, getRelativeTime } = require('../../helperFunctions.js');
 const { getStats, getHighestProfile } = require('../../api/wynnCraftAPI.js');
-const { registerFont, createCanvas, Image, loadImage } = require('canvas');
-const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
+const { registerFont, createCanvas, loadImage } = require('canvas');
 const { getUUID } = require('../../api/mojangAPI.js');
-const { readFile } = require('fs/promises');
 
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
-  // Set the fill color and stroke style
   if (rectWidth == 0) return;
   ctx.fillStyle = 'rgb(237, 135, 150)';
   ctx.strokeStyle = 'rgb(237, 135, 150)';
@@ -33,24 +31,19 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      await interaction.reply({ content: 'Loading...' });
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
 
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
 
-      registerFont('src/fonts/MinecraftRegular-Bmg3.ttf', {
+      registerFont('src/fonts/Inter-Regular.ttf', {
         family: 'Inter Regular',
       });
 
-      const background = await readFile('./src/assets/background.png');
-      const backgroundImage = new Image();
-      backgroundImage.src = background;
-      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/background.png'), 0, 0, canvas.width, canvas.height);
 
       var stats = await getStats(uuid);
-      await writeAt('data/data.json', 'a', stats);
       var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
 
       // ! Player Icon
@@ -410,11 +403,11 @@ module.exports = {
       const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), {
         name: 'image.png',
       });
-
-      await interaction.editReply({ content: '', files: [attachment] });
+      
+      await interaction.reply({ files: [attachment], components: [row] });
     } catch (error) {
       console.log(error);
-      await interaction.editReply({ content: `${error}` });
+      await interaction.reply({ content: `${error}` });
     }
   },
 };
