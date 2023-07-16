@@ -6,7 +6,7 @@ const fetch = (...args) =>
     .catch((err) => console.log(err));
 
 const nodeCache = require('node-cache');
-const wynncraftCache = new nodeCache({ stdTTL: 300 }); // Cached Keys will never get removed (should not be a problem as it takes very little memory and gets restarted often)
+const wynncraftCache = new nodeCache({ stdTTL: 300 });
 
 async function getStats(uuid) {
   try {

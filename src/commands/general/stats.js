@@ -12,7 +12,7 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      var perms = ['608584543506530314', '501976955998961664', '728254498018951238'];
+      var perms = ['608584543506530314', '501976955998961664', '728254498018951238', '894034804503351366'];
       if (!perms.includes(interaction.user.id)) {
         await interaction.reply({
           content: 'https://tenor.com/view/dad-daddy-zal%C3%A1n-apja-noel-apja-ao%C3%A1d-gif-25400675',

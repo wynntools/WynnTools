@@ -4,10 +4,9 @@ const fetch = (...args) =>
     .catch((err) => console.log(err));
 
 const nodeCache = require('node-cache');
-const mojangCache = new nodeCache(); // Cached Keys will never get removed (should not be a problem as it takes very little memory and gets restarted often)
+const mojangCache = new nodeCache();
 
 async function validateUUID(uuid) {
-  // Check if the uuid has dashes in it
   var regex;
   if (uuid.includes('-')) {
     regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;

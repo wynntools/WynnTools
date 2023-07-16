@@ -21,14 +21,14 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
   ctx.strokeStyle = 'white';
 }
 
+registerFont('src/fonts/Inter-Regular.ttf', {
+  family: 'Inter Regular',
+});
+
 async function generateStats(uuid) {
   try {
     const canvas = createCanvas(1200, 1200);
     const ctx = canvas.getContext('2d');
-
-    registerFont('src/fonts/Inter-Regular.ttf', {
-      family: 'Inter Regular',
-    });
 
     ctx.drawImage(await loadImage('src/assets/background.png'), 0, 0, canvas.width, canvas.height);
 
@@ -98,6 +98,45 @@ async function generateStats(uuid) {
       ctx.fillText(stats.username, 62, 52);
     }
 
+    // ? Gamemodes
+
+    if (currentProfileStats.gamemode.craftsman) {
+      ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.hardcore) {
+        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.ironman) {
+          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+          if (currentProfileStats.gamemode.hunted) {
+            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+          }
+        }
+      } else if (currentProfileStats.gamemode.ironman) {
+        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+        }
+      } else if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.hardcore) {
+      ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.ironman) {
+        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+        }
+      } else if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.ironman) {
+      ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.hunted) {
+      ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+    }
+
     ctx.font = '24px Inter';
     ctx.fillStyle = 'white';
 
@@ -114,8 +153,7 @@ async function generateStats(uuid) {
         140
       );
       if (stats.data.meta.location.online == true) {
-        ctx.textAlign = 'right';
-        ctx.fillText(`Online - ${stats.data.meta.location.server}`, 866, 208);
+        ctx.fillText(`Online - ${stats.data.meta.location.server}`, 581, 208);
       } else {
         ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 208);
       }
@@ -464,6 +502,45 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(stats.username, 62, 52);
     }
 
+    // ? Gamemodes
+
+    if (currentProfileStats.gamemode.craftsman) {
+      ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.hardcore) {
+        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.ironman) {
+          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+          if (currentProfileStats.gamemode.hunted) {
+            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+          }
+        }
+      } else if (currentProfileStats.gamemode.ironman) {
+        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+        }
+      } else if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.hardcore) {
+      ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.ironman) {
+        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+        if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+        }
+      } else if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.ironman) {
+      ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+      if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+      }
+    } else if (currentProfileStats.gamemode.hunted) {
+      ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+    }
+
     ctx.font = '24px Inter';
     ctx.fillStyle = 'white';
 
@@ -480,8 +557,7 @@ async function generateProfileImage(uuid, profileId) {
         140
       );
       if (stats.data.meta.location.online == true) {
-        ctx.textAlign = 'right';
-        ctx.fillText(`Online - ${stats.data.meta.location.server}`, 866, 208);
+        ctx.fillText(`Online - ${stats.data.meta.location.server}`, 581, 208);
       } else {
         ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 208);
       }

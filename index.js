@@ -57,13 +57,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-// Get all the files in the current directory
 const commandFiles = fs.readdirSync('./src/scripts').filter((file) => file.endsWith('.js'));
 scriptMessage(`Found ${commandFiles.length} scripts and running them all`);
-// loop through the filtered files and require them so they run
 for (const file of commandFiles) {
   try {
-    // Console log the file name
     scriptMessage(`Started ${file} script`);
     require(`./src/scripts/${file}`);
   } catch (error) {
