@@ -20,7 +20,7 @@ async function validateUUID(uuid) {
 
 async function getUUID(username) {
   if (mojangCache.has(username.toLowerCase())) {
-    console.log('Cache hit');
+    console.log('Cache hit - mojangAPI');
     return mojangCache.get(username.toLowerCase()).id;
   } else {
     const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then((res) => res.json());
@@ -32,6 +32,7 @@ async function getUUID(username) {
 
 async function getUsername(uuid) {
   if (mojangCache.has(uuid)) {
+    console.log('Cache hit - mojangAPI');
     return mojangCache.get(uuid).name;
   } else {
     const data = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`).then((res) =>

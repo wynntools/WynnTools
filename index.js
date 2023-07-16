@@ -1,6 +1,5 @@
-// eslint-disable-next-line
-const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { discordMessage, commandMessage, scriptMessage, warnMessage } = require('./src/Logger.js');
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const token = require('./config.json').discord.token;
 const path = require('path');
 const fs = require('fs');

@@ -1,12 +1,12 @@
 const { validateUUID, getUUID } = require('./mojangAPI.js');
-const { formatUUID, writeAt } = require('../helperFunctions.js');
+const { formatUUID } = require('../helperFunctions.js');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
 
 const nodeCache = require('node-cache');
-const wynncraftCache = new nodeCache(); // Cached Keys will never get removed (should not be a problem as it takes very little memory and gets restarted often)
+const wynncraftCache = new nodeCache({ stdTTL: 300 }); // Cached Keys will never get removed (should not be a problem as it takes very little memory and gets restarted often)
 
 async function getStats(uuid) {
   try {
@@ -18,8 +18,7 @@ async function getStats(uuid) {
     if (!check) return { status: 400, error: 'Invalid UUID' };
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
     if (wynncraftCache.has(uuid)) {
-      console.log('Cache hit');
-      await writeAt('data/cache.json', uuid, wynncraftCache.get(uuid));
+      console.log('Cache hit - wynnCraftCache');
       return wynncraftCache.get(uuid);
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
@@ -61,8 +60,12 @@ async function getHighestProfile(characters) {
   return selectedId;
 }
 
-async function clearCache() {
-  wynncraftCache.flushAll();
+async function getProfiles(uuid) {
+  var stats = await getStats(uuid);
+  return Object.keys(stats.data.characters).map((key) => {
+    const { type, level } = stats.data.characters[key];
+    return { key, type, level };
+  });
 }
 
-module.exports = { getStats, clearCache, getHighestProfile };
+module.exports = { getStats, getHighestProfile, getProfiles };
