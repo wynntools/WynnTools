@@ -6,7 +6,8 @@ const fetch = (...args) =>
     .catch((err) => console.log(err));
 
 const nodeCache = require('node-cache');
-const wynncraftCache = new nodeCache({ stdTTL: 300 });
+const wynncraftPlayerCache = new nodeCache({ stdTTL: 300 });
+const wynncraftGuildCache = new nodeCache({ stdTTL: 300 });
 
 async function getStats(uuid) {
   try {
@@ -17,9 +18,9 @@ async function getStats(uuid) {
     }
     if (!check) return { status: 400, error: 'Invalid UUID' };
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
-    if (wynncraftCache.has(uuid)) {
+    if (wynncraftPlayerCache.has(uuid)) {
       console.log('Cache hit - wynnCraftCache');
-      return wynncraftCache.get(uuid);
+      return wynncraftPlayerCache.get(uuid);
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
       var data = await res.json();
@@ -37,7 +38,7 @@ async function getStats(uuid) {
           ranking: data.data[0].ranking,
         },
       };
-      wynncraftCache.set(uuid, response);
+      wynncraftPlayerCache.set(uuid, response);
       return response;
     }
   } catch (error) {
@@ -68,4 +69,32 @@ async function getProfiles(uuid) {
   });
 }
 
-module.exports = { getStats, getHighestProfile, getProfiles };
+async function getGuild(name) {
+  var fixedNamed = encodeURIComponent(name);
+  if (wynncraftGuildCache.has(fixedNamed)) {
+    console.log('Cache hit - wynnCraftCache');
+    return wynncraftGuildCache.get(fixedNamed);
+  } else {
+    var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
+    var data = await res.json();
+    var response = {
+      status: res.status,
+      name: data.name,
+      timestamp: Date.now(),
+      prefix: data.prefix,
+      members: data.members,
+      created: data.created,
+      xp: data.xp,
+      level: data.level,
+      banner: data.banner,
+      onlineMembers: data.onlineMembers,
+      offlineMembers: data.totalMembers - data.onlineMembers,
+      totalMembers: data.totalMembers,
+      territories: data.territories,
+    };
+    wynncraftGuildCache.set(fixedNamed, response);
+    return response;
+  }
+}
+
+module.exports = { getStats, getHighestProfile, getProfiles, getGuild };

@@ -1,5 +1,5 @@
+const { getStats, getHighestProfile, getGuild } = require('../api/wynnCraftAPI.js');
 const { generateDate, getRelativeTime } = require('../helperFunctions.js');
-const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
 const { AttachmentBuilder } = require('discord.js');
 
@@ -30,7 +30,7 @@ async function generateStats(uuid) {
     const canvas = createCanvas(1200, 1200);
     const ctx = canvas.getContext('2d');
 
-    ctx.drawImage(await loadImage('src/assets/background.png'), 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
 
     var stats = await getStats(uuid);
     var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
@@ -434,7 +434,7 @@ async function generateProfileImage(uuid, profileId) {
       family: 'Inter Regular',
     });
 
-    ctx.drawImage(await loadImage('src/assets/background.png'), 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
 
     var stats = await getStats(uuid);
     var currentProfileStats = stats.data.characters[profileId];
@@ -824,8 +824,155 @@ async function generateProfileImage(uuid, profileId) {
   }
 }
 
+async function generateGuild(name) {
+  const canvas = createCanvas(1200, 800);
+  const ctx = canvas.getContext('2d');
+
+  ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+
+  registerFont('src/fonts/Inter-Regular.ttf', {
+    family: 'Inter Regular',
+  });
+
+  var guild = await getGuild(name);
+
+  // ! Stats
+  // ? name/tag
+  ctx.font = '64px Inter';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`[${guild.prefix}] ${guild.name}`, 64, 64);
+
+  // ? Owner
+  var uuid = Object.values(guild.members.OWNER)[0].uuid;
+  console.log(uuid);
+  var stats = await getStats(uuid);
+  ctx.textBaseline = 'top';
+  ctx.font = '32px Inter';
+  ctx.textAlign = 'left';
+  ctx.fillText(`Owner - `, 64, 150);
+  if (stats.data.meta.tag.value === 'VIP') {
+    ctx.fillStyle = '#00AA00';
+    ctx.fillText('[', 207, 150);
+    ctx.fillStyle = '#55FF55';
+    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+    ctx.fillStyle = '#00AA00';
+    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+    ctx.fillText(
+      ` ${stats.username}`,
+      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
+      150
+    );
+  } else if (stats.data.meta.tag.value === 'VIP+') {
+    ctx.fillStyle = '#55FFFF';
+    ctx.fillText('[', 207, 150);
+    ctx.fillStyle = '#00AAAA';
+    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+    ctx.fillStyle = '#55FFFF';
+    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+    ctx.fillText(
+      ` ${stats.username}`,
+      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
+      150
+    );
+  } else if (stats.data.meta.tag.value === 'HERO') {
+    ctx.fillStyle = '#AA00AA';
+    ctx.fillText('[', 207, 150);
+    ctx.fillStyle = '#FF55FF';
+    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+    ctx.fillStyle = '#AA00AA';
+    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+    ctx.fillText(
+      ` ${stats.username}`,
+      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
+      150
+    );
+  } else if (stats.data.meta.tag.value === 'CHAMPION') {
+    ctx.fillStyle = '#FFAA00';
+    ctx.fillText('[', 207, 150);
+    ctx.fillStyle = '#FFFF55';
+    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+    ctx.fillStyle = '#FFAA00';
+    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+    ctx.fillText(
+      ` ${stats.username}`,
+      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
+      150
+    );
+  } else {
+    ctx.fillStyle = 'white';
+    ctx.fillText(stats.username, 207, 52);
+  }
+
+  ctx.font = `24px Inter`;
+  ctx.fillStyle = 'white';
+  ctx.fillText(
+    `Created - ${generateDate(guild.created).split(' at ')[0]} (${getRelativeTime(
+      new Date(guild.created).getTime(),
+      'ms'
+    )})`,
+    64,
+    197
+  );
+  await bar(ctx, 64, 234, Math.floor((guild.xp / 100) * 866), 28);
+  ctx.font = `22px Inter`;
+  ctx.fillText(`Level - ${guild.level}`, 80, 234);
+  ctx.fillText(`${guild.xp}%`, 868, 234);
+
+  // ! Members
+  var statsY = 530;
+  var memberX = 162;
+  var onlineMemberX = 505.5;
+  var territoriesX = 816;
+  ctx.font = `32px Inter`;
+  ctx.drawImage(await loadImage('src/assets/guildMemberIcon.png'), 112, 346, 224, 184);
+  const textMember = `Members\n${guild.totalMembers}/bad code`;
+  const textLinesMember = textMember.split('\n');
+  ctx.fillText(textLinesMember[0], memberX, statsY);
+  ctx.fillText(
+    textLinesMember[1],
+    memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
+    statsY + parseInt(ctx.font, 10)
+  );
+
+  const textOnlineMembers = `Online\n${guild.onlineMembers}/${guild.totalMembers}`;
+  const textLinesOnlineMembers = textOnlineMembers.split('\n');
+  ctx.fillText(textLinesOnlineMembers[0], onlineMemberX, statsY);
+  ctx.fillText(
+    textLinesOnlineMembers[1],
+    onlineMemberX +
+      (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
+    statsY + parseInt(ctx.font, 10)
+  );
+
+  const textTerritories = `Territories\n${guild.territories}`;
+  const textLinesTerritories = textTerritories.split('\n');
+  ctx.fillText(textLinesTerritories[0], territoriesX, statsY);
+  ctx.fillText(
+    textLinesTerritories[1],
+    territoriesX +
+      (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
+    statsY + parseInt(ctx.font, 10)
+  );
+
+  var packageJson = require('../../package.json');
+  ctx.font = `32px Inter`;
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(
+    `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+    600,
+    720,
+    1136
+  );
+  return canvas.toBuffer('image/png');
+}
+
 module.exports = {
-  generateProfileImage,
-  generateStats,
   bar,
+  generateStats,
+  generateProfileImage,
+  generateGuild,
 };

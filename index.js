@@ -1,6 +1,6 @@
 const { discordMessage, commandMessage, scriptMessage, warnMessage } = require('./src/Logger.js');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const token = require('./config.json').discord.token;
+const token = require('../config.json').discord.token;
 const path = require('path');
 const fs = require('fs');
 
@@ -24,6 +24,8 @@ for (const folder of commandFolders) {
   }
 }
 
+require('./deploy-commands.js').deployCommands();
+
 client.once(Events.ClientReady, () => {
   discordMessage(`Client Logged in as ${client.user.tag}`);
 });
@@ -37,10 +39,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (!command) return;
     try {
       if (interaction.user.discriminator == '0') {
-        commandMessage(`${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`);
+        commandMessage(
+          `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName} in ${interaction.guild.name} (${interaction.guild.id}) in ${interaction.channel.name} (${interaction.channel.id})`
+        );
       } else {
         commandMessage(
-          `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
+          `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName} in ${interaction.guild.name} (${interaction.guild.id}) in ${interaction.channel.name} (${interaction.channel.id})`
         );
       }
       await command.execute(interaction);

@@ -1,4 +1,4 @@
-const config = require('../config.json');
+const config = require('../../config.json');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');
@@ -42,8 +42,9 @@ async function writeAt(filePath, jsonPath, value) {
   }
 }
 
-function generateDate() {
-  return new Date().toLocaleString('en-US', {
+function generateDate(timestamp) {
+  if (timestamp == null) timestamp = Date.now();
+  return new Date(timestamp).toLocaleString('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
