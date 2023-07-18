@@ -846,7 +846,6 @@ async function generateGuild(name) {
 
   // ? Owner
   var uuid = Object.values(guild.members.OWNER)[0].uuid;
-  console.log(uuid);
   var stats = await getStats(uuid);
   ctx.textBaseline = 'top';
   ctx.font = '32px Inter';
