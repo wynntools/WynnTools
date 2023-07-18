@@ -1,6 +1,7 @@
 const { discordMessage, commandMessage, scriptMessage, warnMessage } = require('./src/Logger.js');
+const { deployCommands, deployDevCommands } = require('./deploy-commands.js')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const token = require('../config.json').discord.token;
+const token = require('./config.json').discord.token;
 const path = require('path');
 const fs = require('fs');
 
@@ -24,7 +25,8 @@ for (const folder of commandFolders) {
   }
 }
 
-require('./deploy-commands.js').deployCommands();
+deployCommands()
+deployDevCommands()
 
 client.once(Events.ClientReady, () => {
   discordMessage(`Client Logged in as ${client.user.tag}`);

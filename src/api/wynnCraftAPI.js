@@ -97,4 +97,12 @@ async function getGuild(name) {
   }
 }
 
-module.exports = { getStats, getHighestProfile, getProfiles, getGuild };
+async function clearWynnCraftCache() {
+  clearWynnCraftCache.flushAll()
+}
+
+async function clearWynnCraftGuildCache() {
+  clearWynnCraftGuildCache.flushAll()
+}
+
+module.exports = { getStats, getHighestProfile, getProfiles, getGuild, clearWynnCraftCache, clearWynnCraftGuildCache };

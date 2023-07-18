@@ -1,8 +1,9 @@
-const config = require('../../config.json');
+const config = require('../config.json');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');
 const moment = require('moment');
+const fs = require('fs');
 
 const getDirName = require('path').dirname;
 
@@ -63,10 +64,20 @@ function getRelativeTime(timestamp, type) {
   return moment(timestamp).fromNow();
 }
 
+async function blacklistCheck(id) {
+  const blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
+  if (blacklist.includes(id)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
   writeAt,
   generateDate,
   getRelativeTime,
+  blacklistCheck,
 };

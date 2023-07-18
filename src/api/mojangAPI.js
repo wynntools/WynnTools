@@ -43,8 +43,8 @@ async function getUsername(uuid) {
   }
 }
 
-async function clearCache() {
+async function clearMojangCache() {
   mojangCache.flushAll();
 }
 
-module.exports = { validateUUID, getUUID, getUsername, clearCache };
+module.exports = { validateUUID, getUUID, getUsername, clearMojangCache };
