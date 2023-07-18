@@ -350,7 +350,7 @@ async function generateStats(uuid) {
     // ? Alchemism
     await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 104, 885);
-    ctx.drawImage(await loadImage('src/assets/AlchemismIcon.png'), 104, 889);
+    ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
     ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
     ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
     ctx.textAlign = 'right';
@@ -359,7 +359,7 @@ async function generateStats(uuid) {
     // ? Cooking
     await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 447, 885);
-    ctx.drawImage(await loadImage('src/assets/CookingIcon.png'), 447, 889);
+    ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
     ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
     ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
     ctx.textAlign = 'right';
@@ -368,7 +368,7 @@ async function generateStats(uuid) {
     // ? Weaponsmithing
     await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 791, 885);
-    ctx.drawImage(await loadImage('src/assets/WeaponsmithingIcon.png'), 791, 889);
+    ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
     ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
     ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
     ctx.textAlign = 'right';
@@ -377,7 +377,7 @@ async function generateStats(uuid) {
     // ? Tailoring
     await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 104, 957);
-    ctx.drawImage(await loadImage('src/assets/TailoringIcon.png'), 104, 961);
+    ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
     ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
     ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
     ctx.textAlign = 'right';
@@ -386,7 +386,7 @@ async function generateStats(uuid) {
     // ? Woodworking
     await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 447, 957);
-    ctx.drawImage(await loadImage('src/assets/WoodworkingIcon.png'), 447, 961);
+    ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
     ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
     ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
     ctx.textAlign = 'right';
@@ -395,7 +395,7 @@ async function generateStats(uuid) {
     // ? Armouring
     await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 791, 957);
-    ctx.drawImage(await loadImage('src/assets/ArmouringIcon.png'), 791, 961);
+    ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
     ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
     ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
     ctx.textAlign = 'right';
@@ -754,7 +754,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Alchemism
     await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 104, 885);
-    ctx.drawImage(await loadImage('src/assets/AlchemismIcon.png'), 104, 889);
+    ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
     ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
     ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
     ctx.textAlign = 'right';
@@ -763,7 +763,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Cooking
     await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 447, 885);
-    ctx.drawImage(await loadImage('src/assets/CookingIcon.png'), 447, 889);
+    ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
     ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
     ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
     ctx.textAlign = 'right';
@@ -772,7 +772,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Weaponsmithing
     await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 791, 885);
-    ctx.drawImage(await loadImage('src/assets/WeaponsmithingIcon.png'), 791, 889);
+    ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
     ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
     ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
     ctx.textAlign = 'right';
@@ -781,7 +781,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Tailoring
     await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 104, 957);
-    ctx.drawImage(await loadImage('src/assets/TailoringIcon.png'), 104, 961);
+    ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
     ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
     ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
     ctx.textAlign = 'right';
@@ -790,7 +790,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Woodworking
     await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 447, 957);
-    ctx.drawImage(await loadImage('src/assets/WoodworkingIcon.png'), 447, 961);
+    ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
     ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
     ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
     ctx.textAlign = 'right';
@@ -799,7 +799,7 @@ async function generateProfileImage(uuid, profileId) {
     // ? Armouring
     await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
     ctx.drawImage(professionsIconBackground, 791, 957);
-    ctx.drawImage(await loadImage('src/assets/ArmouringIcon.png'), 791, 961);
+    ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
     ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
     ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
     ctx.textAlign = 'right';
