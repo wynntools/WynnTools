@@ -21,7 +21,6 @@ module.exports = {
         if (!file.endsWith('.js')) return;
         commands.push(file);
       });
-         
 
       const support = new ButtonBuilder()
         .setLabel('support')

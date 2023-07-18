@@ -45,7 +45,44 @@ async function generateStats(uuid) {
     ctx.textBaseline = 'top';
     ctx.font = '36px Inter';
     ctx.textAlign = 'left';
-    if (stats.data.meta.tag.value === 'VIP') {
+
+    if (stats.rank === 'Media') {
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.rank === 'Administrator') {
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#FF5555';
+      ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.data.meta.veteran) {
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#F38BA8';
+      ctx.fillText('Vet', 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.data.meta.tag.value === 'VIP') {
       ctx.fillStyle = '#00AA00';
       ctx.fillText('[', 62, 52);
       ctx.fillStyle = '#55FF55';
