@@ -66,7 +66,7 @@ function getRelativeTime(timestamp, type) {
 
 async function blacklistCheck(id) {
   const blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
-  if (blacklist.includes(id)) {
+  if (blacklist[id]) {
     return true;
   } else {
     return false;

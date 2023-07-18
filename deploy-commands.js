@@ -1,4 +1,4 @@
-const { discordMessage, warnMessage } = require('./src/Logger.js');
+const { discordMessage, warnMessage } = require('./src/logger.js');
 const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const path = require('path');
