@@ -8,8 +8,10 @@ module.exports = {
     .setName('blacklist')
     .setDescription('Blacklist a user (Dev Only)')
     .setDMPermission(true)
-    .addUserOption(option => option.setName('target').setDescription('The user').setRequired(true))
-    .addStringOption(option => option.setName('reason').setDescription('The reason for the blacklist').setRequired(false)),
+    .addUserOption((option) => option.setName('target').setDescription('The user').setRequired(true))
+    .addStringOption((option) =>
+      option.setName('reason').setDescription('The reason for the blacklist').setRequired(false)
+    ),
   async execute(interaction) {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
@@ -18,11 +20,11 @@ module.exports = {
         return;
       }
       if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?'});
+        await interaction.reply({ content: 'No Perms?' });
         return;
       }
       const user = interaction.options.getMember('target');
-      const reason = interaction.options.getString('reason');
+      var reason = interaction.options.getString('reason');
       if (reason == null) reason = 'No reason provided';
       var blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
       if (blacklist.includes(user.id)) {
@@ -33,7 +35,7 @@ module.exports = {
         id: user.id,
         reason: reason,
         timestamp: Date.now(),
-      }
+      };
       await writeAt('data/blacklist.json', user.id, blacklistInfo);
       await interaction.reply({ content: 'User has been blacklisted' });
     } catch (error) {

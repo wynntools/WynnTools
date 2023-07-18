@@ -8,15 +8,16 @@ module.exports = {
     .setName('clear-cache')
     .setDescription('Clear Cache (Dev Only)')
     .setDMPermission(true)
-	  .addStringOption(option =>
-		  option.setName('cache')
-		  	.setDescription('The Cache you want to clear')
-		  	.setRequired(false)
-		  	.addChoices(
-		  		{ name: 'Mojang', value: 'mojang' },
-		  		{ name: 'WynnCraft', value: 'wynncraft' },
-		  		{ name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
-      )
+    .addStringOption((option) =>
+      option
+        .setName('cache')
+        .setDescription('The Cache you want to clear')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Mojang', value: 'mojang' },
+          { name: 'WynnCraft', value: 'wynncraft' },
+          { name: 'Wynncraft Guilds', value: 'wynncraftGuild' }
+        )
     ),
   async execute(interaction) {
     try {
@@ -26,7 +27,7 @@ module.exports = {
         return;
       }
       if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?'});
+        await interaction.reply({ content: 'No Perms?' });
         return;
       }
       const cacheCategory = interaction.options.getString('cache');
