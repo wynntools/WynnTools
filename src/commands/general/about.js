@@ -15,21 +15,13 @@ module.exports = {
 
       var packageJson = require('../../../package.json');
       const commands = [];
-      const foldersPath = path.join(__dirname, '../../../src/commands');
-      const commandFolders = fs.readdirSync(foldersPath);
-
-      for (const folder of commandFolders) {
-        if (folder != 'dev') continue;
-        const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-        for (const file of commandFiles) {
-          const filePath = path.join(commandsPath, file);
-          const command = require(filePath);
-          if ('data' in command && 'execute' in command) {
-            commands.push(command.data.toJSON());
-          }
-        }
-      }
+      // get all file names in the commands folder then push the name into commands array
+      fs.readdirSync(path.resolve(__dirname, '../general')).forEach((file) => {
+        // filter out files that are not .js files
+        if (!file.endsWith('.js')) return;
+        commands.push(file);
+      });
+         
 
       const support = new ButtonBuilder()
         .setLabel('support')
