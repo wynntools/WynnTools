@@ -45,57 +45,84 @@ async function generateStats(uuid) {
     ctx.textBaseline = 'top';
     ctx.font = '36px Inter';
     ctx.textAlign = 'left';
-    if (stats.data.meta.tag.value === 'VIP') {
-      ctx.fillStyle = '#00AA00';
-      ctx.fillText('[', 62, 52);
-      ctx.fillStyle = '#55FF55';
-      ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-      ctx.fillStyle = '#00AA00';
-      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-      ctx.fillText(
-        ` ${stats.username}`,
-        62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-        52
-      );
-    } else if (stats.data.meta.tag.value === 'VIP+') {
-      ctx.fillStyle = '#55FFFF';
-      ctx.fillText('[', 62, 52);
-      ctx.fillStyle = '#00AAAA';
-      ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-      ctx.fillStyle = '#55FFFF';
-      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-      ctx.fillText(
-        ` ${stats.username}`,
-        62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-        52
-      );
-    } else if (stats.data.meta.tag.value === 'HERO') {
-      ctx.fillStyle = '#AA00AA';
-      ctx.fillText('[', 62, 52);
+
+    if (stats.rank === 'Media') {
       ctx.fillStyle = '#FF55FF';
-      ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-      ctx.fillStyle = '#AA00AA';
-      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-      ctx.fillText(
-        ` ${stats.username}`,
-        62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-        52
-      );
-    } else if (stats.data.meta.tag.value === 'CHAMPION') {
-      ctx.fillStyle = '#FFAA00';
       ctx.fillText('[', 62, 52);
-      ctx.fillStyle = '#FFFF55';
-      ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-      ctx.fillStyle = '#FFAA00';
-      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
       ctx.fillText(
         ` ${stats.username}`,
-        62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
+        62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
         52
       );
     } else {
-      ctx.fillStyle = 'white';
-      ctx.fillText(stats.username, 62, 52);
+      if (stats.data.meta.tag.value === 'VIP') {
+        ctx.fillStyle = '#00AA00';
+        ctx.fillText('[', 62, 52);
+        ctx.fillStyle = '#55FF55';
+        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
+        ctx.fillStyle = '#00AA00';
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
+        ctx.fillText(
+          ` ${stats.username}`,
+          62 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          52
+        );
+      } else if (stats.data.meta.tag.value === 'VIP+') {
+        ctx.fillStyle = '#55FFFF';
+        ctx.fillText('[', 62, 52);
+        ctx.fillStyle = '#00AAAA';
+        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
+        ctx.fillStyle = '#55FFFF';
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
+        ctx.fillText(
+          ` ${stats.username}`,
+          62 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          52
+        );
+      } else if (stats.data.meta.tag.value === 'HERO') {
+        ctx.fillStyle = '#AA00AA';
+        ctx.fillText('[', 62, 52);
+        ctx.fillStyle = '#FF55FF';
+        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
+        ctx.fillStyle = '#AA00AA';
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
+        ctx.fillText(
+          ` ${stats.username}`,
+          62 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          52
+        );
+      } else if (stats.data.meta.tag.value === 'CHAMPION') {
+        ctx.fillStyle = '#FFAA00';
+        ctx.fillText('[', 62, 52);
+        ctx.fillStyle = '#FFFF55';
+        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
+        ctx.fillStyle = '#FFAA00';
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
+        ctx.fillText(
+          ` ${stats.username}`,
+          62 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          52
+        );
+      } else {
+        ctx.fillStyle = 'white';
+        ctx.fillText(stats.username, 62, 52);
+      }
     }
 
     // ? Gamemodes
