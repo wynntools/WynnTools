@@ -47,18 +47,18 @@ module.exports = {
             fields: [
               {
                 name: '<:invis:1064700091778220043>',
-                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - ${commands.length}\n<:bullet:1064700156789927936> Version ${packageJson.version}\nServers - ${interaction.client.guilds.cache.size}`,
+                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${commands.length}\`\n<:bullet:1064700156789927936> Version \`${packageJson.version}\`\nServers - \`${interaction.client.guilds.cache.size}\``,
                 inline: true,
               },
               {
                 name: '<:invis:1064700091778220043>',
-                value: `Files - ${addNotation('oneLetters', totalFiles)}\nLines - ${addNotation(
+                value: `Files -\` ${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
                   'oneLetters',
                   totalLines
-                )}\nCharacters - ${addNotation(
+                )}\`\nCharacters - \`${addNotation(
                   'oneLetters',
                   totalCharacters
-                )}\nCharacters with out spaces - ${addNotation('oneLetters', totalCharacters - totalWhitespace)}`,
+                )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
                 inline: true,
               },
             ],
