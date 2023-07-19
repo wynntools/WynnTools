@@ -23,6 +23,8 @@ async function getUUID(username) {
     return mojangCache.get(username.toLowerCase()).id;
   } else {
     const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then((res) => res.json());
+    if (data.id == undefined) return 'Invalid Username';
+    else if (data.name == undefined) return 'Invalid Username';
     mojangCache.set(data.id, data);
     mojangCache.set(username.toLowerCase(), data);
     return data.id;
@@ -37,6 +39,8 @@ async function getUsername(uuid) {
     const data = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`).then((res) =>
       res.json()
     );
+    if (data.id == undefined) return 'Invalid UUID';
+    else if (data.name == undefined) return 'Invalid UUID';
     mojangCache.set(uuid, data);
     mojangCache.set(data.name.toLowerCase(), data);
     return data.name;

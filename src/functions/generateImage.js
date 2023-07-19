@@ -871,7 +871,6 @@ async function generateGuild(guildData) {
     family: 'Inter Regular',
   });
 
-
   // ! Stats
   // ? name/tag
   ctx.font = '64px Inter';

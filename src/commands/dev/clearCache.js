@@ -1,4 +1,4 @@
-const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
+const { clearWynnCraftCache, clearWynnCraftGuildCache, EmbedBuilder } = require('../../api/wynnCraftAPI.js');
 const { blacklistCheck } = require('../../helperFunctions.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
 const { SlashCommandBuilder } = require('discord.js');
@@ -23,7 +23,14 @@ module.exports = {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
       if (blacklistTest) {
-        await interaction.reply({ content: 'You are blacklisted' });
+        const blacklisted = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setDescription('You are blacklisted')
+          .setFooter({
+            text: `by @kathund | discord.gg/kathund for support`,
+            iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          });
+        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
         return;
       }
       if (!interaction.user.id == config.discord.devId) {

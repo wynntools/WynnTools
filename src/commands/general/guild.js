@@ -1,7 +1,8 @@
 const { generateGuild } = require('../../functions/generateImage.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { blacklistCheck } = require('../../helperFunctions.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
-const { SlashCommandBuilder } = require('discord.js');
+const config = require('../../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,7 +14,14 @@ module.exports = {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
       if (blacklistTest) {
-        await interaction.reply({ content: 'You are blacklisted' });
+        const blacklisted = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setDescription('You are blacklisted')
+          .setFooter({
+            text: `by @kathund | discord.gg/kathund for support`,
+            iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          });
+        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
         return;
       }
       var name = interaction.options.getString('name');

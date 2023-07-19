@@ -1,5 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { blacklistCheck, countStatsInDirectory, addNotation } = require('../../helperFunctions.js');
+const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');
 
@@ -9,7 +10,14 @@ module.exports = {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
       if (blacklistTest) {
-        await interaction.reply({ content: 'You are blacklisted' });
+        const blacklisted = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setDescription('You are blacklisted')
+          .setFooter({
+            text: `by @kathund | discord.gg/kathund for support`,
+            iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          });
+        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
         return;
       }
 
