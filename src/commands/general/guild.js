@@ -5,11 +5,9 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('guild')
-    .setDescription('Search a guild and display there stats')
+    .setDescription('Displays the statistics of the specified guild.')
     .setDMPermission(false)
-    .addStringOption((option) =>
-      option.setName('name').setDescription('Name of the guild you want to view stats off').setRequired(true)
-    ),
+    .addStringOption((option) => option.setName('name').setDescription("The guild's name.").setRequired(true)),
   async execute(interaction) {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
