@@ -1,5 +1,5 @@
-const { getStats, getHighestProfile, getGuild } = require('../api/wynnCraftAPI.js');
 const { generateDate, getRelativeTime } = require('../helperFunctions.js');
+const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
 const { AttachmentBuilder } = require('discord.js');
 
@@ -861,7 +861,7 @@ async function generateProfileImage(uuid, profileId) {
   }
 }
 
-async function generateGuild(name) {
+async function generateGuild(guildData) {
   const canvas = createCanvas(1200, 800);
   const ctx = canvas.getContext('2d');
 
@@ -871,7 +871,6 @@ async function generateGuild(name) {
     family: 'Inter Regular',
   });
 
-  var guild = await getGuild(name);
 
   // ! Stats
   // ? name/tag
@@ -879,10 +878,10 @@ async function generateGuild(name) {
   ctx.fillStyle = 'white';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.fillText(`[${guild.prefix}] ${guild.name}`, 64, 64);
+  ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
 
   // ? Owner
-  var uuid = Object.values(guild.members.OWNER)[0].uuid;
+  var uuid = Object.values(guildData.members.OWNER)[0].uuid;
   var stats = await getStats(uuid);
   ctx.textBaseline = 'top';
   ctx.font = '32px Inter';
@@ -944,17 +943,17 @@ async function generateGuild(name) {
   ctx.font = `24px Inter`;
   ctx.fillStyle = 'white';
   ctx.fillText(
-    `Created - ${generateDate(guild.created).split(' at ')[0]} (${getRelativeTime(
-      new Date(guild.created).getTime(),
+    `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
+      new Date(guildData.created).getTime(),
       'ms'
     )})`,
     64,
     197
   );
-  await bar(ctx, 64, 234, Math.floor((guild.xp / 100) * 866), 28);
+  await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 866), 28);
   ctx.font = `22px Inter`;
-  ctx.fillText(`Level - ${guild.level}`, 80, 234);
-  ctx.fillText(`${guild.xp}%`, 868, 234);
+  ctx.fillText(`Level - ${guildData.level}`, 80, 234);
+  ctx.fillText(`${guildData.xp}%`, 868, 234);
 
   // ! Members
   var statsY = 530;
@@ -963,7 +962,7 @@ async function generateGuild(name) {
   var territoriesX = 816;
   ctx.font = `32px Inter`;
   ctx.drawImage(await loadImage('src/assets/guildMemberIcon.png'), 112, 346, 224, 184);
-  const textMember = `Members\n${guild.totalMembers}/bad code`;
+  const textMember = `Members\n${guildData.totalMembers}/bad code`;
   const textLinesMember = textMember.split('\n');
   ctx.fillText(textLinesMember[0], memberX, statsY);
   ctx.fillText(
@@ -972,7 +971,7 @@ async function generateGuild(name) {
     statsY + parseInt(ctx.font, 10)
   );
 
-  const textOnlineMembers = `Online\n${guild.onlineMembers}/${guild.totalMembers}`;
+  const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
   const textLinesOnlineMembers = textOnlineMembers.split('\n');
   ctx.fillText(textLinesOnlineMembers[0], onlineMemberX, statsY);
   ctx.fillText(
@@ -982,7 +981,7 @@ async function generateGuild(name) {
     statsY + parseInt(ctx.font, 10)
   );
 
-  const textTerritories = `Territories\n${guild.territories}`;
+  const textTerritories = `Territories\n${guildData.territories}`;
   const textLinesTerritories = textTerritories.split('\n');
   ctx.fillText(textLinesTerritories[0], territoriesX, statsY);
   ctx.fillText(

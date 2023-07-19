@@ -52,7 +52,7 @@ module.exports = {
               },
               {
                 name: '<:invis:1064700091778220043>',
-                value: `Files -\` ${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
+                value: `Files - \`${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
                   'oneLetters',
                   totalLines
                 )}\`\nCharacters - \`${addNotation(

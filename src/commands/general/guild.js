@@ -1,5 +1,6 @@
 const { generateGuild } = require('../../functions/generateImage.js');
 const { blacklistCheck } = require('../../helperFunctions.js');
+const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -16,7 +17,13 @@ module.exports = {
         return;
       }
       var name = interaction.options.getString('name');
-      await interaction.reply({ files: [await generateGuild(name)] });
+
+      var guild = await getGuild(name);
+      if (guild.status != 200) {
+        await interaction.reply({ content: guild.error });
+      } else {
+        await interaction.reply({ files: [await generateGuild(guild)] });
+      }
     } catch (error) {
       console.log(error);
       await interaction.reply({ content: `${error}` });
