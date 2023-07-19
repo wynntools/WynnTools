@@ -3,6 +3,7 @@ const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');
 const moment = require('moment');
+const path = require('path');
 const fs = require('fs');
 
 const getDirName = require('path').dirname;
@@ -72,6 +73,96 @@ async function blacklistCheck(id) {
     return false;
   }
 }
+function countLinesAndCharacters(filePath) {
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const lines = fileContent.split('\n');
+  const totalLines = lines.length;
+  const totalCharacters = fileContent.replace(/\s/g, '').length;
+  const totalWhitespace = fileContent.match(/\s/g)?.length || 0;
+  return { totalLines, totalCharacters, totalWhitespace };
+}
+
+function isJavaScriptFile(file) {
+  return path.extname(file) === '.js';
+}
+
+function countStatsInDirectory(dirPath) {
+  let totalFiles = 0;
+  let totalLines = 0;
+  let totalCharacters = 0;
+  let totalWhitespace = 0;
+
+  const files = fs.readdirSync(dirPath);
+
+  files.forEach((file) => {
+    const filePath = path.join(dirPath, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat.isFile()) {
+      if (!filePath.includes('node_modules') && isJavaScriptFile(file)) {
+        const {
+          totalLines: lines,
+          totalCharacters: chars,
+          totalWhitespace: whitespace,
+        } = countLinesAndCharacters(filePath);
+        totalFiles++;
+        totalLines += lines;
+        totalCharacters += chars;
+        totalWhitespace += whitespace;
+      }
+    } else if (stat.isDirectory() && !filePath.includes('node_modules')) {
+      const {
+        totalFiles: dirFiles,
+        totalLines: dirLines,
+        totalCharacters: dirChars,
+        totalWhitespace: dirWhitespace,
+      } = countStatsInDirectory(filePath);
+      totalFiles += dirFiles;
+      totalLines += dirLines;
+      totalCharacters += dirChars;
+      totalWhitespace += dirWhitespace;
+    }
+  });
+
+  return { totalFiles, totalLines, totalCharacters, totalWhitespace };
+}
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function addNotation(type, value) {
+  let returnVal = value;
+  let notList = [];
+  if (type === 'shortScale') {
+    notList = [' Thousand', ' Million', ' Billion', ' Trillion', ' Quadrillion', ' Quintillion'];
+  }
+
+  if (type === 'oneLetters') {
+    notList = ['K', 'M', 'B', 'T'];
+  }
+
+  let checkNum = 1000;
+  if (type !== 'none' && type !== 'commas') {
+    let notValue = notList[notList.length - 1];
+    for (let u = notList.length; u >= 1; u--) {
+      notValue = notList.shift();
+      for (let o = 3; o >= 1; o--) {
+        if (value >= checkNum) {
+          returnVal = value / (checkNum / 100);
+          returnVal = Math.floor(returnVal);
+          returnVal = (returnVal / Math.pow(10, o)) * 10;
+          returnVal = +returnVal.toFixed(o - 1) + notValue;
+        }
+        checkNum *= 10;
+      }
+    }
+  } else {
+    returnVal = numberWithCommas(value.toFixed(0));
+  }
+
+  return returnVal;
+}
 
 module.exports = {
   getCurrentTime,
@@ -80,4 +171,7 @@ module.exports = {
   generateDate,
   getRelativeTime,
   blacklistCheck,
+  countLinesAndCharacters,
+  countStatsInDirectory,
+  addNotation,
 };

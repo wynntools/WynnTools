@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
-const { blacklistCheck } = require('../../helperFunctions.js');
+const { blacklistCheck, countStatsInDirectory, addNotation } = require('../../helperFunctions.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -15,9 +15,7 @@ module.exports = {
 
       var packageJson = require('../../../package.json');
       const commands = [];
-      // get all file names in the commands folder then push the name into commands array
       fs.readdirSync(path.resolve(__dirname, '../general')).forEach((file) => {
-        // filter out files that are not .js files
         if (!file.endsWith('.js')) return;
         commands.push(file);
       });
@@ -32,7 +30,14 @@ module.exports = {
         .setURL('https://discord.com/api/oauth2/authorize?client_id=1127383186683465758&permissions=8&scope=bot')
         .setStyle(ButtonStyle.Link);
 
-      const row = new ActionRowBuilder().addComponents(support, invite);
+      const source = new ButtonBuilder()
+        .setLabel('source')
+        .setURL('https://github.com/Kathund/WynnTools')
+        .setStyle(ButtonStyle.Link);
+
+      const row = new ActionRowBuilder().addComponents(support, invite, source);
+
+      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
 
       await interaction.reply({
         embeds: [
@@ -42,7 +47,18 @@ module.exports = {
             fields: [
               {
                 name: '<:invis:1064700091778220043>',
-                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - ${commands.length}\n<:bullet:1064700156789927936> Version ${packageJson.version}`,
+                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - ${commands.length}\n<:bullet:1064700156789927936> Version ${packageJson.version}\nServers - ${interaction.client.guilds.cache.size}`,
+                inline: true,
+              },
+              {
+                name: '<:invis:1064700091778220043>',
+                value: `Files - ${addNotation('oneLetters', totalFiles)}\nLines - ${addNotation(
+                  'oneLetters',
+                  totalLines
+                )}\nCharacters - ${addNotation(
+                  'oneLetters',
+                  totalCharacters
+                )}\nCharacters with out spaces - ${addNotation('oneLetters', totalCharacters - totalWhitespace)}`,
                 inline: true,
               },
             ],
