@@ -1096,7 +1096,13 @@ async function generateGuild(guildData) {
   } else {
     ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
     console.log(guildData.fixedNamed);
-    ctx.drawImage(await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`), 978, 56);
+    ctx.drawImage(
+      await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
+      978,
+      56,
+      150,
+      300
+    );
 
     // ! Stats
     // ? name/tag
