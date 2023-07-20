@@ -73,7 +73,7 @@ module.exports = {
         } else {
           embed = new EmbedBuilder()
             .setTitle(`Information for <@${user.id}>`)
-            .setColor(config.discord.embed.green)
+            .setColor(config.discord.embeds.green)
             .setTimestamp()
             .addFields({
               name: '<:invis:1064700091778220043>',
