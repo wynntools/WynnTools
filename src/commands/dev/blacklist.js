@@ -1,4 +1,4 @@
-const { writeAt, blacklistCheck } = require('../../helperFunctions.js');
+const { writeAt, blacklistCheck, toFixed } = require('../../helperFunctions.js');
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -52,7 +52,7 @@ module.exports = {
         var blacklistInfo = {
           id: user.id,
           reason: reason,
-          timestamp: Date.now(),
+          timestamp: toFixed(new Date().getTime() / 1000, 0),
         };
         await writeAt('data/blacklist.json', user.id, blacklistInfo);
         await interaction.reply({ content: 'User has been blacklisted', ephemeral: true });

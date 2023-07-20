@@ -2,6 +2,7 @@ const { discordMessage, commandMessage, scriptMessage, warnMessage } = require('
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { writeAt, toFixed } = require('./src/helperFunctions.js');
 const token = require('./config.json').discord.token;
 const path = require('path');
 const fs = require('fs');
@@ -57,6 +58,18 @@ async function start() {
 
       if (!command) return;
       try {
+        var userData = JSON.parse(fs.readFileSync('data/userData.json'));
+        if (userData[interaction.user.id]) {
+          await writeAt('data/userData.json', interaction.user.id, {
+            commandsRun: userData[interaction.user.id].commandsRun + 1,
+            firstCommand: userData[interaction.user.id].firstCommand,
+          });
+        } else {
+          await writeAt('data/userData.json', interaction.user.id, {
+            commandsRun: 1,
+            firstCommand: toFixed(new Date().getTime() / 1000, 0),
+          });
+        }
         if (interaction.user.discriminator == '0') {
           commandMessage(
             `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`
