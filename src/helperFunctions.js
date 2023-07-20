@@ -164,6 +164,11 @@ function addNotation(type, value) {
   return returnVal;
 }
 
+function toFixed(num, fixed) {
+  const response = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
+  return num.toString().match(response)[0];
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
@@ -174,4 +179,5 @@ module.exports = {
   countLinesAndCharacters,
   countStatsInDirectory,
   addNotation,
+  toFixed,
 };
