@@ -59,16 +59,29 @@ async function start() {
       if (!command) return;
       try {
         var userData = JSON.parse(fs.readFileSync('data/userData.json'));
+        let data;
         if (userData[interaction.user.id]) {
-          await writeAt('data/userData.json', interaction.user.id, {
+          data = {
             commandsRun: userData[interaction.user.id].commandsRun + 1,
             firstCommand: userData[interaction.user.id].firstCommand,
-          });
+            lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+            commands: userData[interaction.user.id].commands,
+          };
+          const commands = data.commands;
+          if (commands[interaction.commandName]) {
+            commands[interaction.commandName]++;
+          } else {
+            commands[interaction.commandName] = 1;
+          }
+          await writeAt('data/userData.json', interaction.user.id, data);
         } else {
-          await writeAt('data/userData.json', interaction.user.id, {
+          data = {
             commandsRun: 1,
             firstCommand: toFixed(new Date().getTime() / 1000, 0),
-          });
+            lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+            commands: { [interaction.commandName]: 1 },
+          };
+          await writeAt('data/userData.json', interaction.user.id, data);
         }
         if (interaction.user.discriminator == '0') {
           commandMessage(
