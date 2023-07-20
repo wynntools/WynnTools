@@ -916,7 +916,7 @@ async function generateGuild(guildData) {
   var packageJson = require('../../package.json');
 
   if (guildData.banner == undefined) {
-    ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
 
     // ! Stats
     // ? name/tag
