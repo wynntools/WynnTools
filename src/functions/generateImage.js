@@ -1098,8 +1098,8 @@ async function generateGuild(guildData) {
     console.log(guildData.fixedNamed);
     ctx.drawImage(
       await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
-      978,
-      56,
+      986,
+      64,
       150,
       300
     );
