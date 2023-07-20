@@ -1045,7 +1045,7 @@ async function generateGuild(guildData) {
     await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 1072), 28);
     ctx.font = `22px Inter`;
     ctx.fillText(`Level - ${guildData.level}`, 80, 234);
-    ctx.fillText(`${guildData.xp}%`, 868, 234);
+    ctx.fillText(`${guildData.xp}%`, 1058, 234);
 
     // ! Members
     statsY = 530;
