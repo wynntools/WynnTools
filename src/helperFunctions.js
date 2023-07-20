@@ -169,6 +169,32 @@ function toFixed(num, fixed) {
   return num.toString().match(response)[0];
 }
 
+function getMaxMembers(lvl) {
+  if (lvl < 2) return 4;
+  if (lvl < 6) return 8;
+  if (lvl < 15) return 16;
+  if (lvl < 24) return 26;
+  if (lvl < 33) return 38;
+  if (lvl < 42) return 48;
+  if (lvl < 54) return 60;
+  if (lvl < 66) return 72;
+  if (lvl < 75) return 80;
+  if (lvl < 81) return 86;
+  if (lvl < 87) return 92;
+  if (lvl < 93) return 98;
+  if (lvl < 96) return 102;
+  if (lvl < 99) return 106;
+  if (lvl < 102) return 110;
+  if (lvl < 105) return 114;
+  if (lvl < 108) return 118;
+  if (lvl < 111) return 122;
+  if (lvl < 114) return 126;
+  if (lvl < 117) return 130;
+  if (lvl < 120) return 140;
+
+  return 150;
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
@@ -180,4 +206,5 @@ module.exports = {
   countStatsInDirectory,
   addNotation,
   toFixed,
+  getMaxMembers,
 };

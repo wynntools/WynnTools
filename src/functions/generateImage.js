@@ -1,4 +1,4 @@
-const { generateDate, getRelativeTime } = require('../helperFunctions.js');
+const { generateDate, getRelativeTime, getMaxMembers } = require('../helperFunctions.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
 const { AttachmentBuilder } = require('discord.js');
@@ -1053,7 +1053,7 @@ async function generateGuild(guildData) {
     onlineMemberX = 578.22;
     territoriesX = 916;
     ctx.font = `32px Inter`;
-    const textMember = `Members\n${guildData.totalMembers}/bad code`;
+    const textMember = `Members\n${guildData.totalMembers}/${getMaxMembers(guildData.level)}`;
     const textLinesMember = textMember.split('\n');
     ctx.fillText(textLinesMember[0], memberX, statsY);
     ctx.fillText(
@@ -1239,7 +1239,7 @@ async function generateGuild(guildData) {
     onlineMemberX = 505.5;
     territoriesX = 816;
     ctx.font = `32px Inter`;
-    const textMember = `Members\n${guildData.totalMembers}/bad code`;
+    const textMember = `Members\n${guildData.totalMembers}/${getMaxMembers(guildData.level)}`;
     const textLinesMember = textMember.split('\n');
     ctx.fillText(textLinesMember[0], memberX, statsY);
     ctx.fillText(
