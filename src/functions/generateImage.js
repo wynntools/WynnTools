@@ -486,7 +486,44 @@ async function generateProfileImage(uuid, profileId) {
     ctx.textBaseline = 'top';
     ctx.font = '36px Inter';
     ctx.textAlign = 'left';
-    if (stats.data.meta.tag.value === 'VIP') {
+
+    if (stats.rank === 'Media') {
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.rank === 'Administrator') {
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#FF5555';
+      ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.data.meta.veteran) {
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText('[', 62, 52);
+      ctx.fillStyle = '#F38BA8';
+      ctx.fillText('Vet', 62 + ctx.measureText('[').width, 52);
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
+      ctx.fillText(
+        ` ${stats.username}`,
+        62 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
+        52
+      );
+    } else if (stats.data.meta.tag.value === 'VIP') {
       ctx.fillStyle = '#00AA00';
       ctx.fillText('[', 62, 52);
       ctx.fillStyle = '#55FF55';
@@ -865,143 +902,378 @@ async function generateGuild(guildData) {
   const canvas = createCanvas(1200, 800);
   const ctx = canvas.getContext('2d');
 
-  ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
-
   registerFont('src/fonts/Inter-Regular.ttf', {
     family: 'Inter Regular',
   });
-
-  // ! Stats
-  // ? name/tag
-  ctx.font = '64px Inter';
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
-
-  // ? Owner
   var uuid = Object.values(guildData.members.OWNER)[0].uuid;
   var stats = await getStats(uuid);
-  ctx.textBaseline = 'top';
-  ctx.font = '32px Inter';
-  ctx.textAlign = 'left';
-  ctx.fillText(`Owner - `, 64, 150);
-  if (stats.data.meta.tag.value === 'VIP') {
-    ctx.fillStyle = '#00AA00';
-    ctx.fillText('[', 207, 150);
-    ctx.fillStyle = '#55FF55';
-    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-    ctx.fillStyle = '#00AA00';
-    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
-    ctx.fillText(
-      ` ${stats.username}`,
-      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-      150
-    );
-  } else if (stats.data.meta.tag.value === 'VIP+') {
-    ctx.fillStyle = '#55FFFF';
-    ctx.fillText('[', 207, 150);
-    ctx.fillStyle = '#00AAAA';
-    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-    ctx.fillStyle = '#55FFFF';
-    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
-    ctx.fillText(
-      ` ${stats.username}`,
-      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-      150
-    );
-  } else if (stats.data.meta.tag.value === 'HERO') {
-    ctx.fillStyle = '#AA00AA';
-    ctx.fillText('[', 207, 150);
-    ctx.fillStyle = '#FF55FF';
-    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-    ctx.fillStyle = '#AA00AA';
-    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
-    ctx.fillText(
-      ` ${stats.username}`,
-      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-      150
-    );
-  } else if (stats.data.meta.tag.value === 'CHAMPION') {
-    ctx.fillStyle = '#FFAA00';
-    ctx.fillText('[', 207, 150);
-    ctx.fillStyle = '#FFFF55';
-    ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-    ctx.fillStyle = '#FFAA00';
-    ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
-    ctx.fillText(
-      ` ${stats.username}`,
-      207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width + ctx.measureText(']').width,
-      150
-    );
-  } else {
-    ctx.fillStyle = 'white';
-    ctx.fillText(stats.username, 207, 52);
-  }
 
-  ctx.font = `24px Inter`;
-  ctx.fillStyle = 'white';
-  ctx.fillText(
-    `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
-      new Date(guildData.created).getTime(),
-      'ms'
-    )})`,
-    64,
-    197
-  );
-  await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 866), 28);
-  ctx.font = `22px Inter`;
-  ctx.fillText(`Level - ${guildData.level}`, 80, 234);
-  ctx.fillText(`${guildData.xp}%`, 868, 234);
-
-  // ! Members
-  var statsY = 530;
-  var memberX = 162;
-  var onlineMemberX = 505.5;
-  var territoriesX = 816;
-  ctx.font = `32px Inter`;
-  ctx.drawImage(await loadImage('src/assets/guildMemberIcon.png'), 112, 346, 224, 184);
-  const textMember = `Members\n${guildData.totalMembers}/bad code`;
-  const textLinesMember = textMember.split('\n');
-  ctx.fillText(textLinesMember[0], memberX, statsY);
-  ctx.fillText(
-    textLinesMember[1],
-    memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
-    statsY + parseInt(ctx.font, 10)
-  );
-
-  const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
-  const textLinesOnlineMembers = textOnlineMembers.split('\n');
-  ctx.fillText(textLinesOnlineMembers[0], onlineMemberX, statsY);
-  ctx.fillText(
-    textLinesOnlineMembers[1],
-    onlineMemberX +
-      (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
-    statsY + parseInt(ctx.font, 10)
-  );
-
-  const textTerritories = `Territories\n${guildData.territories}`;
-  const textLinesTerritories = textTerritories.split('\n');
-  ctx.fillText(textLinesTerritories[0], territoriesX, statsY);
-  ctx.fillText(
-    textLinesTerritories[1],
-    territoriesX +
-      (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
-    statsY + parseInt(ctx.font, 10)
-  );
+  let statsY = 0;
+  let memberX = 0;
+  let onlineMemberX = 0;
+  let territoriesX = 0;
 
   var packageJson = require('../../package.json');
-  ctx.font = `32px Inter`;
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(
-    `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
-    600,
-    720,
-    1136
-  );
-  return canvas.toBuffer('image/png');
+
+  if (guildData.banner == undefined) {
+    ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+
+    // ! Stats
+    // ? name/tag
+    ctx.font = '64px Inter';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
+
+    // ? Owner
+    ctx.textBaseline = 'top';
+    ctx.font = '32px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Owner - `, 64, 150);
+    if (stats.rank === 'Media') {
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.rank === 'Administrator') {
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FF5555';
+      ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.veteran) {
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#F38BA8';
+      ctx.fillText('Vet', 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'VIP') {
+      ctx.fillStyle = '#00AA00';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#55FF55';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#00AA00';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'VIP+') {
+      ctx.fillStyle = '#55FFFF';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#00AAAA';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#55FFFF';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'HERO') {
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'CHAMPION') {
+      ctx.fillStyle = '#FFAA00';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FFFF55';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FFAA00';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else {
+      ctx.fillStyle = 'white';
+      ctx.fillText(stats.username, 207, 150);
+    }
+
+    ctx.font = `24px Inter`;
+    ctx.fillStyle = 'white';
+    ctx.fillText(
+      `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
+        new Date(guildData.created).getTime(),
+        'ms'
+      )})`,
+      64,
+      197
+    );
+    await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 1072), 28);
+    ctx.font = `22px Inter`;
+    ctx.fillText(`Level - ${guildData.level}`, 80, 234);
+    ctx.fillText(`${guildData.xp}%`, 868, 234);
+
+    // ! Members
+    statsY = 530;
+    memberX = 162;
+    onlineMemberX = 578.22;
+    territoriesX = 916;
+    ctx.font = `32px Inter`;
+    const textMember = `Members\n${guildData.totalMembers}/bad code`;
+    const textLinesMember = textMember.split('\n');
+    ctx.fillText(textLinesMember[0], memberX, statsY);
+    ctx.fillText(
+      textLinesMember[1],
+      memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
+    const textLinesOnlineMembers = textOnlineMembers.split('\n');
+    ctx.fillText(textLinesOnlineMembers[0], onlineMemberX, statsY);
+    ctx.fillText(
+      textLinesOnlineMembers[1],
+      onlineMemberX +
+        (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    const textTerritories = `Territories\n${guildData.territories}`;
+    const textLinesTerritories = textTerritories.split('\n');
+    ctx.fillText(textLinesTerritories[0], territoriesX, statsY);
+    ctx.fillText(
+      textLinesTerritories[1],
+      territoriesX +
+        (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    ctx.font = `32px Inter`;
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      720,
+      1136
+    );
+    return canvas.toBuffer('image/png');
+  } else {
+    ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+    console.log(guildData.fixedNamed);
+    ctx.drawImage(await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`), 978, 56);
+
+    // ! Stats
+    // ? name/tag
+    ctx.font = '64px Inter';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
+
+    // ? Owner
+    ctx.textBaseline = 'top';
+    ctx.font = '32px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Owner - `, 64, 150);
+    if (stats.rank === 'Media') {
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.rank === 'Administrator') {
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FF5555';
+      ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#AA0000';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.veteran) {
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#F38BA8';
+      ctx.fillText('Vet', 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FAB387';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'VIP') {
+      ctx.fillStyle = '#00AA00';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#55FF55';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#00AA00';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'VIP+') {
+      ctx.fillStyle = '#55FFFF';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#00AAAA';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#55FFFF';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'HERO') {
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FF55FF';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#AA00AA';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else if (stats.data.meta.tag.value === 'CHAMPION') {
+      ctx.fillStyle = '#FFAA00';
+      ctx.fillText('[', 207, 150);
+      ctx.fillStyle = '#FFFF55';
+      ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
+      ctx.fillStyle = '#FFAA00';
+      ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
+      ctx.fillText(
+        ` ${stats.username}`,
+        207 +
+          ctx.measureText('[').width +
+          ctx.measureText(stats.data.meta.tag.value).width +
+          ctx.measureText(']').width,
+        150
+      );
+    } else {
+      ctx.fillStyle = 'white';
+      ctx.fillText(stats.username, 207, 150);
+    }
+
+    ctx.font = `24px Inter`;
+    ctx.fillStyle = 'white';
+    ctx.fillText(
+      `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
+        new Date(guildData.created).getTime(),
+        'ms'
+      )})`,
+      64,
+      197
+    );
+    await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 866), 28);
+    ctx.font = `22px Inter`;
+    ctx.fillText(`Level - ${guildData.level}`, 80, 234);
+    ctx.fillText(`${guildData.xp}%`, 868, 234);
+
+    // ! Members
+    statsY = 530;
+    memberX = 162;
+    onlineMemberX = 505.5;
+    territoriesX = 816;
+    ctx.font = `32px Inter`;
+    const textMember = `Members\n${guildData.totalMembers}/bad code`;
+    const textLinesMember = textMember.split('\n');
+    ctx.fillText(textLinesMember[0], memberX, statsY);
+    ctx.fillText(
+      textLinesMember[1],
+      memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
+    const textLinesOnlineMembers = textOnlineMembers.split('\n');
+    ctx.fillText(textLinesOnlineMembers[0], onlineMemberX, statsY);
+    ctx.fillText(
+      textLinesOnlineMembers[1],
+      onlineMemberX +
+        (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    const textTerritories = `Territories\n${guildData.territories}`;
+    const textLinesTerritories = textTerritories.split('\n');
+    ctx.fillText(textLinesTerritories[0], territoriesX, statsY);
+    ctx.fillText(
+      textLinesTerritories[1],
+      territoriesX +
+        (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
+      statsY + parseInt(ctx.font, 10)
+    );
+
+    ctx.font = `32px Inter`;
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      720,
+      1136
+    );
+    return canvas.toBuffer('image/png');
+  }
 }
 
 module.exports = {

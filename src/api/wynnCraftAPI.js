@@ -76,13 +76,14 @@ async function getGuild(name) {
     return wynncraftGuildCache.get(fixedNamed);
   } else {
     var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
-    if (res.stats != 200) {
+    if (res.status != 200) {
       return { status: res.status, error: 'Invalid Guild Name' };
     }
     var data = await res.json();
     var response = {
       status: res.status,
       name: data.name,
+      fixedNamed: fixedNamed,
       timestamp: Date.now(),
       prefix: data.prefix,
       members: data.members,
