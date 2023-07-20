@@ -31,28 +31,28 @@ module.exports = {
         .setCustomId('whatHappened')
         .setLabel('What Happened?')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(1536)
+        .setMaxLength(1024)
         .setMinLength(20);
 
       const howDidThisHappen = new TextInputBuilder()
         .setCustomId('howDidThisHappen')
         .setLabel('How did this happen?')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(1536)
+        .setMaxLength(1024)
         .setMinLength(20);
 
       const whenDidThisHappen = new TextInputBuilder()
         .setCustomId('whenDidThisHappen')
         .setLabel('When did this happen?')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(1536)
+        .setMaxLength(1024)
         .setMinLength(20);
 
       const stepsToReproduce = new TextInputBuilder()
         .setCustomId('stepsToReproduce')
         .setLabel('Steps To Reproduce')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(1536)
+        .setMaxLength(1024)
         .setMinLength(20);
 
       const firstActionRow = new ActionRowBuilder().addComponents(title);
@@ -70,7 +70,6 @@ module.exports = {
       interaction.client.on(Events.InteractionCreate, async (interaction) => {
         if (!interaction.isModalSubmit()) return;
 
-        // Get the data entered by the user
         const title = interaction.fields.getTextInputValue('title');
         const whatHappened = interaction.fields.getTextInputValue('whatHappened');
         const howDidThisHappen = interaction.fields.getTextInputValue('howDidThisHappen');
