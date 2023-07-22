@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { blacklistCheck } = require('../../helperFunctions.js');
+const { blacklistCheck, capitalizeFirstLetter } = require('../../helperFunctions.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
@@ -34,7 +34,6 @@ module.exports = {
 
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var blacklist = JSON.parse(fs.readFileSync('data/blacklist.json'));
-      console.log(user.id);
       if (userData[user.id] == undefined) {
         const invalid = new EmbedBuilder()
           .setColor(config.discord.embeds.red)
@@ -58,7 +57,9 @@ module.exports = {
           num = commandsSorted.length;
         }
         for (var i = 0; i < num; i++) {
-          string += `${commandsSorted[i]} - \`${userData[user.id].commands[commandsSorted[i]]}\`\n`;
+          string += `<:arrowright:1132130283613868112> **${capitalizeFirstLetter(commandsSorted[i])}:** \`${
+            userData[user.id].commands[commandsSorted[i]]
+          }\`\n`;
         }
         if (blacklist[user.id]) {
           embed = new EmbedBuilder()
@@ -120,19 +121,12 @@ module.exports = {
           .setLabel('Delete data')
           .setStyle(ButtonStyle.Danger);
 
-        const deleteDataDisabled = new ButtonBuilder()
-          .setCustomId('deleteDataDisabled')
-          .setLabel('Delete data')
-          .setDisabled(true)
-          .setStyle(ButtonStyle.Danger);
-
         const yes = new ButtonBuilder().setCustomId('yes').setLabel('Yes').setStyle(ButtonStyle.Danger);
         const cancel = new ButtonBuilder().setCustomId('cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary);
         const row = new ActionRowBuilder().addComponents(deleteData);
-        const rowDisabled = new ActionRowBuilder().addComponents(deleteDataDisabled);
         const confirmRow = new ActionRowBuilder().addComponents(yes, cancel);
         var msg;
-        if (!interaction.user.id === user.id) {
+        if (interaction.user.id !== user.id) {
           msg = await interaction.reply({
             embeds: [embed],
           });
@@ -152,6 +146,7 @@ module.exports = {
                 embeds: [updatedEmbed],
                 components: [confirmRow],
               });
+
               const collectorFilter = (i) => i.user.id === interaction.user.id;
               try {
                 const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
@@ -163,7 +158,7 @@ module.exports = {
                     .setTimestamp()
                     .setDescription('Data deleted');
 
-                  await confirmation.update({
+                  return await confirmation.update({
                     embeds: [updatedEmbed],
                     components: [],
                   });
@@ -173,7 +168,7 @@ module.exports = {
                     .setTimestamp()
                     .setDescription('Cancelled');
 
-                  await confirmation.update({
+                  return await confirmation.update({
                     embeds: [updatedEmbed],
                     components: [],
                   });
@@ -181,17 +176,16 @@ module.exports = {
               } catch (e) {
                 await interaction.editReply({
                   embeds: [embed],
-                  components: [rowDisabled],
+                  components: [],
                 });
               }
             }
           } catch (e) {
             await interaction.editReply({
               embeds: [embed],
-              components: [rowDisabled],
+              components: [],
             });
           }
-          await interaction.reply({ embeds: [embed] });
         }
       }
     } catch (error) {

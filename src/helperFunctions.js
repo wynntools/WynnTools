@@ -195,6 +195,14 @@ function getMaxMembers(lvl) {
   return 150;
 }
 
+function capitalizeFirstLetter(str) {
+  if (typeof str !== 'string' || str.length === 0) {
+    return ''; // Return an empty string if the input is not a valid non-empty string
+  }
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
@@ -207,4 +215,5 @@ module.exports = {
   addNotation,
   toFixed,
   getMaxMembers,
+  capitalizeFirstLetter,
 };
