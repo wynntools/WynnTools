@@ -3,8 +3,6 @@ const { toFixed, countStatsInDirectory, addNotation } = require('../helperFuncti
 const packageJson = require('../../package.json');
 const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
-const messageId = '1132306220452155423';
-const channelId = '1132304234847666320';
 const timestamp = new Date().getTime();
 const cron = require('node-cron');
 const path = require('path');
@@ -16,8 +14,8 @@ async function statsChannel(client) {
       try {
         scriptMessage('Updating stats embed/message');
         const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
-        const channel = await client.channels.fetch(channelId);
-        const message = await channel.messages.fetch(messageId);
+        const channel = await client.channels.fetch(config.discord.channels.stats);
+        const message = await channel.messages.fetch(config.discord.messages.stats);
 
         var userData = JSON.parse(fs.readFileSync('data/userData.json'));
         var totalCommandsRun = 0;
