@@ -101,6 +101,16 @@ async function getGuild(name) {
   }
 }
 
+async function getServers() {
+  var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
+  var data = await res.json();
+  var response = {
+    status: res.status,
+    a: data
+  };
+  return response;
+}
+
 async function clearWynnCraftCache() {
   wynncraftPlayerCache.flushAll();
 }
@@ -109,4 +119,12 @@ async function clearWynnCraftGuildCache() {
   wynncraftGuildCache.flushAll();
 }
 
-module.exports = { getStats, getHighestProfile, getProfiles, getGuild, clearWynnCraftCache, clearWynnCraftGuildCache };
+module.exports = {
+  getStats,
+  getHighestProfile,
+  getProfiles,
+  getGuild,
+  getServers,
+  clearWynnCraftCache,
+  clearWynnCraftGuildCache,
+};

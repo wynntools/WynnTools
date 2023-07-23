@@ -19,7 +19,7 @@ module.exports = {
           .setColor(config.discord.embeds.red)
           .setDescription('You are blacklisted')
           .setFooter({
-            text: `by @kathund | discord.gg/kathund for support`,
+            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
         await interaction.reply({ embeds: [blacklisted], ephemeral: true });
@@ -39,7 +39,7 @@ module.exports = {
           .setColor(config.discord.embeds.red)
           .setDescription('User has no data')
           .setFooter({
-            text: `by @kathund | discord.gg/kathund for support`,
+            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
         await interaction.reply({ embeds: [invalid], ephemeral: true });
@@ -88,7 +88,7 @@ module.exports = {
               inline: false,
             })
             .setFooter({
-              text: `by @kathund | discord.gg/kathund for support`,
+              text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
               iconURL: 'https://i.imgur.com/uUuZx2E.png',
             });
         } else {
@@ -111,7 +111,7 @@ module.exports = {
               inline: false,
             })
             .setFooter({
-              text: `by @kathund | discord.gg/kathund for support`,
+              text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
               iconURL: 'https://i.imgur.com/uUuZx2E.png',
             });
         }

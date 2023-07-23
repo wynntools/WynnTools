@@ -31,23 +31,34 @@ async function start() {
   deployCommands();
   deployDevCommands();
 
-  const commandFiles = fs.readdirSync('./src/scripts').filter((file) => file.endsWith('.js'));
-  scriptMessage(`Found ${commandFiles.length} scripts and running them all`);
-  for (const file of commandFiles) {
-    try {
-      scriptMessage(`Started ${file} script`);
-      require(`./src/scripts/${file}`);
-      await delay(300);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  scriptMessage(`Started all scripts`);
-
   await delay(3000);
 
-  client.once(Events.ClientReady, () => {
+  client.once(Events.ClientReady, async () => {
+    global.uptime = new Date().getTime();
     discordMessage(`Client Logged in as ${client.user.tag}`);
+
+    const scriptFiles = fs.readdirSync('./src/scripts').filter((file) => file.endsWith('.js'));
+    scriptMessage(`Found ${scriptFiles.length} scripts and running them all`);
+    var skipped = 0;
+    for (const file of scriptFiles) {
+      try {
+        if (file.toLowerCase().includes('disabled')) {
+          skipped++;
+          continue;
+        }
+        scriptMessage(`Started ${file} script`);
+        if (file.toLowerCase().includes('wynntoolsstatschannel')) {
+          const { statsChannel } = require(`./src/scripts/${file}`);
+          await statsChannel(client);
+        } else {
+          require(`./src/scripts/${file}`);
+        }
+        await delay(300);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
   });
 
   client.on(Events.InteractionCreate, async (interaction) => {

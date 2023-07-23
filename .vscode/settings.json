@@ -4,13 +4,17 @@
     "arrowright",
     "gamemode",
     "Gamemodes",
+    "hastebin",
     "invis",
     "ironman",
     "kathund",
+    "messagelink",
     "napi",
+    "starb",
     "undici",
     "weaponsmithing",
     "wynncraft",
-    "wynntools"
+    "wynntools",
+    "wynntoolsstatschannel"
   ]
 }

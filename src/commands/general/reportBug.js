@@ -81,7 +81,7 @@ module.exports = {
           .setAuthor({ name: 'Bug Report Submitted' })
           .setDescription(`Your bug report has been successfully sent to the dev.`)
           .setFooter({
-            text: `by @kathund | discord.gg/kathund for support`,
+            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
 
@@ -154,7 +154,7 @@ module.exports = {
             .replaceAll('Error: ', '')}\``
         )
         .setFooter({
-          text: `by @kathund | discord.gg/kathund for support`,
+          text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
           iconURL: 'https://i.imgur.com/uUuZx2E.png',
         });
 
