@@ -1,7 +1,8 @@
-const { clearWynnCraftCache, clearWynnCraftGuildCache, EmbedBuilder } = require('../../api/wynnCraftAPI.js');
+const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { blacklistCheck } = require('../../helperFunctions.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
-const { SlashCommandBuilder } = require('discord.js');
 const config = require('../../../config.json');
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,7 +17,9 @@ module.exports = {
         .addChoices(
           { name: 'Mojang', value: 'mojang' },
           { name: 'WynnCraft', value: 'wynncraft' },
-          { name: 'Wynncraft Guilds', value: 'wynncraftGuild' }
+          { name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
+          { name: 'Discord', value: 'discord' },
+          { name: 'All', value: 'all' }
         )
     ),
   async execute(interaction) {
@@ -47,11 +50,17 @@ module.exports = {
       } else if (cacheCategory == 'wynncraftGuild') {
         await clearWynnCraftGuildCache();
         await interaction.reply({ content: 'Cleared WynnCraft Guild Cache' });
-      } else {
+      } else if (cacheCategory == 'discord') {
+        await clearDiscordCache();
+        await interaction.reply({ content: 'Cleared Discord Cache' });
+      } else if (cacheCategory == 'all') {
         await clearMojangCache();
+        await clearDiscordCache();
         await clearWynnCraftCache();
         await clearWynnCraftGuildCache();
         await interaction.reply({ content: 'Cleared All Caches' });
+      } else {
+        throw new Error('uhhh something went wrong');
       }
     } catch (error) {
       console.log(error);
