@@ -1,5 +1,6 @@
-const { writeAt, blacklistCheck, toFixed } = require('../../helperFunctions.js');
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { writeAt, blacklistCheck, toFixed, generateID } = require('../../helperFunctions.js');
+const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
@@ -7,7 +8,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('blacklist')
     .setDescription('Blacklist a user (Dev Only)')
-    .setDMPermission(true)
+    .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('add')
@@ -24,20 +25,9 @@ module.exports = {
   async execute(interaction) {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
-      if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?', ephemeral: true });
-        return;
+      if (blacklistTest) throw new Error('You are blacklisted');
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+        throw new Error('No Perms');
       }
 
       var blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
@@ -67,8 +57,30 @@ module.exports = {
         await interaction.reply({ content: 'User has been removed from the blacklist', ephemeral: true });
       }
     } catch (error) {
+      var errorId = generateID(10);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
-      await interaction.reply({ content: `${error}`, ephemeral: true });
+      const errorEmbed = new EmbedBuilder()
+        .setColor(config.discord.embeds.red)
+        .setTitle('An error occurred')
+        .setDescription(
+          `Use </report-bug:${
+            config.discord.commands['report-bug']
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+        )
+        .setFooter({
+          text: `by @kathund | ${config.discord.supportInvite} for support`,
+          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+        });
+
+      const supportDisc = new ButtonBuilder()
+        .setLabel('Support Discord')
+        .setURL(config.discord.supportInvite)
+        .setStyle(ButtonStyle.Link);
+
+      const row = new ActionRowBuilder().addComponents(supportDisc);
+
+      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
 };

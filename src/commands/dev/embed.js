@@ -1,10 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { generateID, blacklistCheck } = require('../../helperFunctions.js');
+const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('embed')
+    .setDMPermission(false)
     .setDescription('Handles everything with embeds')
     .addSubcommand((subcommand) =>
       subcommand
@@ -41,95 +44,125 @@ module.exports = {
         .addStringOption((option) => option.setName('embed').setDescription('The new embed').setRequired(true))
     ),
   async execute(interaction) {
-    const subcommand = interaction.options.getSubcommand();
-    await interaction.deferReply();
-    if (!interaction.user.id == config.discord.devId) return await interaction.editReply('no perms!');
-    if (subcommand === 'source') {
-      const messageLink = interaction.options.getString('message-link').split('/');
-      const messageId = messageLink.pop();
-      const channelId = messageLink.pop();
-      const channel = await interaction.client.channels.fetch(channelId);
-      const message = await channel.messages.fetch(messageId);
-      const embedJson = message.embeds;
-      if (embedJson[0] === undefined) {
-        await interaction.editReply('This is not a valid embed!');
-        return;
+    try {
+      const subcommand = interaction.options.getSubcommand();
+      await interaction.deferReply();
+      var blacklistTest = await blacklistCheck(interaction.user.id);
+      if (blacklistTest) throw new Error('You are blacklisted');
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+        throw new Error('No Perms');
       }
-      const link = await hastebin.createPaste(JSON.stringify(embedJson[0], 0, 4), {
-        server: 'https://starb.in',
-        dataType: 'js',
-        contentType: '.json',
-      });
+      if (subcommand === 'source') {
+        const messageLink = interaction.options.getString('message-link').split('/');
+        const messageId = messageLink.pop();
+        const channelId = messageLink.pop();
+        const channel = await interaction.client.channels.fetch(channelId);
+        const message = await channel.messages.fetch(messageId);
+        const embedJson = message.embeds;
+        if (embedJson[0] === undefined) {
+          await interaction.editReply('This is not a valid embed!');
+          return;
+        }
+        const link = await hastebin.createPaste(JSON.stringify(embedJson[0], 0, 4), {
+          server: 'https://starb.in',
+          dataType: 'js',
+          contentType: '.json',
+        });
 
-      // console.log(`starb.in link: ${link}`);
-      await interaction.editReply(link + '.json');
-    } else if (subcommand === 'send') {
-      const embedInput = interaction.options.getString('embed');
-      if (embedInput.startsWith('https://starb.in')) {
-        const fetch = (...args) =>
-          import('node-fetch')
-            .then(({ default: fetch }) => fetch(...args))
-            .catch((err) => console.log(err));
+        // console.log(`starb.in link: ${link}`);
+        await interaction.editReply(link + '.json');
+      } else if (subcommand === 'send') {
+        const embedInput = interaction.options.getString('embed');
+        if (embedInput.startsWith('https://starb.in')) {
+          const fetch = (...args) =>
+            import('node-fetch')
+              .then(({ default: fetch }) => fetch(...args))
+              .catch((err) => console.log(err));
 
-        // const url = embedInput.replace(/starb.in/g, "starb.in/raw");
-        const url = `http://starb.in/raw/${embedInput.split('.')[1].split('/')[1]}`;
-        // console.log(url);
+          // const url = embedInput.replace(/starb.in/g, "starb.in/raw");
+          const url = `http://starb.in/raw/${embedInput.split('.')[1].split('/')[1]}`;
+          // console.log(url);
 
-        const response = await fetch(url);
-        const data = await response.text();
+          const response = await fetch(url);
+          const data = await response.text();
 
-        const channel = interaction.options.getChannel('channel') ?? interaction.channel;
+          const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 
-        const embed = new EmbedBuilder(JSON.parse(data));
-        // console.log("embed");
-        try {
-          await channel.send({ embeds: [embed] });
+          const embed = new EmbedBuilder(JSON.parse(data));
+          try {
+            await channel.send({ embeds: [embed] });
+            await interaction.editReply({
+              content: `Successfully sent embed to ${channel}`,
+              ephemeral: true,
+            });
+          } catch (error) {
+            console.error(error);
+            interaction.editReply('This is not a valid embed!');
+          }
+        } else {
+          const embedInput = interaction.options.getString('embed');
+          const channel = interaction.options.getChannel('channel') ?? interaction.channel;
+          const embed = new EmbedBuilder(JSON.parse(embedInput));
+          channel.send({ embeds: [embed] });
           await interaction.editReply({
             content: `Successfully sent embed to ${channel}`,
             ephemeral: true,
           });
-        } catch (error) {
-          console.error(error);
-          interaction.editReply('This is not a valid embed!');
         }
-      } else {
-        const embedInput = interaction.options.getString('embed');
-        const channel = interaction.options.getChannel('channel') ?? interaction.channel;
-        const embed = new EmbedBuilder(JSON.parse(embedInput));
-        channel.send({ embeds: [embed] });
+      } else if (subcommand === 'edit') {
+        const newEmbed = interaction.options.getString('embed');
+        const messageLink = interaction.options.getString('message-link').split('/');
+        const messageId = messageLink.pop();
+        let embed = null;
+        const channel = await interaction.client.channels.fetch(messageLink.pop());
+        const message = await channel.messages.fetch(messageId);
+        if (newEmbed.startsWith('https://')) {
+          const fetch = (...args) =>
+            import('node-fetch')
+              .then(({ default: fetch }) => fetch(...args))
+              .catch((err) => console.log(err));
+
+          const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
+          // console.log(url);
+
+          const response = await fetch(url);
+          const data = await response.text();
+
+          embed = new EmbedBuilder(JSON.parse(data));
+        } else {
+          embed = new EmbedBuilder(JSON.parse(newEmbed));
+        }
+        await message.edit({ embeds: [embed] });
         await interaction.editReply({
-          content: `Successfully sent embed to ${channel}`,
+          content: `Successfully edited embed at ${interaction.options.getString('message-link')}`,
           ephemeral: true,
         });
       }
-    } else if (subcommand === 'edit') {
-      const newEmbed = interaction.options.getString('embed');
-      const messageLink = interaction.options.getString('message-link').split('/');
-      const messageId = messageLink.pop();
-      let embed = null;
-      const channel = await interaction.client.channels.fetch(messageLink.pop());
-      const message = await channel.messages.fetch(messageId);
-      if (newEmbed.startsWith('https://')) {
-        const fetch = (...args) =>
-          import('node-fetch')
-            .then(({ default: fetch }) => fetch(...args))
-            .catch((err) => console.log(err));
+    } catch (error) {
+      var errorId = generateID(10);
+      errorMessage(`Error Id - ${errorId}`);
+      console.log(error);
+      const errorEmbed = new EmbedBuilder()
+        .setColor(config.discord.embeds.red)
+        .setTitle('An error occurred')
+        .setDescription(
+          `Use </report-bug:${
+            config.discord.commands['report-bug']
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+        )
+        .setFooter({
+          text: `by @kathund | ${config.discord.supportInvite} for support`,
+          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+        });
 
-        const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
-        // console.log(url);
+      const supportDisc = new ButtonBuilder()
+        .setLabel('Support Discord')
+        .setURL(config.discord.supportInvite)
+        .setStyle(ButtonStyle.Link);
 
-        const response = await fetch(url);
-        const data = await response.text();
+      const row = new ActionRowBuilder().addComponents(supportDisc);
 
-        embed = new EmbedBuilder(JSON.parse(data));
-      } else {
-        embed = new EmbedBuilder(JSON.parse(newEmbed));
-      }
-      await message.edit({ embeds: [embed] });
-      await interaction.editReply({
-        content: `Successfully edited embed at ${interaction.options.getString('message-link')}`,
-        ephemeral: true,
-      });
+      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
 };

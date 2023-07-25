@@ -7,13 +7,19 @@ const {
   TextInputStyle,
   Events,
   SlashCommandBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } = require('discord.js');
 /* eslint-enable */
-const { writeAt, toFixed } = require('../../helperFunctions.js');
+const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
+const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('report-bug').setDescription('Report a bug to the dev'),
+  data: new SlashCommandBuilder()
+    .setDMPermission(false)
+    .setName('report-bug')
+    .setDescription('Report a bug to the dev'),
 
   async execute(interaction) {
     try {
@@ -81,7 +87,7 @@ module.exports = {
           .setAuthor({ name: 'Bug Report Submitted' })
           .setDescription(`Your bug report has been successfully sent to the dev.`)
           .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
 
@@ -144,21 +150,30 @@ module.exports = {
         });
       });
     } catch (error) {
+      var errorId = generateID(10);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')
         .setDescription(
-          `Use </report-bug:1131152648834396220> to report it\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          `Use </report-bug:${
+            config.discord.commands['report-bug']
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
         .setFooter({
-          text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
+          text: `by @kathund | ${config.discord.supportInvite} for support`,
           iconURL: 'https://i.imgur.com/uUuZx2E.png',
         });
 
-      await interaction.reply({ embeds: [errorEmbed] });
+      const supportDisc = new ButtonBuilder()
+        .setLabel('Support Discord')
+        .setURL(config.discord.supportInvite)
+        .setStyle(ButtonStyle.Link);
+
+      const row = new ActionRowBuilder().addComponents(supportDisc);
+
+      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
 };

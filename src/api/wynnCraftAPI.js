@@ -106,7 +106,7 @@ async function getServers() {
   var data = await res.json();
   var response = {
     status: res.status,
-    a: data
+    a: data,
   };
   return response;
 }

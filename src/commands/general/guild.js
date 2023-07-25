@@ -1,7 +1,8 @@
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { blacklistCheck, generateID } = require('../../helperFunctions.js');
 const { generateGuild } = require('../../functions/generateImage.js');
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { blacklistCheck } = require('../../helperFunctions.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
+const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 
 module.exports = {
@@ -18,7 +19,7 @@ module.exports = {
           .setColor(config.discord.embeds.red)
           .setDescription('You are blacklisted')
           .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
         await interaction.reply({ embeds: [blacklisted], ephemeral: true });
@@ -33,8 +34,30 @@ module.exports = {
         await interaction.reply({ files: [await generateGuild(guild)] });
       }
     } catch (error) {
+      var errorId = generateID(10);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
-      await interaction.reply({ content: `${error}` });
+      const errorEmbed = new EmbedBuilder()
+        .setColor(config.discord.embeds.red)
+        .setTitle('An error occurred')
+        .setDescription(
+          `Use </report-bug:${
+            config.discord.commands['report-bug']
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+        )
+        .setFooter({
+          text: `by @kathund | ${config.discord.supportInvite} for support`,
+          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+        });
+
+      const supportDisc = new ButtonBuilder()
+        .setLabel('Support Discord')
+        .setURL(config.discord.supportInvite)
+        .setStyle(ButtonStyle.Link);
+
+      const row = new ActionRowBuilder().addComponents(supportDisc);
+
+      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
 };

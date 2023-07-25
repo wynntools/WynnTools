@@ -203,6 +203,16 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function generateID(length) {
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
+    charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
@@ -216,4 +226,5 @@ module.exports = {
   toFixed,
   getMaxMembers,
   capitalizeFirstLetter,
+  generateID,
 };

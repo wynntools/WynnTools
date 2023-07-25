@@ -1,9 +1,8 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { blacklistCheck, toFixed, countStatsInDirectory, addNotation } = require('../../helperFunctions.js');
+const { blacklistCheck, countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
 const packageJson = require('../../../package.json');
+const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
-const messageId = '1132306220452155423';
-const channelId = '1132304234847666320';
 const path = require('path');
 const fs = require('fs');
 
@@ -11,28 +10,17 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('update-stats')
     .setDescription('Clear Cache (Dev Only)')
-    .setDMPermission(true),
+    .setDMPermission(false),
   async execute(interaction) {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
-      if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?' });
-        return;
+      if (blacklistTest) throw new Error('You are blacklisted');
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+        throw new Error('No Perms');
       }
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
-      const channel = await interaction.client.channels.fetch(channelId);
-      const message = await channel.messages.fetch(messageId);
+      const channel = await interaction.client.channels.fetch(config.discord.channels.stats);
+      const message = await channel.messages.fetch(config.discord.messages.stats);
 
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var totalCommandsRun = 0;
@@ -78,10 +66,7 @@ module.exports = {
               devCommands.length
             } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
               packageJson.version
-            }\`\nServers - \`${await interaction.client.guilds.cache.size}\`\nUptime - <t:${toFixed(
-              global.uptime / 1000,
-              0
-            )}:R>`,
+            }\`\nServers - \`${await interaction.client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
             inline: true,
           },
           {
@@ -101,9 +86,32 @@ module.exports = {
           iconURL: 'https://i.imgur.com/uUuZx2E.png',
         });
       await message.edit({ embeds: [embed], components: [row] });
+      await interaction.reply({ content: 'Updated Stats', ephemeral: true });
     } catch (error) {
+      var errorId = generateID(10);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
-      await interaction.reply({ content: `${error}` });
+      const errorEmbed = new EmbedBuilder()
+        .setColor(config.discord.embeds.red)
+        .setTitle('An error occurred')
+        .setDescription(
+          `Use </report-bug:${
+            config.discord.commands['report-bug']
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+        )
+        .setFooter({
+          text: `by @kathund | ${config.discord.supportInvite} for support`,
+          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+        });
+
+      const supportDisc = new ButtonBuilder()
+        .setLabel('Support Discord')
+        .setURL(config.discord.supportInvite)
+        .setStyle(ButtonStyle.Link);
+
+      const row = new ActionRowBuilder().addComponents(supportDisc);
+
+      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
 };

@@ -1,1 +1,26 @@
-{"894034804503351366":{"commandsRun":4,"firstCommand":"1689890965","lastUpdated":"1689891083","commands":{"guild":4}},"608584543506530314":{"commandsRun":22,"firstCommand":"1689996034","lastUpdated":"1690033239","commands":{"embed":22}},"1030989688359620639":{"commandsRun":1,"firstCommand":"1690033261","lastUpdated":"1690033261","commands":{"stats":1}}}
+{
+  "894034804503351366": {
+    "commandsRun": 4,
+    "firstCommand": "1689890965",
+    "lastUpdated": "1689891083",
+    "commands": { "guild": 4 }
+  },
+  "608584543506530314": {
+    "commandsRun": 124,
+    "firstCommand": "1689996034",
+    "lastUpdated": "1690202284",
+    "commands": { "embed": 24, "fun-facts": 94, "user": 1, "update-stats": 4, "report-bug": 1 }
+  },
+  "1030989688359620639": {
+    "commandsRun": 1,
+    "firstCommand": "1690033261",
+    "lastUpdated": "1690033261",
+    "commands": { "stats": 1 }
+  },
+  "501976955998961664": {
+    "commandsRun": 3,
+    "firstCommand": "1690189233",
+    "lastUpdated": "1690189405",
+    "commands": { "fun-facts": 3 }
+  }
+}
