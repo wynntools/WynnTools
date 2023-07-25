@@ -48,7 +48,7 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('suggest')
-        .setDescription('Suggest a fun fact for the bot to sent')
+        .setDescription('Suggest a fun fact for daily fun facts')
         .addStringOption((option) =>
           option.setName('fact').setDescription('The fun fact you want to suggest').setRequired(true)
         )
@@ -390,18 +390,119 @@ module.exports = {
             try {
               const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
               if (confirmation.customId == 'funFactsDisableYes') {
-                await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                  serverId: funFactsConfig[interaction.guild.id].serverId,
-                  channelId: funFactsConfig[interaction.guild.id].channelId,
-                  roleId: funFactsConfig[interaction.guild.id].roleId,
-                  ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                  deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                  disabled: true,
-                  setup: {
-                    by: funFactsConfig[interaction.guild.id].setup.by,
-                    at: funFactsConfig[interaction.guild.id].setup.at,
-                  },
+                const deleteDataEmbed = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setDescription('Do you want to delete the config? **THIS CANNOT BE UNDONE')
+                  .setTimestamp()
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  });
+
+                const deleteYes = new ButtonBuilder()
+                  .setCustomId('funFactsDeleteYes')
+                  .setLabel('Yes')
+                  .setStyle(ButtonStyle.Danger);
+
+                const deleteNo = new ButtonBuilder()
+                  .setCustomId('funFactsDeleteNo')
+                  .setLabel('No')
+                  .setStyle(ButtonStyle.Success);
+
+                const deleteRow = new ActionRowBuilder().addComponents(deleteYes, deleteNo);
+
+                await confirmation.update({
+                  embeds: [deleteDataEmbed],
+                  components: [deleteRow],
                 });
+
+                const collectorFilter = (i) => i.user.id === interaction.user.id;
+                try {
+                  const deleteConfirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
+                  if (deleteConfirmation.customId == 'funFactsDeleteYes') {
+                    delete funFactsConfig[interaction.guild.id];
+                    fs.writeFileSync('data/funFacts/config.json', JSON.stringify(funFactsConfig));
+                    const updatedEmbed = new EmbedBuilder()
+                      .setColor(config.discord.embeds.green)
+                      .setDescription('Successfully disabled the fun facts in this server and deleted the config')
+                      .setTimestamp()
+                      .setFooter({
+                        text: `by @kathund | ${config.discord.supportInvite} for support`,
+                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                      });
+
+                    await writeAt('data/funFacts/config.json', interaction.guild.id, {
+                      serverId: funFactsConfig[interaction.guild.id].serverId,
+                      channelId: funFactsConfig[interaction.guild.id].channelId,
+                      roleId: funFactsConfig[interaction.guild.id].roleId,
+                      ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
+                      deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
+                      disabled: true,
+                      setup: {
+                        by: funFactsConfig[interaction.guild.id].setup.by,
+                        at: funFactsConfig[interaction.guild.id].setup.at,
+                      },
+                    });
+
+                    return await deleteConfirmation.update({
+                      embeds: [updatedEmbed],
+                      components: [],
+                    });
+                  } else if (deleteConfirmation.customId == 'funFactsDeleteNo') {
+                    const updatedEmbed = new EmbedBuilder()
+                      .setColor(config.discord.embeds.green)
+                      .setDescription('Fun facts have been disabled')
+                      .setTimestamp()
+                      .setFooter({
+                        text: `by @kathund | ${config.discord.supportInvite} for support`,
+                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                      });
+
+                    await writeAt('data/funFacts/config.json', interaction.guild.id, {
+                      serverId: funFactsConfig[interaction.guild.id].serverId,
+                      channelId: funFactsConfig[interaction.guild.id].channelId,
+                      roleId: funFactsConfig[interaction.guild.id].roleId,
+                      ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
+                      deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
+                      disabled: true,
+                      setup: {
+                        by: funFactsConfig[interaction.guild.id].setup.by,
+                        at: funFactsConfig[interaction.guild.id].setup.at,
+                      },
+                    });
+
+                    return await deleteConfirmation.update({
+                      embeds: [updatedEmbed],
+                      components: [],
+                    });
+                  }
+                } catch (error) {
+                  const updatedEmbed = new EmbedBuilder()
+                    .setColor(config.discord.embeds.green)
+                    .setDescription('Fun facts have been disabled')
+                    .setTimestamp()
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+
+                  await writeAt('data/funFacts/config.json', interaction.guild.id, {
+                    serverId: funFactsConfig[interaction.guild.id].serverId,
+                    channelId: funFactsConfig[interaction.guild.id].channelId,
+                    roleId: funFactsConfig[interaction.guild.id].roleId,
+                    ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
+                    deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
+                    disabled: true,
+                    setup: {
+                      by: funFactsConfig[interaction.guild.id].setup.by,
+                      at: funFactsConfig[interaction.guild.id].setup.at,
+                    },
+                  });
+                  return await interaction.editReply({
+                    embeds: [updatedEmbed],
+                    components: [],
+                  });
+                }
 
                 const updatedEmbed = new EmbedBuilder()
                   .setColor(config.discord.embeds.green)
@@ -459,6 +560,17 @@ module.exports = {
 
             return await interaction.reply({ embeds: [embed] });
           }
+        } else {
+          const failEmbed = new EmbedBuilder()
+            .setColor(config.discord.embeds.red)
+            .setDescription('This server does not have a config set for fun facts')
+            .setTimestamp()
+            .setFooter({
+              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+            });
+
+          return await interaction.reply({ embeds: [failEmbed] });
         }
       } else if (subcommand === 'enable') {
         if (!member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {

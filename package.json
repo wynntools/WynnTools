@@ -15,7 +15,6 @@
   "author": "kathund",
   "license": "ISC",
   "dependencies": {
-    "@napi-rs/canvas": "^0.1.41",
     "canvas": "^2.11.2",
     "cli-color": "^2.0.3",
     "discord.js": "^14.11.0",
