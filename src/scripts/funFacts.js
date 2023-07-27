@@ -7,7 +7,7 @@ const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
 
-cron.schedule('03 21 * * *', async function () {
+cron.schedule('00 16 * * *', async function () {
   var startTime = Math.floor(Date.now() / 1000);
   function checkFunFact(fact) {
     try {
@@ -92,17 +92,25 @@ cron.schedule('03 21 * * *', async function () {
       const channelId = currentConfig.channelId;
       const guild = client.guilds.cache.get(serverId);
       const channel = guild.channels.cache.get(channelId);
+      var role = currentConfig.roleId;
+      if (role === serverId) {
+        role = '@everyone';
+      } else if (role === null) {
+        role = '';
+      } else {
+        role = `<@&${role}>`;
+      }
       if (currentConfig.deleteMsgs) await channel.bulkDelete(100);
       if (currentConfig.role === null) {
         await channel.send({ embeds: [funFactEmbed], components: [row] });
       } else {
         if (currentConfig.ghostPing) {
-          await channel.sent({ content: `<@&${currentConfig.roleId}>` });
+          await channel.sent({ content: role });
           await channel.bulkDelete(1);
           await delay(300);
           await channel.send({ embeds: [funFactEmbed], components: [row] });
         } else {
-          await channel.send({ embeds: [funFactEmbed], components: [row], content: `<@&${currentConfig.roleId}>` });
+          await channel.send({ embeds: [funFactEmbed], components: [row], content: role });
         }
       }
       await delay(300);

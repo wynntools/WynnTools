@@ -1,7 +1,9 @@
 const { generateDate, getRelativeTime, getMaxMembers } = require('../helperFunctions.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { getDisplayName } = require('../api/discordAPI.js');
 const { AttachmentBuilder } = require('discord.js');
+var packageJson = require('../../package.json');
 
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
   if (rectWidth == 0) return;
@@ -440,7 +442,6 @@ async function generateStats(uuid) {
     ctx.textAlign = 'left';
 
     // ! Footer
-    var packageJson = require('../../package.json');
     ctx.font = `32px Inter`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
@@ -881,7 +882,6 @@ async function generateProfileImage(uuid, profileId) {
     ctx.textAlign = 'left';
 
     // ! Footer
-    var packageJson = require('../../package.json');
     ctx.font = `32px Inter`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
@@ -912,8 +912,6 @@ async function generateGuild(guildData) {
   let memberX = 0;
   let onlineMemberX = 0;
   let territoriesX = 0;
-
-  var packageJson = require('../../package.json');
 
   if (guildData.banner == undefined) {
     ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
@@ -1282,9 +1280,56 @@ async function generateGuild(guildData) {
   }
 }
 
+async function generateMemberJoin(data) {
+  try {
+    var member = data.user;
+    const canvas = createCanvas(1200, 600);
+    const ctx = canvas.getContext('2d');
+
+    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(256, 246, 128, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(
+      await loadImage(`https://cdn.discordapp.com/avatars/${member.id}/${member.avatar}.png?size=4096`),
+      128,
+      118,
+      256,
+      256
+    );
+    ctx.restore();
+
+    ctx.font = `96px Inter`;
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(await getDisplayName(member.id), 448, 130);
+    ctx.font = `48px Inter`;
+    ctx.fillText(`@${member.username}`, 448, 229);
+    ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
+
+    ctx.font = `32px Inter`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      520,
+      1136
+    );
+    return canvas.toBuffer('image/png');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   bar,
   generateStats,
   generateProfileImage,
   generateGuild,
+  generateMemberJoin,
 };

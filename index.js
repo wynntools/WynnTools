@@ -11,13 +11,14 @@ const {
 const { discordMessage, commandMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const { writeAt, toFixed, generateID } = require('./src/helperFunctions.js');
+const { generateMemberJoin } = require('./src/functions/generateImage.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
 
 async function start() {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+  const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 
   client.commands = new Collection();
   const foldersPath = path.join(__dirname, 'src/commands');
@@ -170,6 +171,16 @@ async function start() {
           await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
         }
       }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  client.on(Events.GuildMemberAdd, async (member) => {
+    try {
+      if (!member.guild.id == config.discord.devServer) return;
+      var welcomeChannel = await client.channels.fetch(config.discord.channels.welcome);
+      await welcomeChannel.send({ content: `Welcome <@${member.user.id}> to WynnTools Support`, files: [await generateMemberJoin(member)] });
     } catch (error) {
       console.log(error);
     }

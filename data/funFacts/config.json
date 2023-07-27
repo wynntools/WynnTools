@@ -1,11 +1,20 @@
 {
   "1132485588621217874": {
     "serverId": "1132485588621217874",
-    "channelId": "1132485590466699266",
+    "channelId": "1132513911011291146",
     "roleId": "1132485588621217874",
     "ghostPing": false,
     "deleteMsgs": false,
     "disabled": false,
-    "setup": { "by": "608584543506530314", "at": "1690117546" }
+    "setup": { "by": "608584543506530314", "at": "1690268048" }
+  },
+  "1123074723069300777": {
+    "serverId": "1123074723069300777",
+    "channelId": "1132477880488689786",
+    "roleId": null,
+    "ghostPing": false,
+    "deleteMsgs": false,
+    "disabled": false,
+    "setup": { "by": "608584543506530314", "at": "1690271356" }
   }
 }

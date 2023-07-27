@@ -68,10 +68,6 @@ module.exports = {
         await interaction.reply({ embeds: [blacklisted], ephemeral: true });
         return;
       }
-      if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?', ephemeral: true });
-        return;
-      }
       var subcommand;
       if (interaction.options === undefined) {
         subcommand = 'button-setup-guide';
@@ -720,8 +716,9 @@ module.exports = {
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
           const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
+          console.log(confirmation.customId);
           if (confirmation.customId == 'funFactsSuggestYes') {
-            const embed = new EmbedBuilder()
+            const notifyEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.green)
               .setDescription('Do you want to be notified when your fun fact is added?')
               .setTimestamp()
@@ -743,7 +740,7 @@ module.exports = {
             const notifyRow = new ActionRowBuilder().addComponents(notifyYes, notifyNo);
 
             await confirmation.update({
-              embeds: [embed],
+              embeds: [notifyEmbed],
               components: [notifyRow],
             });
 
@@ -833,6 +830,7 @@ module.exports = {
             });
           }
         } catch (error) {
+          console.log(error);
           const embed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setDescription('Fun fact suggestion cancelled')

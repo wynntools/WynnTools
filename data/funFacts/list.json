@@ -1,10 +1,31 @@
 {
-  "next": 1690337188,
+  "next": 1690358400,
   "2UnE7AvOD4": {
     "requestedBy": "608584543506530314",
     "fact": "Wynncraft did not always have the Shaman class! It was added in The Silent Expanse Update on December 8th 2019 but was released in the HERO beta on November 12th of the same year.",
     "hidden": false,
     "id": "2UnE7AvOD4",
     "lastSent": 1690203780
+  },
+  "7wRAm1IWwh": {
+    "requestedBy": "608584543506530314",
+    "fact": "Enemies lose there aggression on you when opening chests",
+    "hidden": true,
+    "id": "7wRAm1IWwh",
+    "lastSent": 1690272000
+  },
+  "phRn5KC8V2": {
+    "requestedBy": "608584543506530314",
+    "fact": "All current Mythic items are, with a 1/142857 (7/999999) chance to drop, the rarest variant of item to be found.",
+    "hidden": true,
+    "id": "phRn5KC8V2",
+    "lastSent": 0
+  },
+  "bVUV3E4EFW": {
+    "requestedBy": "608584543506530314",
+    "fact": "Detlas is Salted (one of the server owners) spelled backwards",
+    "hidden": true,
+    "id": "bVUV3E4EFW",
+    "lastSent": 0
   }
 }
