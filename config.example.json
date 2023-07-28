@@ -10,7 +10,8 @@
     },
     "channels": {
       "stats": "STATS_CHANNEL_ID",
-      "fun-facts-suggestions": "FUN_FACTS_SUGGESTIONS_CHANNEL_ID"
+      "fun-facts-suggestions": "FUN_FACTS_SUGGESTIONS_CHANNEL_ID",
+      "welcome": "WELCOME_CHANNEL_ID"
     },
     "messages": {
       "stats": "STATS_MESSAGE_ID"

@@ -6,10 +6,10 @@
     "commands": { "guild": 4 }
   },
   "608584543506530314": {
-    "commandsRun": 149,
+    "commandsRun": 163,
     "firstCommand": "1689996034",
-    "lastUpdated": "1690368275",
-    "commands": { "embed": 24, "fun-facts": 118, "user": 1, "update-stats": 4, "report-bug": 1, "about": 1 }
+    "lastUpdated": "1690549044",
+    "commands": { "embed": 24, "fun-facts": 132, "user": 1, "update-stats": 4, "report-bug": 1, "about": 1 }
   },
   "1030989688359620639": {
     "commandsRun": 1,

@@ -746,6 +746,14 @@ module.exports = {
 
             const collectorFilter = (i) => i.user.id === interaction.user.id;
             try {
+              const embed = new EmbedBuilder()
+                .setColor(config.discord.embeds.green)
+                .setDescription('Your fun fact has been submitted')
+                .setTimestamp()
+                .setFooter({
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                });
               const channel = await interaction.client.channels.fetch(config.discord.channels['fun-facts-suggestions']);
               let suggestionEmbed;
               const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
@@ -772,15 +780,11 @@ module.exports = {
                   });
 
                 await channel.send({ content: `<@&${config.discord.roles.dev}>`, embeds: [suggestionEmbed] });
+                return await confirmation.update({
+                  embeds: [embed],
+                  components: [],
+                });
               } else if (confirmation.customId == 'funFactsSuggestNotifyNo') {
-                const embed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setDescription('Your fun fact has been submitted')
-                  .setTimestamp()
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
                 await writeAt('data/funFacts/suggested.json', generatedFactId, {
                   by: interaction.user.id,
                   at: toFixed(new Date().getTime() / 1000, 0),
@@ -825,6 +829,20 @@ module.exports = {
             }
 
             await confirmation.update({
+              embeds: [embed],
+              components: [],
+            });
+          } else if (confirmation.customId == 'funFactsSuggestNo') {
+            const embed = new EmbedBuilder()
+              .setColor(config.discord.embeds.green)
+              .setDescription('Fun fact suggestion cancelled')
+              .setTimestamp()
+              .setFooter({
+                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              });
+
+            return await confirmation.update({
               embeds: [embed],
               components: [],
             });

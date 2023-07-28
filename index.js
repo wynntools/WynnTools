@@ -124,8 +124,6 @@ async function start() {
 
       if (interaction.isButton()) {
         try {
-          await interaction.deferReply({ ephemeral: true });
-
           // ? Setup Guide for Fun Facts
           if (interaction.customId.includes('setupGuideFunFacts')) {
             const setupGuideCommand = interaction.client.commands.get('fun-facts');
@@ -168,7 +166,7 @@ async function start() {
 
           const row = new ActionRowBuilder().addComponents(supportDisc);
 
-          await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+          await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
         }
       }
     } catch (error) {
