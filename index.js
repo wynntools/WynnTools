@@ -178,7 +178,7 @@ async function start() {
 
   client.on(Events.GuildMemberAdd, async (member) => {
     try {
-      if (!member.guild.id == config.discord.devServer) return;
+      if (member.guild.id != config.discord.devServer) return;
       var welcomeChannel = await client.channels.fetch(config.discord.channels.welcome);
       await welcomeChannel.send({
         content: `Welcome <@${member.user.id}> to WynnTools Support`,
