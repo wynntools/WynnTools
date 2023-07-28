@@ -1,10 +1,24 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { scriptMessage } = require('../logger.js');
 const { ActivityType } = require('discord.js');
+const config = require('../../config.json');
+const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
 
+var timezoneStuff = { scheduled: true };
+if (!config.other.timezone == null) timezoneStuff = { scheduled: true, timezone: config.other.timezone };
+
+var task = cron.schedule(
+  '*/5 * * * *',
+  async function () {
+    run();
+  },
+  timezoneStuff
+);
+
 async function run() {
+  task.stop();
   const commands = [];
   fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
     if (!file.endsWith('.js')) return;

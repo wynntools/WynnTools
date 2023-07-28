@@ -180,7 +180,10 @@ async function start() {
     try {
       if (!member.guild.id == config.discord.devServer) return;
       var welcomeChannel = await client.channels.fetch(config.discord.channels.welcome);
-      await welcomeChannel.send({ content: `Welcome <@${member.user.id}> to WynnTools Support`, files: [await generateMemberJoin(member)] });
+      await welcomeChannel.send({
+        content: `Welcome <@${member.user.id}> to WynnTools Support`,
+        files: [await generateMemberJoin(member)],
+      });
     } catch (error) {
       console.log(error);
     }
