@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
 const { generateID, blacklistCheck } = require('../../helperFunctions.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
+const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -20,6 +21,7 @@ module.exports = {
           { name: 'WynnCraft', value: 'wynncraft' },
           { name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
           { name: 'Discord', value: 'discord' },
+          { name: 'Pixelic', value: 'pixelic' },
           { name: 'All', value: 'all' }
         )
     ),
@@ -54,9 +56,13 @@ module.exports = {
       } else if (cacheCategory == 'discord') {
         await clearDiscordCache();
         await interaction.reply({ content: 'Cleared Discord Cache' });
+      } else if (cacheCategory == 'pixelic') {
+        await clearPixelicCache();
+        await interaction.reply({ content: 'Cleared Pixelic Cache' });
       } else if (cacheCategory == 'all') {
         await clearMojangCache();
         await clearDiscordCache();
+        await clearPixelicCache();
         await clearWynnCraftCache();
         await clearWynnCraftGuildCache();
         await interaction.reply({ content: 'Cleared All Caches' });
