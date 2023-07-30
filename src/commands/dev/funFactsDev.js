@@ -53,18 +53,18 @@ module.exports = {
         .setName('delete')
         .setDescription('Delete a fun fact')
         .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('configs')
+        .setDescription('View the configs for fun facts')
+        .addStringOption((option) =>
+          option
+            .setName('server-id')
+            .setDescription('The ID of the server you want to view the configs for')
+            .setRequired(false)
+        )
     ),
-  // .addSubcommand((subcommand) =>
-  //   subcommand
-  //     .setName('configs')
-  //     .setDescription('View the configs for fun facts')
-  //     .addStringOption((option) =>
-  //       option
-  //         .setName('server-id')
-  //         .setDescription('The ID of the server you want to view the configs for')
-  //         .setRequired(false)
-  //     )
-  // ),
   async execute(interaction) {
     var startTime = Math.floor(Date.now() / 1000);
     const blacklist = new Set();
@@ -81,22 +81,22 @@ module.exports = {
       }
     }
 
+    const funFactList = JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'));
     function getRandomFact() {
       try {
-        const funFactList = JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'));
-        const validFacts = Object.keys(funFactList).filter((factId) => !blacklist.has(factId));
+        const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
         if (validFacts.length === 0) {
           console.log('No more valid fun facts available.');
           return null;
         }
-        const randomFactId = validFacts[Math.floor(Math.random() * validFacts.length)];
-        const randomFact = funFactList[randomFactId];
+        const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
         return randomFact;
       } catch (error) {
         console.log(error);
         return null;
       }
     }
+
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
       if (blacklistTest) throw new Error('You are blacklisted');
@@ -107,18 +107,18 @@ module.exports = {
 
       const suggestedData = JSON.parse(fs.readFileSync('data/funFacts/suggested.json'));
       const listData = JSON.parse(fs.readFileSync('data/funFacts/list.json'));
+      const factList = listData.facts;
       let i = 0;
       let list = '';
       let msg;
       if (subcommand === 'list') {
         var type = interaction.options.getString('type');
         if (type === 'list') {
-          const objects = Object.keys(listData);
-          if (objects.length == 0) throw new Error('No Facts');
-          for (i = 1; i < objects.length; i++) {
-            list += `**${i}**`;
-            if (listData[objects[i]].lastSent !== 0) {
-              list += ` Last Sent: <t:${listData[i].lastSent}:R>\n`;
+          for (let i = 0; i < factList.length; i++) {
+            const fact = factList[i];
+            list += `**${i + 1}**`;
+            if (fact.lastSent > 0) {
+              list += ` - Last Sent: <t:${fact.lastSent}:R>\n`;
             } else {
               list += '\n';
             }
@@ -253,14 +253,18 @@ module.exports = {
                 }
                 await delay(300);
               }
-
-              await writeAt('data/funFacts/list.json', funFact.id, {
-                requestedBy: funFact.requestedBy,
-                fact: funFact.fact,
-                hidden: funFact.hidden,
-                id: funFact.id,
-                lastSent: startTime,
-              });
+              await writeAt(
+                'data/funFacts/list.json',
+                'facts',
+                funFactList.facts.map((fact) =>
+                  fact.id === funFact.id
+                    ? {
+                        ...fact,
+                        lastSent: startTime,
+                      }
+                    : fact
+                )
+              );
               await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
             } catch (error) {
               console.error(error);
@@ -490,33 +494,118 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(confirmButton, cancelButton);
 
         msg = await interaction.reply({ embeds: [factEmbed], components: [row] });
-      }
-      // else if (subcommand === 'configs') {
-      //   var serverId = interaction.options.getString('server-id');
-      //   const configs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
-      //   const configsObject = Object.keys(configs);
-      //   let currentConfig;
-      //   if (serverId === null) {
-      //     var num = 0;
-      //     serverId = configs[num].serverId;
-      //     currentConfig = configs[configsObject[num]];
-      //     const guild = client.guilds.cache.get(serverId);
-      //     const channel = guild.channels.cache.get(channelId);
-      //     var configEmbed = new EmbedBuilder()
-      //       .setColor(config.discord.embeds.green)
-      //       .setTitle(`Fun Fact Configs - ${configsObject[num].serverId}`)
-      //       .setDescription(
-      //         `**Server Name:** ${data.name} (${data.id}) \n\n**Config**\n**Channel:** <#${
-      //           currentConfig.channelId
-      //         }> | ${data.channels.find((item) => item.id === currentConfig.channelId).name}`
-      //       );
+      } else if (subcommand === 'configs') {
+        var serverId = interaction.options.getString('server-id');
+        const configs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
+        const configsObject = Object.keys(configs);
+        let currentConfig;
+        if (serverId === null) {
+          var num = 0;
+          currentConfig = configs[configsObject[num]];
+          const guild = client.guilds.cache.get(currentConfig.serverId);
+          const channel = guild.channels.cache.get(currentConfig.channelId);
+          let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+          if (currentConfig.roleId) {
+            const role = guild.roles.cache.get(currentConfig.roleId);
+            if (role.id === guild.id) {
+              string += `\n**Role:** @everyone | @everyone (${role.id})`;
+            } else {
+              string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+            }
+          } else {
+            string += `\n**Role:** None`;
+          }
+          string += `\n**Ghost Ping:** ${
+            currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
+          string += `\n**Delete Messages:** ${
+            currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
+          string += `\n**Disabled:** ${currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no}`;
+          const configEmbed = new EmbedBuilder()
+            .setColor(config.discord.embeds.green)
+            .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
+            .setDescription(string);
 
-      //     msg = await interaction.reply({ embeds: [configEmbed] });
-      //   } else {
-      //     var data = await getGuild(id);
-      //     console.log(data);
-      //   }
-      // }
+          const leftButton = new ButtonBuilder()
+            .setEmoji('1135038841426825297')
+            .setStyle(ButtonStyle.Secondary)
+            .setCustomId('leftButtonConfigs');
+
+          const trashButton = new ButtonBuilder()
+            .setEmoji('1135050640524066837')
+            .setStyle(ButtonStyle.Danger)
+            .setCustomId('trashButtonConfigs');
+
+          const rightButton = new ButtonBuilder()
+            .setEmoji('1135038844706762799')
+            .setStyle(ButtonStyle.Secondary)
+            .setCustomId('rightButtonConfigs');
+
+          const row = new ActionRowBuilder().addComponents(leftButton, trashButton, rightButton);
+          msg = await interaction.reply({ embeds: [configEmbed], components: [row] });
+          const collectorFilter = (i) => i.user.id === interaction.user.id;
+          try {
+            const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 30_000 });
+            console.log(confirmation.customId);
+            if (confirmation.customId === 'leftButtonConfigs') {
+              num = num - 1;
+              if (num > configsObject.length) num = 0;
+              currentConfig = configs[num];
+              console.log(currentConfig);
+              const guild = client.guilds.cache.get(currentConfig.serverId);
+              const channel = guild.channels.cache.get(currentConfig.channelId);
+              let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+              if (currentConfig.roleId) {
+                const role = guild.roles.cache.get(currentConfig.roleId);
+                if (role.id === guild.id) {
+                  string += `\n**Role:** @everyone | @everyone (${role.id})`;
+                } else {
+                  string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+                }
+              } else {
+                string += `\n**Role:** None`;
+              }
+              string += `\n**Ghost Ping:** ${
+                currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+              }`;
+              string += `\n**Delete Messages:** ${
+                currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+              }`;
+              string += `\n**Disabled:** ${
+                currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+              }`;
+
+              const configEmbed = new EmbedBuilder()
+                .setColor(config.discord.embeds.green)
+                .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
+                .setDescription(string);
+
+              const leftButton = new ButtonBuilder()
+                .setEmoji('1135038841426825297')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('left');
+
+              const trashButton = new ButtonBuilder()
+                .setEmoji('1135050640524066837')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('trash');
+
+              const rightButton = new ButtonBuilder()
+                .setEmoji('1135038844706762799')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('right');
+
+              const row = new ActionRowBuilder().addComponents(leftButton, trashButton, rightButton);
+              confirmation.update({ embeds: [configEmbed], components: [row] });
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          console.log('aaaa');
+        }
+      }
     } catch (error) {
       var errorId = generateID(10);
       errorMessage(`Error Id - ${errorId}`);

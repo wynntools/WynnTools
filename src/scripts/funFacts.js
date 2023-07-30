@@ -28,22 +28,22 @@ cron.schedule(
     }
     const blacklist = new Set();
 
+    const funFactList = JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'));
     function getRandomFact() {
       try {
-        const funFactList = JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'));
-        const validFacts = Object.keys(funFactList).filter((factId) => !blacklist.has(factId));
+        const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
         if (validFacts.length === 0) {
           console.log('No more valid fun facts available.');
           return null;
         }
-        const randomFactId = validFacts[Math.floor(Math.random() * validFacts.length)];
-        const randomFact = funFactList[randomFactId];
+        const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
         return randomFact;
       } catch (error) {
         console.log(error);
         return null;
       }
     }
+
     try {
       scriptMessage('Sending fun facts');
 
@@ -121,13 +121,18 @@ cron.schedule(
         await delay(300);
       }
 
-      await writeAt('data/funFacts/list.json', funFact.id, {
-        requestedBy: funFact.requestedBy,
-        fact: funFact.fact,
-        hidden: funFact.hidden,
-        id: funFact.id,
-        lastSent: startTime,
-      });
+      await writeAt(
+        'data/funFacts/list.json',
+        'facts',
+        funFactList.facts.map((fact) =>
+          fact.id === funFact.id
+            ? {
+                ...fact,
+                lastSent: startTime,
+              }
+            : fact
+        )
+      );
       await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
     } catch (error) {
       console.error(error);
