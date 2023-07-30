@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { blacklistCheck, generateID, writeAt } = require('../../helperFunctions.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { getUsername, getGuild } = require('../../api/discordAPI.js');
+const { getUsername } = require('../../api/discordAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -53,18 +53,18 @@ module.exports = {
         .setName('delete')
         .setDescription('Delete a fun fact')
         .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('configs')
-        .setDescription('View the configs for fun facts')
-        .addStringOption((option) =>
-          option
-            .setName('server-id')
-            .setDescription('The ID of the server you want to view the configs for')
-            .setRequired(false)
-        )
     ),
+  // .addSubcommand((subcommand) =>
+  //   subcommand
+  //     .setName('configs')
+  //     .setDescription('View the configs for fun facts')
+  //     .addStringOption((option) =>
+  //       option
+  //         .setName('server-id')
+  //         .setDescription('The ID of the server you want to view the configs for')
+  //         .setRequired(false)
+  //     )
+  // ),
   async execute(interaction) {
     var startTime = Math.floor(Date.now() / 1000);
     const blacklist = new Set();
@@ -490,32 +490,33 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(confirmButton, cancelButton);
 
         msg = await interaction.reply({ embeds: [factEmbed], components: [row] });
-      } else if (subcommand === 'configs') {
-        var serverId = interaction.options.getString('server-id');
-        const configs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
-        const configsObject = Object.keys(configs);
-        let currentConfig;
-        if (serverId === null) {
-          var num = 0;
-          serverId = configs[num].serverId;
-          currentConfig = configs[configsObject[num]];
-          const guild = client.guilds.cache.get(serverId);
-          const channel = guild.channels.cache.get(channelId);
-          var configEmbed = new EmbedBuilder()
-            .setColor(config.discord.embeds.green)
-            .setTitle(`Fun Fact Configs - ${configsObject[num].serverId}`)
-            .setDescription(
-              `**Server Name:** ${data.name} (${data.id}) \n\n**Config**\n**Channel:** <#${
-                currentConfig.channelId
-              }> | ${data.channels.find((item) => item.id === currentConfig.channelId).name}`
-            );
-
-          msg = await interaction.reply({ embeds: [configEmbed] });
-        } else {
-          var data = await getGuild(id);
-          console.log(data);
-        }
       }
+      // else if (subcommand === 'configs') {
+      //   var serverId = interaction.options.getString('server-id');
+      //   const configs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
+      //   const configsObject = Object.keys(configs);
+      //   let currentConfig;
+      //   if (serverId === null) {
+      //     var num = 0;
+      //     serverId = configs[num].serverId;
+      //     currentConfig = configs[configsObject[num]];
+      //     const guild = client.guilds.cache.get(serverId);
+      //     const channel = guild.channels.cache.get(channelId);
+      //     var configEmbed = new EmbedBuilder()
+      //       .setColor(config.discord.embeds.green)
+      //       .setTitle(`Fun Fact Configs - ${configsObject[num].serverId}`)
+      //       .setDescription(
+      //         `**Server Name:** ${data.name} (${data.id}) \n\n**Config**\n**Channel:** <#${
+      //           currentConfig.channelId
+      //         }> | ${data.channels.find((item) => item.id === currentConfig.channelId).name}`
+      //       );
+
+      //     msg = await interaction.reply({ embeds: [configEmbed] });
+      //   } else {
+      //     var data = await getGuild(id);
+      //     console.log(data);
+      //   }
+      // }
     } catch (error) {
       var errorId = generateID(10);
       errorMessage(`Error Id - ${errorId}`);
