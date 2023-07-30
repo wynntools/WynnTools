@@ -1,10 +1,11 @@
+const { cacheMessage } = require('../logger.js');
+const nodeCache = require('node-cache');
+const mojangCache = new nodeCache();
+
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
-
-const nodeCache = require('node-cache');
-const mojangCache = new nodeCache();
 
 async function validateUUID(uuid) {
   var regex;
@@ -19,7 +20,7 @@ async function validateUUID(uuid) {
 
 async function getUUID(username) {
   if (mojangCache.has(username.toLowerCase())) {
-    console.log('Cache hit - mojangAPI');
+    cacheMessage('MojangAPI', 'Cache hit');
     return mojangCache.get(username.toLowerCase()).id;
   } else {
     const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then((res) => res.json());
@@ -33,7 +34,7 @@ async function getUUID(username) {
 
 async function getUsername(uuid) {
   if (mojangCache.has(uuid)) {
-    console.log('Cache hit - mojangAPI');
+    cacheMessage('MojangAPI', 'Cache hit');
     return mojangCache.get(uuid).name;
   } else {
     const data = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`).then((res) =>
@@ -48,6 +49,7 @@ async function getUsername(uuid) {
 }
 
 async function clearMojangCache() {
+  cacheMessage('MojangAPI', 'Cleared');
   mojangCache.flushAll();
 }
 

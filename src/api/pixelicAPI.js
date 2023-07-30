@@ -1,12 +1,13 @@
 const { validateUUID, getUUID } = require('./mojangAPI.js');
-const config = require('..././../config.json');
+const { cacheMessage } = require('../logger.js');
+const config = require('../../config.json');
+const nodeCache = require('node-cache');
+const pixelicCache = new nodeCache();
+
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
-
-const nodeCache = require('node-cache');
-const pixelicCache = new nodeCache();
 
 async function register(uuid) {
   try {
@@ -22,7 +23,7 @@ async function register(uuid) {
         'X-API-Key': config.api.pixelicAPIKey,
       },
     });
-    if (!res.status === 201) {
+    if (!res.status === 200) {
       var data = await res.json();
       return {
         status: res.status,
@@ -31,6 +32,7 @@ async function register(uuid) {
     } else {
       return {
         status: res.status,
+        success: true,
       };
     }
   } catch (error) {
@@ -39,8 +41,9 @@ async function register(uuid) {
   }
 }
 
-async function clearCache() {
+async function clearPixelicCache() {
+  cacheMessage('PixelicAPI', 'Cleared');
   pixelicCache.flushAll();
 }
 
-module.exports = { register, clearCache };
+module.exports = { register, clearPixelicCache };

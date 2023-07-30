@@ -1,5 +1,6 @@
 const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { formatUUID } = require('../helperFunctions.js');
+const { cacheMessage } = require('../logger.js');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
@@ -19,7 +20,7 @@ async function getStats(uuid) {
     if (!check) return { status: 400, error: 'Invalid UUID' };
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
     if (wynncraftPlayerCache.has(uuid)) {
-      console.log('Cache hit - wynnCraftCache');
+      cacheMessage('WynnCraft API Player', 'hit');
       return wynncraftPlayerCache.get(uuid);
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
@@ -72,7 +73,7 @@ async function getProfiles(uuid) {
 async function getGuild(name) {
   var fixedNamed = encodeURIComponent(name);
   if (wynncraftGuildCache.has(fixedNamed)) {
-    console.log('Cache hit - wynnCraftCache');
+    cacheMessage('WynnCraft API Guild', 'hit');
     return wynncraftGuildCache.get(fixedNamed);
   } else {
     var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
@@ -112,10 +113,12 @@ async function getServers() {
 }
 
 async function clearWynnCraftCache() {
+  cacheMessage('WynnCraft API Player', 'Cleared');
   wynncraftPlayerCache.flushAll();
 }
 
 async function clearWynnCraftGuildCache() {
+  cacheMessage('WynnCraft API Guild', 'Cleared');
   wynncraftGuildCache.flushAll();
 }
 

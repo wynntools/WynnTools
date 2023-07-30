@@ -16,8 +16,13 @@ function warnMessage(message) {
 function errorMessage(message) {
   return console.log(cli.bgRedBright.black(`[${getCurrentTime()}] Error >`) + ' ' + cli.redBright(message));
 }
+
 function scriptMessage(message) {
   return console.log(cli.bgCyan.black(`[${getCurrentTime()}] Scripts >`) + ' ' + cli.cyan(message));
 }
 
-module.exports = { discordMessage, commandMessage, warnMessage, errorMessage, scriptMessage };
+function cacheMessage(type, message) {
+  return console.log(cli.bgYellow.black(`[${getCurrentTime()}] ${type} Cache >`) + ' ' + cli.yellow(message));
+}
+
+module.exports = { discordMessage, commandMessage, warnMessage, errorMessage, scriptMessage, cacheMessage };
