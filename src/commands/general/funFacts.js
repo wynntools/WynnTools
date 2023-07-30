@@ -716,7 +716,6 @@ module.exports = {
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
           const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
-          console.log(confirmation.customId);
           if (confirmation.customId == 'funFactsSuggestYes') {
             const notifyEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.green)

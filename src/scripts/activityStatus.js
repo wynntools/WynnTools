@@ -1,4 +1,3 @@
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { scriptMessage } = require('../logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
@@ -9,38 +8,33 @@ const fs = require('fs');
 var timezoneStuff = { scheduled: true };
 if (!config.other.timezone == null) timezoneStuff = { scheduled: true, timezone: config.other.timezone };
 
-var task = cron.schedule(
+var num = 0;
+
+const commands = [];
+fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
+  if (!file.endsWith('.js')) return;
+  commands.push(file);
+});
+
+client.user.setPresence({
+  activities: [{ name: 'to crys', type: ActivityType.Listening }],
+});
+
+var activities = [
+  { id: 'servers', title: `to ${client.guilds.cache.size} servers!` },
+  { id: 'ping', title: `to ${client.ws.ping}ms of ping!` },
+  { id: 'commands', title: `to ${commands.length} commands!` },
+];
+
+cron.schedule(
   '*/5 * * * *',
   async function () {
-    run();
+    scriptMessage(`Changing activity status - ${activities[num].id}`);
+    client.user.setPresence({
+      activities: [{ name: activities[num].title, type: ActivityType.Listening }],
+    });
+    num++;
+    if (num == activities.length) num = 0;
   },
   timezoneStuff
 );
-
-async function run() {
-  task.stop();
-  const commands = [];
-  fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
-    if (!file.endsWith('.js')) return;
-    commands.push(file);
-  });
-
-  while (true) {
-    scriptMessage('Changing activity status - To Servers');
-    client.user.setPresence({
-      activities: [{ name: `to ${client.guilds.cache.size} servers!`, type: ActivityType.Listening }],
-    });
-    await delay(5 * 60_000); // 60 000 milliseconds = 1 minute
-    scriptMessage('Changing activity status - To Commands');
-    client.user.setPresence({
-      activities: [{ name: `to ${commands.length} commands!`, type: ActivityType.Listening }],
-    });
-    await delay(5 * 60_000); // 60 000 milliseconds = 1 minute
-    scriptMessage('Changing activity status - To Ping');
-    client.user.setPresence({
-      activities: [{ name: `to ${client.ws.ping}ms of ping!`, type: ActivityType.Listening }],
-    });
-    await delay(5 * 60_000); // 60 000 milliseconds = 1 minute
-  }
-}
-run();

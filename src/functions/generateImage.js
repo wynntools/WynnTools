@@ -1302,14 +1302,22 @@ async function generateMemberJoin(data) {
     );
     ctx.restore();
 
-    ctx.font = `96px Inter`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText(await getDisplayName(member.id), 448, 130);
-    ctx.font = `48px Inter`;
-    ctx.fillText(`@${member.username}`, 448, 229);
-    ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
+    var displayName = await getDisplayName(member.id);
+    if (displayName === null) {
+      ctx.font = `96px Inter`;
+      ctx.fillText(`@${member.username}`, 448, 171);
+      ctx.font = `48px Inter`;
+      ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
+    } else {
+      ctx.font = `96px Inter`;
+      ctx.fillText(await displayName, 448, 130);
+      ctx.font = `48px Inter`;
+      ctx.fillText(`@${member.username}`, 448, 229);
+      ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
+    }
 
     ctx.font = `32px Inter`;
     ctx.textAlign = 'center';
