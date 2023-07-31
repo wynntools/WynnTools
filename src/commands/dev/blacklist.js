@@ -12,14 +12,14 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('add')
-        .setDescription('add a user to blacklist')
+        .setDescription('Add a user to blacklist')
         .addUserOption((option) => option.setName('target').setDescription('The user').setRequired(true))
         .addStringOption((option) => option.setName('reason').setDescription('The reason for blacklisting'))
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('remove')
-        .setDescription('remove a user to blacklist')
+        .setDescription('Remove a user to blacklist')
         .addUserOption((option) => option.setName('target').setDescription('The user').setRequired(true))
     ),
   async execute(interaction) {

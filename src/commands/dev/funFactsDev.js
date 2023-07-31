@@ -19,7 +19,7 @@ module.exports = {
             .setName('type')
             .setDescription('The type of list you want to generate')
             .setRequired(true)
-            .addChoices({ name: 'Suggested', value: 'suggested' }, { name: 'List', value: 'list' })
+            .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
         )
     )
     .addSubcommand((subcommand) => subcommand.setName('send').setDescription('force send fun facts'))
@@ -32,7 +32,7 @@ module.exports = {
             .setName('type')
             .setDescription('The type of fun fact')
             .setRequired(true)
-            .addChoices({ name: 'Suggested', value: 'suggested' }, { name: 'List', value: 'list' })
+            .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
         )
         .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
     )
@@ -45,13 +45,20 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('deny')
-        .setDescription('deny a fun fact')
+        .setDescription('Deny a fun fact')
         .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('delete')
         .setDescription('Delete a fun fact')
+        .addStringOption((option) =>
+          option
+            .setName('type')
+            .setDescription('The type of fun fact')
+            .setRequired(true)
+            .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
+        )
         .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
     )
     .addSubcommand((subcommand) =>
@@ -228,7 +235,7 @@ module.exports = {
                 if (currentConfig.disabled) return;
                 const serverId = currentConfig.serverId;
                 const channelId = currentConfig.channelId;
-                const guild = client.guilds.cache.get(serverId);
+                const guild = interaction.client.guilds.cache.get(serverId);
                 const channel = guild.channels.cache.get(channelId);
                 var role = currentConfig.roleId;
                 if (role === serverId) {
@@ -502,7 +509,7 @@ module.exports = {
         if (serverId === null) {
           var num = 0;
           currentConfig = configs[configsObject[num]];
-          const guild = client.guilds.cache.get(currentConfig.serverId);
+          const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
           const channel = guild.channels.cache.get(currentConfig.channelId);
           let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
           if (currentConfig.roleId) {
@@ -553,7 +560,7 @@ module.exports = {
               if (num > configsObject.length) num = 0;
               currentConfig = configs[num];
               console.log(currentConfig);
-              const guild = client.guilds.cache.get(currentConfig.serverId);
+              const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
               const channel = guild.channels.cache.get(currentConfig.channelId);
               let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
               if (currentConfig.roleId) {

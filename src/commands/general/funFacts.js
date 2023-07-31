@@ -884,7 +884,7 @@ module.exports = {
             },
             {
               name: 'Step 3 Method 1',
-              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the defualt/Most Common config for the bot`,
+              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the default/Most Common config for the bot`,
               inline: false,
             },
             {
@@ -968,7 +968,7 @@ module.exports = {
             },
             {
               name: 'Step 3 Method 1',
-              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the defualt/Most Common config for the bot`,
+              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the default/Most Common config for the bot`,
               inline: false,
             },
             {
