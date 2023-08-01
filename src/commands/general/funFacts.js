@@ -426,20 +426,7 @@ module.exports = {
                         text: `by @kathund | ${config.discord.supportInvite} for support`,
                         iconURL: 'https://i.imgur.com/uUuZx2E.png',
                       });
-
-                    await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                      serverId: funFactsConfig[interaction.guild.id].serverId,
-                      channelId: funFactsConfig[interaction.guild.id].channelId,
-                      roleId: funFactsConfig[interaction.guild.id].roleId,
-                      ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                      deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                      disabled: true,
-                      setup: {
-                        by: funFactsConfig[interaction.guild.id].setup.by,
-                        at: funFactsConfig[interaction.guild.id].setup.at,
-                      },
-                    });
-
+                    
                     return await deleteConfirmation.update({
                       embeds: [updatedEmbed],
                       components: [],

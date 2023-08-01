@@ -531,7 +531,7 @@ module.exports = {
           string += `\n**Disabled:** ${currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no}`;
           const configEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
-            .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
+            .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
             .setDescription(string);
 
           const leftButton = new ButtonBuilder()
@@ -551,66 +551,301 @@ module.exports = {
 
           const row = new ActionRowBuilder().addComponents(leftButton, trashButton, rightButton);
           msg = await interaction.reply({ embeds: [configEmbed], components: [row] });
+          const TIMEOUT_S = 15;
+
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
-            const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 30_000 });
-            console.log(confirmation.customId);
-            if (confirmation.customId === 'leftButtonConfigs') {
-              num = num - 1;
-              if (num > configsObject.length) num = 0;
-              currentConfig = configs[num];
-              console.log(currentConfig);
-              const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
-              const channel = guild.channels.cache.get(currentConfig.channelId);
-              let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-              if (currentConfig.roleId) {
-                const role = guild.roles.cache.get(currentConfig.roleId);
-                if (role.id === guild.id) {
-                  string += `\n**Role:** @everyone | @everyone (${role.id})`;
+            let confirmation;
+            while (true) {
+              confirmation = await msg.awaitMessageComponent({
+                filter: collectorFilter,
+                time: TIMEOUT_S * 1000,
+              });
+              if (confirmation.customId === 'leftButtonConfigs') {
+                num = num - 1;
+                if (num <= 0) num = configsObject.length - 1;
+                currentConfig = configs[configsObject[num]];
+                const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
+                const channel = guild.channels.cache.get(currentConfig.channelId);
+                let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+                if (currentConfig.roleId) {
+                  const role = guild.roles.cache.get(currentConfig.roleId);
+                  if (role.id === guild.id) {
+                    string += `\n**Role:** @everyone | @everyone (${role.id})`;
+                  } else {
+                    string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+                  }
                 } else {
-                  string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+                  string += `\n**Role:** None`;
                 }
-              } else {
-                string += `\n**Role:** None`;
+                string += `\n**Ghost Ping:** ${
+                  currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                string += `\n**Delete Messages:** ${
+                  currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                string += `\n**Disabled:** ${
+                  currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                const configEmbed = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
+                  .setDescription(string);
+
+                await confirmation.update({ embeds: [configEmbed], components: [row] });
+              } else if (confirmation.customId === 'trashButtonConfigs') {
+                currentConfig = configs[configsObject[num]];
+                const confirmEmbed = new EmbedBuilder()
+                  .setColor(config.discord.embeds.red)
+                  .setTitle('Are you sure?')
+                  .setDescription(
+                    `Are you sure you want to delete the config for ${currentConfig.serverId}? **This cannot be undone**`
+                  )
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  });
+
+                const confirmYesButton = new ButtonBuilder()
+                  .setLabel('Yes')
+                  .setStyle(ButtonStyle.Danger)
+                  .setCustomId('confirmYesButtonConfigs');
+
+                const confirmNoButton = new ButtonBuilder()
+                  .setLabel('No')
+                  .setStyle(ButtonStyle.Secondary)
+                  .setCustomId('confirmNoButtonConfigs');
+
+                const row = new ActionRowBuilder().addComponents(confirmYesButton, confirmNoButton);
+                var confirmMessage = await confirmation.followUp({
+                  embeds: [confirmEmbed],
+                  components: [row],
+                  ephemeral: true,
+                });
+
+                const collectorFilter = (i) => i.user.id === interaction.user.id;
+                try {
+                  const confirmationDelete = await confirmMessage.awaitMessageComponent({
+                    filter: collectorFilter,
+                    time: 10 * 1000,
+                  });
+                  if (confirmationDelete.customId === 'confirmYesButtonConfigs') {
+                    delete configs[configsObject[num]];
+                    fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
+
+                    const deletedEmbed = new EmbedBuilder()
+                      .setColor(config.discord.embeds.green)
+                      .setTitle('Config Deleted')
+                      .setDescription(`The config for ${currentConfig.serverId} has been deleted`)
+                      .setFooter({
+                        text: `by @kathund | ${config.discord.supportInvite} for support`,
+                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                      });
+                    return await confirmationDelete.update({
+                      embeds: [deletedEmbed],
+                      components: [],
+                      ephemeral: true,
+                    });
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+              } else if (confirmation.customId === 'rightButtonConfigs') {
+                num = num + 1;
+                if (num >= configsObject.length) num = 0;
+                currentConfig = configs[configsObject[num]];
+                console.log(currentConfig);
+                const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
+                const channel = guild.channels.cache.get(currentConfig.channelId);
+                let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+                if (currentConfig.roleId) {
+                  const role = guild.roles.cache.get(currentConfig.roleId);
+                  if (role.id === guild.id) {
+                    string += `\n**Role:** @everyone | @everyone (${role.id})`;
+                  } else {
+                    string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+                  }
+                } else {
+                  string += `\n**Role:** None`;
+                }
+                string += `\n**Ghost Ping:** ${
+                  currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                string += `\n**Delete Messages:** ${
+                  currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                string += `\n**Disabled:** ${
+                  currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+                }`;
+                const configEmbed = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
+                  .setDescription(string);
+
+                await confirmation.update({ embeds: [configEmbed], components: [row] });
               }
-              string += `\n**Ghost Ping:** ${
-                currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
-              }`;
-              string += `\n**Delete Messages:** ${
-                currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
-              }`;
-              string += `\n**Disabled:** ${
-                currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
-              }`;
-
-              const configEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.green)
-                .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
-                .setDescription(string);
-
-              const leftButton = new ButtonBuilder()
-                .setEmoji('1135038841426825297')
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('left');
-
-              const trashButton = new ButtonBuilder()
-                .setEmoji('1135050640524066837')
-                .setStyle(ButtonStyle.Danger)
-                .setCustomId('trash');
-
-              const rightButton = new ButtonBuilder()
-                .setEmoji('1135038844706762799')
-                .setStyle(ButtonStyle.Secondary)
-                .setCustomId('right');
-
-              const row = new ActionRowBuilder().addComponents(leftButton, trashButton, rightButton);
-              confirmation.update({ embeds: [configEmbed], components: [row] });
             }
           } catch (error) {
             console.log(error);
           }
         } else {
-          console.log('aaaa');
+          currentConfig = configs[serverId];
+          if (!currentConfig) throw new Error('Invalid ID');
+          const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
+          const channel = guild.channels.cache.get(currentConfig.channelId);
+          let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+          if (currentConfig.roleId) {
+            const role = guild.roles.cache.get(currentConfig.roleId);
+            if (role.id === guild.id) {
+              string += `\n**Role:** @everyone | @everyone (${role.id})`;
+            } else {
+              string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+            }
+          } else {
+            string += `\n**Role:** None`;
+          }
+          string += `\n**Ghost Ping:** ${
+            currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
+          string += `\n**Delete Messages:** ${
+            currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
+          string += `\n**Disabled:** ${currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no}`;
+          const configEmbed = new EmbedBuilder()
+            .setColor(config.discord.embeds.green)
+            .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
+            .setDescription(string);
+
+          const trashButton = new ButtonBuilder()
+            .setEmoji('1135050640524066837')
+            .setStyle(ButtonStyle.Danger)
+            .setCustomId('trashButtonConfig');
+
+          const row = new ActionRowBuilder().addComponents(trashButton);
+          msg = await interaction.reply({ embeds: [configEmbed], components: [row] });
+
+          const collectorFilter = (i) => i.user.id === interaction.user.id;
+          try {
+            var confirm = await msg.awaitMessageComponent({
+              filter: collectorFilter,
+              time: 10 * 1000,
+            });
+            if (confirm.customId === 'trashButtonConfig') {
+              const confirmAgainEmbed = new EmbedBuilder()
+                .setColor(config.discord.embeds.red)
+                .setTitle('Are you sure?')
+
+                .setDescription(
+                  `Are you sure you want to delete the config for ${currentConfig.serverId}? **This cannot be undone**`
+                )
+                .setFooter({
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                });
+
+              const confirmYesButton = new ButtonBuilder()
+                .setLabel('Yes')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('confirmYesButtonConfig');
+
+              const confirmNoButton = new ButtonBuilder()
+                .setLabel('No')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('confirmNoButtonConfig');
+
+              const row = new ActionRowBuilder().addComponents(confirmYesButton, confirmNoButton);
+              var confirmAgainMessage = await confirm.followUp({
+                embeds: [confirmAgainEmbed],
+                components: [row],
+                ephemeral: true,
+              });
+
+              const collectorFilter = (i) => i.user.id === interaction.user.id;
+              try {
+                const confirmationDelete = await confirmAgainMessage.awaitMessageComponent({
+                  filter: collectorFilter,
+                  time: 10 * 1000,
+                });
+                if (confirmationDelete.customId === 'confirmYesButtonConfig') {
+                  delete configs[serverId];
+                  fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
+
+                  const deletedEmbed = new EmbedBuilder()
+                    .setColor(config.discord.embeds.green)
+                    .setTitle('Config Deleted')
+                    .setDescription(`The config for ${currentConfig.serverId} has been deleted`)
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+                  return await confirmationDelete.update({
+                    embeds: [deletedEmbed],
+                    components: [],
+                    ephemeral: true,
+                  });
+                } else if (confirmationDelete.customId === 'confirmNoButtonConfig') {
+                  const deletedEmbed = new EmbedBuilder()
+                    .setColor(config.discord.embeds.green)
+                    .setTitle('Cancelled')
+                    .setDescription(`Cancelled deleting the config for ${currentConfig.serverId}`)
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+                  return await confirmationDelete.update({
+                    embeds: [deletedEmbed],
+                    components: [],
+                    ephemeral: true,
+                  });
+                }
+              } catch (error) {
+                console.log(error);
+                const deletedEmbed = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setTitle('Cancelled')
+                  .setDescription(`Cancelled deleting the config for ${currentConfig.serverId}`)
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  });
+                return await confirm.update({
+                  embeds: [deletedEmbed],
+                  components: [],
+                  ephemeral: true,
+                });
+              }
+            }
+          } catch (error) {
+            console.log(error);
+            const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
+            const channel = guild.channels.cache.get(currentConfig.channelId);
+            let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
+            if (currentConfig.roleId) {
+              const role = guild.roles.cache.get(currentConfig.roleId);
+              if (role.id === guild.id) {
+                string += `\n**Role:** @everyone | @everyone (${role.id})`;
+              } else {
+                string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+              }
+            } else {
+              string += `\n**Role:** None`;
+            }
+            string += `\n**Ghost Ping:** ${
+              currentConfig.ghostPing ? config.discord.emojis.yes : config.discord.emojis.no
+            }`;
+            string += `\n**Delete Messages:** ${
+              currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
+            }`;
+            string += `\n**Disabled:** ${
+              currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+            }`;
+            const configEmbed = new EmbedBuilder()
+              .setColor(config.discord.embeds.green)
+              .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
+              .setDescription(string);
+
+            await interaction.editReply({ embeds: [configEmbed], components: [row] });
+          }
         }
       }
     } catch (error) {
