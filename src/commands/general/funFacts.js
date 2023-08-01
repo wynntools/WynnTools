@@ -426,7 +426,7 @@ module.exports = {
                         text: `by @kathund | ${config.discord.supportInvite} for support`,
                         iconURL: 'https://i.imgur.com/uUuZx2E.png',
                       });
-                    
+
                     return await deleteConfirmation.update({
                       embeds: [updatedEmbed],
                       components: [],
