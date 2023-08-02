@@ -10,17 +10,7 @@ module.exports = {
   async execute(interaction) {
     try {
       var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
+      if (blacklistTest) throw new Error('You are blacklisted');
 
       var packageJson = require('../../../package.json');
       const commands = [];

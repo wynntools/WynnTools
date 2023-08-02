@@ -1334,10 +1334,100 @@ async function generateMemberJoin(data) {
   }
 }
 
+async function generateServer(server) {
+  try {
+    const canvas = createCanvas(1200, 600);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+    ctx.font = `128px Inter`;
+    if (server.status === 'online') {
+      ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
+    } else if (server.status === 'offline') {
+      ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 96, 118, 256, 256);
+    }
+    ctx.fillText(server.id, 514, 169);
+    ctx.fillText(server.count, 946, 169);
+
+    ctx.font = `32px Inter`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      520,
+      1136
+    );
+    return canvas.toBuffer('image/png');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const serversXY = [
+  {
+    circle: {
+      x: 99,
+      y: 105,
+    },
+    text: {
+      x: 224,
+      y: 121,
+    },
+    count: {
+      x: 355,
+      y: 121,
+    },
+  },
+  {
+    circle: {
+      x: 447,
+      y: 105,
+    },
+    text: {
+      x: 571,
+      y: 121,
+    },
+    count: {
+      x: 704,
+      y: 121,
+    },
+  },
+];
+
+async function generateServers(servers) {
+  try {
+    const canvas = createCanvas(1200, 1200);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+    ctx.font = `128px Inter`;
+    if (server.status === 'online') {
+      ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
+    } else if (server.status === 'offline') {
+      ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 96, 118, 256, 256);
+    }
+    ctx.fillText(server.id, 514, 169);
+    ctx.fillText(server.count, 946, 169);
+
+    ctx.font = `32px Inter`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      520,
+      1136
+    );
+    return canvas.toBuffer('image/png');
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   bar,
   generateStats,
   generateProfileImage,
   generateGuild,
   generateMemberJoin,
+  generateServer,
 };
