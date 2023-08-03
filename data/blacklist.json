@@ -1,1 +1,27 @@
-{}
+{
+  "type": "pie",
+  "data": {
+    "datasets": [
+      {
+        "data": [100, 125, 45],
+        "backgroundColor": ["#f16558", "#965d5a", "#eabbb9"],
+        "borderColor": "black",
+        "borderWidth": 0.5
+      }
+    ],
+    "labels": ["פחמימה", "חלבון", "שומן"]
+  },
+  "options": {
+    "legend": {
+      "labels": {
+        "fontColor": "black",
+        "fontSize": 12
+      }
+    },
+    "plugins": {
+      "datalabels": {
+        "color": "white"
+      }
+    }
+  }
+}

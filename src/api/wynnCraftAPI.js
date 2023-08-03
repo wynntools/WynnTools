@@ -1,7 +1,6 @@
 const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { formatUUID } = require('../helperFunctions.js');
 const { cacheMessage } = require('../logger.js');
-const fs = require('fs');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
@@ -17,6 +16,7 @@ function formatData(data) {
   for (const key in data) {
     if (key !== 'request' && Object.prototype.hasOwnProperty.call(data, key)) {
       formattedData[key] = {
+        status: 'online',
         players: data[key],
         count: data[key].length,
       };
@@ -126,15 +126,14 @@ async function getGuild(name) {
 }
 
 async function getServers() {
-  // var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
-  // var data = await res.json();
-  // if (res.status != 200) {
-  //   return { status: res.status, error: 'Error' };
-  // }
+  var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
+  var data = await res.json();
+  if (res.status != 200) {
+    return { status: res.status, error: 'Error' };
+  }
 
-  var data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
   var response = {
-    // status: res.status,
+    status: res.status,
     request: data.request,
     data: formatData(data),
   };

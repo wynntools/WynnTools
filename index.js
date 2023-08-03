@@ -55,6 +55,7 @@ async function start() {
       try {
         if (file.toLowerCase().includes('disabled')) {
           skipped++;
+          scriptMessage(`Skipped ${file} script`);
           continue;
         }
         scriptMessage(`Started ${file} script`);

@@ -21,13 +21,10 @@ module.exports = {
 
       const support = new ButtonBuilder()
         .setLabel('support')
-        .setURL('https://discord.gg/ub63JjGGSN')
+        .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
 
-      const invite = new ButtonBuilder()
-        .setLabel('invite')
-        .setURL('https://discord.com/api/oauth2/authorize?client_id=1127383186683465758&permissions=8&scope=bot')
-        .setStyle(ButtonStyle.Link);
+      const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
 
       const source = new ButtonBuilder()
         .setLabel('source')
@@ -38,33 +35,62 @@ module.exports = {
 
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
 
-      await interaction.reply({
-        embeds: [
-          {
-            title: 'About',
-            description: 'A bot that does stuff with the wynncraft api',
-            fields: [
-              {
-                name: '<:invis:1064700091778220043>',
-                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${commands.length}\`\n<:bullet:1064700156789927936> Version \`${packageJson.version}\`\nServers - \`${interaction.client.guilds.cache.size}\``,
-                inline: true,
-              },
-              {
-                name: '<:invis:1064700091778220043>',
-                value: `Files - \`${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
-                  'oneLetters',
-                  totalLines
-                )}\`\nCharacters - \`${addNotation(
-                  'oneLetters',
-                  totalCharacters
-                )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
-                inline: true,
-              },
-            ],
-          },
-        ],
-        components: [row],
+      var userData = JSON.parse(fs.readFileSync('data/userData.json'));
+      var totalCommandsRun = 0;
+      for (const entry in userData) {
+        totalCommandsRun += userData[entry].commandsRun;
+      }
+
+      const genCommands = [];
+      fs.readdirSync(path.resolve(__dirname, '../general')).forEach((file) => {
+        if (!file.endsWith('.js')) return;
+        if (file.toLowerCase().includes('disabled')) return;
+        genCommands.push(file);
       });
+
+      const devCommands = [];
+      fs.readdirSync(path.resolve(__dirname, '../dev')).forEach((file) => {
+        if (!file.endsWith('.js')) return;
+        if (file.toLowerCase().includes('disabled')) return;
+        devCommands.push(file);
+      });
+
+      var embed = new EmbedBuilder()
+        .setTitle(`WynnTools Stats`)
+        .setColor(config.discord.embeds.green)
+        .setTimestamp()
+        .setDescription(
+          'WynnTools - A bot that does stuff with the wynncraft api - The Only bot that uses images **that i have seen**'
+        )
+        .addFields(
+          {
+            name: 'General',
+            value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${
+              genCommands.length
+            } (${
+              devCommands.length
+            } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
+              packageJson.version
+            }\`\nServers - \`${await client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
+            inline: true,
+          },
+          {
+            name: 'Code Stats',
+            value: `Files - \`${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
+              'oneLetters',
+              totalLines
+            )}\`\nCharacters - \`${addNotation(
+              'oneLetters',
+              totalCharacters
+            )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
+            inline: true,
+          }
+        )
+        .setFooter({
+          text: `by @kathund | Stats maybe inaccurate/outdated/cached`,
+          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+        });
+      await interaction.reply({ embeds: [embed], components: [row] });
     } catch (error) {
       var errorId = generateID(10);
       errorMessage(`Error Id - ${errorId}`);

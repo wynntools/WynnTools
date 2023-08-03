@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { blacklistCheck, generateID } = require('../../helperFunctions.js');
+const { generateServer } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -28,14 +29,15 @@ module.exports = {
       }
       var subcommand = interaction.options.getSubcommand();
       if (subcommand === 'get') {
-        var id = interaction.options.getString('server-id').toUpperCase();
+        var id = interaction.options.getString('server-id');
         if (id === null) {
           var servers = await getServers();
           console.log(servers);
         } else {
-          if (!id.includes('WC')) id = `WC${id}`;
           var server = await getServer(id);
-          await interaction.reply(`Server ${id} has ${server.count} players`);
+          if (server.error) throw new Error(server.error);
+          console.log(server);
+          await interaction.reply({ files: [await generateServer(server)] });
         }
       }
     } catch (error) {

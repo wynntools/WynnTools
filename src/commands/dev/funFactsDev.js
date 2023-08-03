@@ -617,7 +617,7 @@ module.exports = {
                   .setCustomId('confirmNoButtonConfigs');
 
                 const row = new ActionRowBuilder().addComponents(confirmYesButton, confirmNoButton);
-                var confirmMessage = await confirmation.followUp({
+                var confirmMessage = await confirmation.reply({
                   embeds: [confirmEmbed],
                   components: [row],
                   ephemeral: true,
