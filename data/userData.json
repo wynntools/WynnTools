@@ -1,1 +1,43 @@
-{"894034804503351366":{"commandsRun":5,"firstCommand":"1689890965","lastUpdated":"1690598891","commands":{"guild":4,"fun-facts":1}},"608584543506530314":{"commandsRun":285,"firstCommand":"1689996034","lastUpdated":"1691149644","commands":{"embed":24,"fun-facts":133,"user":1,"update-stats":4,"report-bug":1,"about":15,"fun-facts-dev":84,"clear-cache":5,"servers":16,"stats":2}},"501976955998961664":{"commandsRun":3,"firstCommand":"1690189233","lastUpdated":"1690189405","commands":{"fun-facts":3}},"964967961263767652":{"commandsRun":2,"firstCommand":"1690284549","lastUpdated":"1690285115","commands":{"fun-facts":2}},"933349617054126110":{"commandsRun":6,"firstCommand":"1690604796","lastUpdated":"1690607342","commands":{"fun-facts":5,"fun-facts-dev":1}}}
+{
+  "894034804503351366": {
+    "commandsRun": 5,
+    "firstCommand": "1689890965",
+    "lastUpdated": "1690598891",
+    "commands": { "guild": 4, "fun-facts": 1 }
+  },
+  "608584543506530314": {
+    "commandsRun": 285,
+    "firstCommand": "1689996034",
+    "lastUpdated": "1691149644",
+    "commands": {
+      "embed": 24,
+      "fun-facts": 133,
+      "user": 1,
+      "update-stats": 4,
+      "report-bug": 1,
+      "about": 15,
+      "fun-facts-dev": 84,
+      "clear-cache": 5,
+      "servers": 16,
+      "stats": 2
+    }
+  },
+  "501976955998961664": {
+    "commandsRun": 3,
+    "firstCommand": "1690189233",
+    "lastUpdated": "1690189405",
+    "commands": { "fun-facts": 3 }
+  },
+  "964967961263767652": {
+    "commandsRun": 2,
+    "firstCommand": "1690284549",
+    "lastUpdated": "1690285115",
+    "commands": { "fun-facts": 2 }
+  },
+  "933349617054126110": {
+    "commandsRun": 6,
+    "firstCommand": "1690604796",
+    "lastUpdated": "1690607342",
+    "commands": { "fun-facts": 5, "fun-facts-dev": 1 }
+  }
+}
