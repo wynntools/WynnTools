@@ -1,14 +1,13 @@
-const { generateDate, getRelativeTime, getMaxMembers } = require('../helperFunctions.js');
+const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('../helperFunctions.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { getServerHistory } = require('../api/pixelicAPI.js');
 const { getDisplayName } = require('../api/discordAPI.js');
-const { getServerData } = require('../api/pixelicAPI.js');
 const { AttachmentBuilder } = require('discord.js');
-const { cacheMessage, scriptMessage } = require('../logger.js');
+const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
 const nodeCache = require('node-cache');
-const moment = require('moment');
 
 // ! Caches
 const generateStatsCache = new nodeCache({ stdTTL: 180 });
@@ -1690,114 +1689,104 @@ async function generateServers(servers) {
 }
 
 async function generateServerChart(data) {
-  data = {
-    1690992000: 32,
-    1690995600: 36,
-    1690999200: 31,
-    1691002800: 39,
-    1691006400: 41,
-    1691010000: 50,
-    1691013600: 12,
-    1691017200: 0,
-    1691020800: 0,
-    1691024400: 10,
-    1691028000: 30,
-    1691031600: 26,
-    1691035200: 31,
-  };
+  try {
+    const timestamps = data.map((entry) => entry.timestamp);
+    const playerCounts = data.map((entry) => entry.value);
 
-  const chart = new QuickChart();
-  chart
-    .setConfig({
-      type: 'line',
-      data: {
-        labels: Object.keys(data).map(
-          (ts) =>
-            `-${moment(ts * 1000)
-              .fromNow()
-              .replace(/^(\d+).*$/, '-$1')}`
-        ),
-        datasets: [
-          {
-            label: 'Player Count',
-            data: Object.values(data),
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0, 0, 255, 0.2)',
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          xAxes: [
+    // Convert timestamps to relative time in hours
+    const relativeTimes = timestamps.map((timestamp) => getRelativeTime(timestamp, 's'));
+
+    const chart = new QuickChart();
+    chart
+      .setConfig({
+        type: 'line',
+        data: {
+          labels: relativeTimes,
+          datasets: [
             {
-              display: true,
-              gridLines: {
-                display: false,
-              },
-              ticks: {
-                fontColor: '#ffffff',
-                fontSize: 16,
-              },
-              scaleLabel: {
-                display: true,
-                labelString: '# Hours ago',
-                fontSize: 16,
-                fontColor: '#ffffff',
-                fontStyle: 'bold',
-              },
-            },
-          ],
-          yAxes: [
-            {
-              display: true,
-              gridLines: {
-                display: false,
-              },
-              ticks: {
-                fontColor: '#ffffff',
-                fontSize: 16,
-              },
-              scaleLabel: {
-                display: true,
-                labelString: '# of Players',
-                fontSize: 16,
-                fontColor: '#ffffff',
-                fontStyle: 'bold',
-              },
+              label: 'Player Count',
+              data: playerCounts,
+              borderColor: 'blue',
+              backgroundColor: 'rgba(0, 0, 255, 0.2)',
+              fill: true,
             },
           ],
         },
-        legend: {
-          labels: {
-            fontColor: '#FFFFFF',
+        options: {
+          scales: {
+            xAxes: [
+              {
+                display: true,
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  fontColor: '#ffffff',
+                  fontSize: 16,
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: '# Hours ago',
+                  fontSize: 16,
+                  fontColor: '#ffffff',
+                  fontStyle: 'bold',
+                },
+              },
+            ],
+            yAxes: [
+              {
+                display: true,
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  fontColor: '#ffffff',
+                  fontSize: 16,
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: '# of Players',
+                  fontSize: 16,
+                  fontColor: '#ffffff',
+                  fontStyle: 'bold',
+                },
+              },
+            ],
+          },
+          legend: {
+            labels: {
+              fontColor: '#FFFFFF',
+            },
           },
         },
-      },
-      plugins: {
-        tooltip: {
-          backgroundColor: '#303446',
-          borderColor: '#303446',
+        plugins: {
+          tooltip: {
+            backgroundColor: '#303446',
+            borderColor: '#303446',
+          },
         },
-      },
-    })
-    .setWidth(1136)
-    .setHeight(428);
+      })
+      .setWidth(1136)
+      .setHeight(428);
 
-  var url = await chart.getShortUrl();
-  return url;
+    var url = await chart.getShortUrl();
+    return url;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function generateServerGraph(server) {
   if (generateServerGraphCache.has(server.id)) {
-    scriptMessage('Generate Server Graph', 'hit');
+    cacheMessage('Generate Server Graph', 'hit');
     return generateServerGraphCache.get(server.id);
   } else {
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
 
-    var data = await getServerData(server.id);
+    var badData = await getServerHistory(server.id, 'day');
+    var data = await cleanUpTimestampData(badData);
     var url = await generateServerChart(data);
 
     ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);

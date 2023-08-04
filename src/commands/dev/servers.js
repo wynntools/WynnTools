@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
 const { blacklistCheck, generateID } = require('../../helperFunctions.js');
-const { generateServer } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -37,7 +37,24 @@ module.exports = {
           var server = await getServer(id);
           if (server.error) throw new Error(server.error);
           console.log(server);
-          await interaction.reply({ files: [await generateServer(server)] });
+          const graphButton = new ButtonBuilder()
+            .setLabel('Player Count History')
+            .setCustomId('server-graph')
+            .setStyle(ButtonStyle.Primary);
+
+          const row = new ActionRowBuilder().addComponents(graphButton);
+
+          var msg = await interaction.reply({ files: [await generateServer(server)], components: [row] });
+          const collectorFilter = (i) => i.user.id === interaction.user.id;
+          try {
+            const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
+            if (confirmation.customId == 'server-graph') {
+              await confirmation.update({ components: [] });
+              await interaction.editReply({ files: [await generateServerGraph(server)] });
+            }
+          } catch (error) {
+            console.log(error);
+          }
         }
       }
     } catch (error) {

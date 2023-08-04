@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { blacklistCheck, countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
+const packageJson = require('../../../package.json');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const path = require('path');
@@ -12,7 +13,6 @@ module.exports = {
       var blacklistTest = await blacklistCheck(interaction.user.id);
       if (blacklistTest) throw new Error('You are blacklisted');
 
-      var packageJson = require('../../../package.json');
       const commands = [];
       fs.readdirSync(path.resolve(__dirname, '../general')).forEach((file) => {
         if (!file.endsWith('.js')) return;

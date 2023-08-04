@@ -1,4 +1,4 @@
-const packageJson = require('../../../package.json');
+const packageJson = require('../../package.json');
 const { scriptMessage } = require('../logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
