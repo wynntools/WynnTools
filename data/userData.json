@@ -6,9 +6,9 @@
     "commands": { "guild": 4, "fun-facts": 1 }
   },
   "608584543506530314": {
-    "commandsRun": 269,
+    "commandsRun": 270,
     "firstCommand": "1689996034",
-    "lastUpdated": "1691021387",
+    "lastUpdated": "1691106340",
     "commands": {
       "embed": 24,
       "fun-facts": 133,
@@ -16,7 +16,7 @@
       "update-stats": 4,
       "report-bug": 1,
       "about": 6,
-      "fun-facts-dev": 83,
+      "fun-facts-dev": 84,
       "clear-cache": 4,
       "servers": 11,
       "stats": 2
