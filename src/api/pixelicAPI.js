@@ -2,7 +2,7 @@ const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { cacheMessage } = require('../logger.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
-const pixelicCache = new nodeCache();
+const pixelicCache = new nodeCache({ stdTTL: 180 });
 
 const fetch = (...args) =>
   import('node-fetch')
@@ -41,9 +41,34 @@ async function register(uuid) {
   }
 }
 
+async function getServerList() {
+  var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/list`, {
+    headers: {
+      'X-API-Key': config.api.pixelicAPIKey,
+    },
+  });
+  var data = await res.json();
+  if (!res.status === 200) {
+    return {
+      status: res.status,
+      error: data.cause,
+    };
+  } else {
+    console.log(data);
+    return {
+      status: res.status,
+      success: true,
+    };
+  }
+}
+
 async function clearPixelicCache() {
   cacheMessage('PixelicAPI', 'Cleared');
   pixelicCache.flushAll();
 }
 
-module.exports = { register, clearPixelicCache };
+module.exports = {
+  register,
+  getServerList,
+  clearPixelicCache,
+};

@@ -1807,6 +1807,56 @@ async function generateServerGraph(server) {
   }
 }
 
+async function clearGenerateStatsCache() {
+  try {
+    cacheMessage('Generate Stats', 'Cleared');
+    generateStatsCache.flushAll();
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function clearGenerateProfileImageCache() {
+  try {
+    cacheMessage('Generate Profile Image', 'Cleared');
+    generateProfileImageCache.flushAll();
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function clearGenerateGuildCache() {
+  try {
+    cacheMessage('Generate Guild', 'Cleared');
+    generateGuildCache.flushAll();
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function clearGenerateServerCache() {
+  try {
+    cacheMessage('Generate Server', 'Cleared');
+    generateServerCache.flushAll();
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function clearGenerateServerGraphCache() {
+  try {
+    cacheMessage('Generate Server Graph', 'Cleared');
+    generateServerGraphCache.flushAll();
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 module.exports = {
   bar,
   generateStats,
@@ -1817,4 +1867,9 @@ module.exports = {
   generateServers,
   generateServerChart,
   generateServerGraph,
+  clearGenerateStatsCache,
+  clearGenerateProfileImageCache,
+  clearGenerateGuildCache,
+  clearGenerateServerCache,
+  clearGenerateServerGraphCache,
 };
