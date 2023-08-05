@@ -1,9 +1,16 @@
+const {
+  clearGenerateStatsCache,
+  clearGenerateProfileImageCache,
+  clearGenerateGuildCache,
+  clearGenerateServerCache,
+  clearGenerateServerGraphCache,
+} = require('../../functions/generateImage.js');
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
-const { generateID, blacklistCheck } = require('../../helperFunctions.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
+const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 module.exports = {
@@ -22,23 +29,16 @@ module.exports = {
           { name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
           { name: 'Discord', value: 'discord' },
           { name: 'Pixelic', value: 'pixelic' },
+          { name: 'Generate Stats', value: 'clearGenerateStatsCache' },
+          { name: 'Generate Profile Image', value: 'clearGenerateProfileImageCache' },
+          { name: 'Generate Guild', value: 'clearGenerateGuildCache' },
+          { name: 'Generate Server', value: 'clearGenerateServerCache' },
+          { name: 'Generate Server Graph', value: 'clearGenerateServerGraphCache' },
           { name: 'All', value: 'all' }
         )
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
       if (!interaction.user.id == config.discord.devId) {
         await interaction.reply({ content: 'No Perms?' });
         return;
@@ -59,12 +59,32 @@ module.exports = {
       } else if (cacheCategory == 'pixelic') {
         await clearPixelicCache();
         await interaction.reply({ content: 'Cleared Pixelic Cache' });
+      } else if (cacheCategory === 'clearGenerateStatsCache') {
+        await clearGenerateStatsCache();
+        await interaction.reply({ content: 'Cleared Generate Stats Cache' });
+      } else if (cacheCategory === 'clearGenerateProfileImageCache') {
+        await clearGenerateProfileImageCache();
+        await interaction.reply({ content: 'Cleared Generate Profile Image Cache' });
+      } else if (cacheCategory === 'clearGenerateGuildCache') {
+        await clearGenerateGuildCache();
+        await interaction.reply({ content: 'Cleared Generate Guild Cache' });
+      } else if (cacheCategory === 'clearGenerateServerCache') {
+        await clearGenerateServerCache();
+        await interaction.reply({ content: 'Cleared Generate Server Cache' });
+      } else if (cacheCategory === 'clearGenerateServerGraphCache') {
+        await clearGenerateServerGraphCache();
+        await interaction.reply({ content: 'Cleared Generate Server Graph Cache' });
       } else if (cacheCategory == 'all') {
         await clearMojangCache();
         await clearDiscordCache();
         await clearPixelicCache();
         await clearWynnCraftCache();
         await clearWynnCraftGuildCache();
+        await clearGenerateStatsCache();
+        await clearGenerateProfileImageCache();
+        await clearGenerateGuildCache();
+        await clearGenerateServerCache();
+        await clearGenerateServerGraphCache();
         await interaction.reply({ content: 'Cleared All Caches' });
       } else {
         throw new Error('uhhh something went wrong');

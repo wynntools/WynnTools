@@ -73,6 +73,7 @@ async function blacklistCheck(id) {
     return false;
   }
 }
+
 function countLinesAndCharacters(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const lines = fileContent.split('\n');
@@ -213,6 +214,18 @@ function generateID(length) {
   return result;
 }
 
+async function cleanUpTimestampData(data) {
+  try {
+    const twelveHoursAgo = Math.floor(Date.now() / 1000) - 12 * 60 * 60;
+    const filteredData = data.data.filter((entry) => {
+      return entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0;
+    });
+    return filteredData;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   getCurrentTime,
   formatUUID,
@@ -227,4 +240,5 @@ module.exports = {
   getMaxMembers,
   capitalizeFirstLetter,
   generateID,
+  cleanUpTimestampData,
 };

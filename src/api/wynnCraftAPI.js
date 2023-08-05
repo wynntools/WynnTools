@@ -7,8 +7,31 @@ const fetch = (...args) =>
     .catch((err) => console.log(err));
 
 const nodeCache = require('node-cache');
-const wynncraftPlayerCache = new nodeCache({ stdTTL: 300 });
-const wynncraftGuildCache = new nodeCache({ stdTTL: 300 });
+const wynncraftPlayerCache = new nodeCache({ stdTTL: 180 });
+const wynncraftGuildCache = new nodeCache({ stdTTL: 180 });
+
+function formatData(data) {
+  const formattedData = {};
+
+  for (const key in data) {
+    if (key !== 'request' && Object.prototype.hasOwnProperty.call(data, key)) {
+      formattedData[key] = {
+        status: 'online',
+        players: data[key],
+        count: data[key].length,
+      };
+    }
+  }
+  const sortedWcCounts = Object.fromEntries(
+    Object.entries(formattedData).sort((a, b) => {
+      const serverNumA = parseInt(a[0].replace('WC', ''));
+      const serverNumB = parseInt(b[0].replace('WC', ''));
+      return serverNumA - serverNumB;
+    })
+  );
+
+  return sortedWcCounts;
+}
 
 async function getStats(uuid) {
   try {
@@ -105,11 +128,54 @@ async function getGuild(name) {
 async function getServers() {
   var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
   var data = await res.json();
+  if (res.status != 200) {
+    return { status: res.status, error: 'Error' };
+  }
+
   var response = {
     status: res.status,
-    a: data,
+    request: data.request,
+    data: formatData(data),
   };
   return response;
+}
+
+async function getServer(id) {
+  let server;
+  id = id.toString().toLowerCase();
+  if (id.includes('yt')) {
+    server = `WCYT`;
+    id = 'YT';
+  } else {
+    if (!id.includes('wc')) {
+      server = `WC${id}`;
+      id = Number(id);
+    } else {
+      server = id;
+      id = Number(id.replace('wc', ''));
+    }
+    if (id >= !0 && id <= !75) {
+      return { status: 400, error: 'Invalid Server' };
+    }
+  }
+
+  var servers = await getServers();
+  if (!servers.data[server]) {
+    return {
+      id: id,
+      server: server,
+      status: 'offline',
+      players: [],
+      count: 0,
+    };
+  }
+  return {
+    id: id,
+    server: server,
+    status: 'online',
+    players: servers.data[server].players,
+    count: servers.data[server].count,
+  };
 }
 
 async function clearWynnCraftCache() {
@@ -128,6 +194,7 @@ module.exports = {
   getProfiles,
   getGuild,
   getServers,
+  getServer,
   clearWynnCraftCache,
   clearWynnCraftGuildCache,
 };

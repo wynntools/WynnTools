@@ -7,7 +7,7 @@ const {
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
-const { blacklistCheck, generateID, writeAt, toFixed } = require('../../helperFunctions.js');
+const { generateID, writeAt, toFixed } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -56,18 +56,6 @@ module.exports = {
     .addSubcommand((subcommand) => subcommand.setName('setup-guide').setDescription('Fun Facts Setup Guide')),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
       var subcommand;
       if (interaction.options === undefined) {
         subcommand = 'button-setup-guide';
@@ -362,147 +350,50 @@ module.exports = {
           if (!funFactsConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
-              .setDescription('Are you sure you want to disable the fun facts in this server?')
+              .setDescription(
+                'Fun Facts have been disabled. Do you want to delete your config? **THIS CANNOT BE UNDONE!**'
+              )
               .setTimestamp()
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
                 iconURL: 'https://i.imgur.com/uUuZx2E.png',
               });
 
-            const disableYes = new ButtonBuilder()
-              .setCustomId('funFactsDisableYes')
+            await writeAt('data/funFacts/config.json', interaction.guild.id, {
+              serverId: funFactsConfig[interaction.guild.id].serverId,
+              channelId: funFactsConfig[interaction.guild.id].channelId,
+              roleId: funFactsConfig[interaction.guild.id].roleId,
+              ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
+              deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
+              disabled: true,
+              setup: {
+                by: funFactsConfig[interaction.guild.id].setup.by,
+                at: funFactsConfig[interaction.guild.id].setup.at,
+              },
+            });
+
+            const deleteYes = new ButtonBuilder()
+              .setCustomId('funFactsDeleteConfigYes')
               .setLabel('Yes')
               .setStyle(ButtonStyle.Danger);
 
-            const disableNo = new ButtonBuilder()
-              .setCustomId('funFactsDisableNo')
+            const deleteNo = new ButtonBuilder()
+              .setCustomId('funFactsDeleteConfigNo')
               .setLabel('No')
               .setStyle(ButtonStyle.Success);
 
-            const disableRow = new ActionRowBuilder().addComponents(disableYes, disableNo);
+            const deleteRow = new ActionRowBuilder().addComponents(deleteYes, deleteNo);
 
-            msg = await interaction.reply({ embeds: [embed], components: [disableRow] });
+            msg = await interaction.reply({ embeds: [embed], components: [deleteRow] });
             const collectorFilter = (i) => i.user.id === interaction.user.id;
             try {
               const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
-              if (confirmation.customId == 'funFactsDisableYes') {
-                const deleteDataEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setDescription('Do you want to delete the config? **THIS CANNOT BE UNDONE')
-                  .setTimestamp()
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
-
-                const deleteYes = new ButtonBuilder()
-                  .setCustomId('funFactsDeleteYes')
-                  .setLabel('Yes')
-                  .setStyle(ButtonStyle.Danger);
-
-                const deleteNo = new ButtonBuilder()
-                  .setCustomId('funFactsDeleteNo')
-                  .setLabel('No')
-                  .setStyle(ButtonStyle.Success);
-
-                const deleteRow = new ActionRowBuilder().addComponents(deleteYes, deleteNo);
-
-                await confirmation.update({
-                  embeds: [deleteDataEmbed],
-                  components: [deleteRow],
-                });
-
-                const collectorFilter = (i) => i.user.id === interaction.user.id;
-                try {
-                  const deleteConfirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
-                  if (deleteConfirmation.customId == 'funFactsDeleteYes') {
-                    delete funFactsConfig[interaction.guild.id];
-                    fs.writeFileSync('data/funFacts/config.json', JSON.stringify(funFactsConfig));
-                    const updatedEmbed = new EmbedBuilder()
-                      .setColor(config.discord.embeds.green)
-                      .setDescription('Successfully disabled the fun facts in this server and deleted the config')
-                      .setTimestamp()
-                      .setFooter({
-                        text: `by @kathund | ${config.discord.supportInvite} for support`,
-                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                      });
-
-                    await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                      serverId: funFactsConfig[interaction.guild.id].serverId,
-                      channelId: funFactsConfig[interaction.guild.id].channelId,
-                      roleId: funFactsConfig[interaction.guild.id].roleId,
-                      ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                      deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                      disabled: true,
-                      setup: {
-                        by: funFactsConfig[interaction.guild.id].setup.by,
-                        at: funFactsConfig[interaction.guild.id].setup.at,
-                      },
-                    });
-
-                    return await deleteConfirmation.update({
-                      embeds: [updatedEmbed],
-                      components: [],
-                    });
-                  } else if (deleteConfirmation.customId == 'funFactsDeleteNo') {
-                    const updatedEmbed = new EmbedBuilder()
-                      .setColor(config.discord.embeds.green)
-                      .setDescription('Fun facts have been disabled')
-                      .setTimestamp()
-                      .setFooter({
-                        text: `by @kathund | ${config.discord.supportInvite} for support`,
-                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                      });
-
-                    await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                      serverId: funFactsConfig[interaction.guild.id].serverId,
-                      channelId: funFactsConfig[interaction.guild.id].channelId,
-                      roleId: funFactsConfig[interaction.guild.id].roleId,
-                      ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                      deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                      disabled: true,
-                      setup: {
-                        by: funFactsConfig[interaction.guild.id].setup.by,
-                        at: funFactsConfig[interaction.guild.id].setup.at,
-                      },
-                    });
-
-                    return await deleteConfirmation.update({
-                      embeds: [updatedEmbed],
-                      components: [],
-                    });
-                  }
-                } catch (error) {
-                  const updatedEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
-                    .setDescription('Fun facts have been disabled')
-                    .setTimestamp()
-                    .setFooter({
-                      text: `by @kathund | ${config.discord.supportInvite} for support`,
-                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                    });
-
-                  await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                    serverId: funFactsConfig[interaction.guild.id].serverId,
-                    channelId: funFactsConfig[interaction.guild.id].channelId,
-                    roleId: funFactsConfig[interaction.guild.id].roleId,
-                    ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                    deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                    disabled: true,
-                    setup: {
-                      by: funFactsConfig[interaction.guild.id].setup.by,
-                      at: funFactsConfig[interaction.guild.id].setup.at,
-                    },
-                  });
-                  return await interaction.editReply({
-                    embeds: [updatedEmbed],
-                    components: [],
-                  });
-                }
-
+              if (confirmation.customId == 'funFactsDeleteConfigYes') {
+                delete funFactsConfig[interaction.guild.id];
+                fs.writeFileSync('data/funFacts/config.json', JSON.stringify(funFactsConfig));
                 const updatedEmbed = new EmbedBuilder()
                   .setColor(config.discord.embeds.green)
-                  .setDescription('Successfully disabled the fun facts in this server')
+                  .setDescription('Successfully Deleted this servers config.')
                   .setTimestamp()
                   .setFooter({
                     text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -513,10 +404,10 @@ module.exports = {
                   embeds: [updatedEmbed],
                   components: [],
                 });
-              } else if (confirmation.customId == 'funFactsDisableNo') {
+              } else if (confirmation.customId == 'funFactsDeleteConfigNo') {
                 const updatedEmbed = new EmbedBuilder()
                   .setColor(config.discord.embeds.green)
-                  .setDescription('Fun facts disable cancelled')
+                  .setDescription('Config not deleted and fun facts disabled.')
                   .setTimestamp()
                   .setFooter({
                     text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -531,13 +422,13 @@ module.exports = {
             } catch (error) {
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
-                .setDescription('Fun facts disable cancelled')
+                .setDescription('Fun facts have been disabled')
                 .setTimestamp()
                 .setFooter({
                   text: `by @kathund | ${config.discord.supportInvite} for support`,
                   iconURL: 'https://i.imgur.com/uUuZx2E.png',
                 });
-              await interaction.editReply({
+              return await interaction.editReply({
                 embeds: [updatedEmbed],
                 components: [],
               });
@@ -576,85 +467,14 @@ module.exports = {
           if (funFactsConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
               .setColor(config.discord.embeds.green)
-              .setDescription('Are you sure you want to enable the fun facts in this server?')
+              .setDescription('Fun Facts have been enabled')
               .setTimestamp()
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
                 iconURL: 'https://i.imgur.com/uUuZx2E.png',
               });
 
-            const enableYes = new ButtonBuilder()
-              .setCustomId('funFactsEnableYes')
-              .setLabel('Yes')
-              .setStyle(ButtonStyle.Success);
-
-            const enableNo = new ButtonBuilder()
-              .setCustomId('funFactsEnableNo')
-              .setLabel('No')
-              .setStyle(ButtonStyle.Danger);
-
-            const enableRow = new ActionRowBuilder().addComponents(enableYes, enableNo);
-
-            msg = await interaction.reply({ embeds: [embed], components: [enableRow] });
-            const collectorFilter = (i) => i.user.id === interaction.user.id;
-            try {
-              const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
-              if (confirmation.customId == 'funFactsEnableYes') {
-                await writeAt('data/funFacts/config.json', interaction.guild.id, {
-                  serverId: funFactsConfig[interaction.guild.id].serverId,
-                  channelId: funFactsConfig[interaction.guild.id].channelId,
-                  roleId: funFactsConfig[interaction.guild.id].roleId,
-                  ghostPing: funFactsConfig[interaction.guild.id].ghostPing,
-                  deleteMsgs: funFactsConfig[interaction.guild.id].deleteMsgs,
-                  disabled: false,
-                  setup: {
-                    by: funFactsConfig[interaction.guild.id].setup.by,
-                    at: funFactsConfig[interaction.guild.id].setup.at,
-                  },
-                });
-
-                const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setDescription('Successfully enabled the fun facts in this server')
-                  .setTimestamp()
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
-
-                return await confirmation.update({
-                  embeds: [updatedEmbed],
-                  components: [],
-                });
-              } else if (confirmation.customId == 'funFactsEnableNo') {
-                const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setDescription('Fun facts enable cancelled')
-                  .setTimestamp()
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
-
-                return await confirmation.update({
-                  embeds: [updatedEmbed],
-                  components: [],
-                });
-              }
-            } catch (error) {
-              const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.green)
-                .setDescription('Fun facts enable cancelled')
-                .setTimestamp()
-                .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
-                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                });
-              await interaction.editReply({
-                embeds: [updatedEmbed],
-                components: [],
-              });
-            }
+            await interaction.reply({ embeds: [embed] });
           } else {
             const embed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
@@ -884,7 +704,7 @@ module.exports = {
             },
             {
               name: 'Step 3 Method 1',
-              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the defualt/Most Common config for the bot`,
+              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the default/Most Common config for the bot`,
               inline: false,
             },
             {
@@ -910,7 +730,7 @@ module.exports = {
 
         const row = new ActionRowBuilder().addComponents(invite, quickSetup);
 
-        msg = await interaction.followUp({
+        msg = await interaction.reply({
           embeds: [guideEmbed],
           components: [row],
           ephemeral: true,
@@ -968,7 +788,7 @@ module.exports = {
             },
             {
               name: 'Step 3 Method 1',
-              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the defualt/Most Common config for the bot`,
+              value: `1. Run this command </fun-facts setup-guide:${config.discord.commands['fun-facts']}> in the channel\n3. Click the **__Quick Setup__** button below. This will use the default/Most Common config for the bot`,
               inline: false,
             },
             {

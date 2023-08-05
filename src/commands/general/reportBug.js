@@ -91,8 +91,6 @@ module.exports = {
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
 
-        await interaction.reply({ embeds: [embed] });
-
         const bugReportEmbed = new EmbedBuilder()
           .setColor(config.discord.embeds.red)
           .setTitle(`BUG REPORT`)
@@ -148,6 +146,8 @@ module.exports = {
           content: `<@${config.discord.devId}>`,
           embeds: [bugReportEmbed],
         });
+
+        await interaction.reply({ embeds: [embed], ephemeral: true });
       });
     } catch (error) {
       var errorId = generateID(10);

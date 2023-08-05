@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { blacklistCheck, capitalizeFirstLetter, generateID } = require('../../helperFunctions.js');
+const { capitalizeFirstLetter, generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -14,18 +14,6 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
       if (!interaction.user.id == config.discord.devId) {
         await interaction.reply({ content: 'No Perms?', ephemeral: true });
         return;

@@ -10,18 +10,24 @@
     "ecmaVersion": "latest"
   },
   "globals": {
-    "bot": true,
     "client": true,
-    "minecraftCommandList": true,
-    "uptime": true,
-    "bridgeChat": true
+    "uptime": true
   },
   "rules": {
-    "curly": ["warn", "multi-line", "consistent"],
+    "curly": ["error", "multi-line", "consistent"],
     "no-unused-vars": ["error", { "args": "none" }],
     "prefer-const": ["warn", { "destructuring": "all" }],
     "no-constant-condition": ["error", { "checkLoops": false }],
-    "import/extensions": ["warn", "always", { "ts": "never" }],
-    "no-throw-literal": "error"
+    "import/extensions": ["error", "always", { "ts": "never" }],
+    "no-template-curly-in-string": "error",
+    "no-use-before-define": "error",
+    "no-duplicate-case": "error",
+    "no-throw-literal": "error",
+    "no-self-compare": "error",
+    "no-unreachable": "error",
+    "sort-imports": "error",
+    "sort-vars": "error",
+    "no-empty": "error",
+    "no-undef": "error"
   }
 }

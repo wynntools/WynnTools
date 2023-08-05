@@ -7,8 +7,8 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const { generateStats, generateProfileImage } = require('../../functions/generateImage.js');
-const { blacklistCheck, generateID } = require('../../helperFunctions.js');
 const { getProfiles } = require('../../api/wynnCraftAPI.js');
+const { generateID } = require('../../helperFunctions.js');
 const { getUUID } = require('../../api/mojangAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -23,18 +23,6 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
 

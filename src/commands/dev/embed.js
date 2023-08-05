@@ -1,5 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { generateID, blacklistCheck } = require('../../helperFunctions.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+} = require('discord.js');
+const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
@@ -23,7 +30,7 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('send')
-        .setDescription('send an embed')
+        .setDescription('Send an embed')
         .addStringOption((option) =>
           option.setName('embed').setDescription('The starb.in link for the embed').setRequired(true)
         )
@@ -31,13 +38,13 @@ module.exports = {
           option
             .setName('channel')
             .setDescription('the channel to send your embed in, if empty it will take the current channel')
-            .addChannelTypes(0)
+            .addChannelTypes(ChannelType.GuildText)
         )
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('edit')
-        .setDescription('edit an embed to a new embed')
+        .setDescription('Edit an embed to a new embed')
         .addStringOption((option) =>
           option.setName('message-link').setDescription("The link of the message you'd like to edit").setRequired(true)
         )
@@ -47,15 +54,14 @@ module.exports = {
     try {
       const subcommand = interaction.options.getSubcommand();
       await interaction.deferReply();
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       if (subcommand === 'source') {
-        const messageLink = interaction.options.getString('message-link').split('/');
-        const messageId = messageLink.pop();
-        const channelId = messageLink.pop();
+        const messageLink = interaction.options.getString('message-link');
+        const messageLinkSplit = messageLink.split('/');
+        const messageId = messageLinkSplit.pop();
+        const channelId = messageLinkSplit.pop();
         const channel = await interaction.client.channels.fetch(channelId);
         const message = await channel.messages.fetch(messageId);
         const embedJson = message.embeds;

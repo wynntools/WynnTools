@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { writeAt, blacklistCheck, toFixed, generateID } = require('../../helperFunctions.js');
+const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -12,32 +12,44 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('add')
-        .setDescription('add a user to blacklist')
-        .addUserOption((option) => option.setName('target').setDescription('The user').setRequired(true))
+        .setDescription('Add a user to blacklist')
+        .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
+        .addStringOption((option) => option.setName('target-id').setDescription('The user'))
         .addStringOption((option) => option.setName('reason').setDescription('The reason for blacklisting'))
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('remove')
-        .setDescription('remove a user to blacklist')
-        .addUserOption((option) => option.setName('target').setDescription('The user').setRequired(true))
+        .setDescription('Remove a user to blacklist')
+        .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
+        .addStringOption((option) => option.setName('target-id').setDescription('The user'))
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
 
+      let userMention;
+      let userId;
+      let user;
       var blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
       if (interaction.options.getSubcommand() === 'add') {
-        const user = interaction.options.getMember('target');
+        userMention = interaction.options.getMember('target-mention');
         var reason = interaction.options.getString('reason');
+        userId = interaction.options.getString('target-id');
         if (reason == null) reason = 'No reason provided';
-        if (blacklist[user.id]) {
-          await interaction.reply({ content: 'User is already blacklisted', ephemeral: true });
+        if (userMention == null && userId == null) {
+          await interaction.reply({ content: 'Please provide a user', ephemeral: true });
           return;
+        }
+        if (userMention != null) {
+          user = userMention;
+        } else {
+          user = await interaction.guild.members.fetch(userId);
+        }
+        if (blacklist[user.id]) {
+          return await interaction.reply({ content: 'User is already blacklisted', ephemeral: true });
         }
         var blacklistInfo = {
           id: user.id,
@@ -47,7 +59,16 @@ module.exports = {
         await writeAt('data/blacklist.json', user.id, blacklistInfo);
         await interaction.reply({ content: 'User has been blacklisted', ephemeral: true });
       } else if (interaction.options.getSubcommand() === 'remove') {
-        const user = interaction.options.getMember('target');
+        userMention = interaction.options.getMember('target-mention');
+        userId = interaction.options.getString('target-id');
+        if (userMention == null && userId == null) {
+          return await interaction.reply({ content: 'Please provide a user', ephemeral: true });
+        }
+        if (userMention != null) {
+          user = userMention;
+        } else {
+          user = await interaction.guild.members.fetch(userId);
+        }
         if (!blacklist[user.id]) {
           await interaction.reply({ content: 'User is not blacklisted', ephemeral: true });
           return;
