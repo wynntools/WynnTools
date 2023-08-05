@@ -55,3 +55,8 @@
 ### v1.0.0 🎉🎉
 
 - With the release of v1.0.0 its the full public release of WynnTools.
+
+## Credits
+
+- [WynnCraft API](https://docs.wynncraft.com/)
+- [Pixelic API](https://api.pixelic.de/)
