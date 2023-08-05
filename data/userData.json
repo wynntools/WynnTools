@@ -1,14 +1,14 @@
 {
   "894034804503351366": {
-    "commandsRun": 5,
+    "commandsRun": 6,
     "firstCommand": "1689890965",
-    "lastUpdated": "1690598891",
-    "commands": { "guild": 4, "fun-facts": 1 }
+    "lastUpdated": "1691175780",
+    "commands": { "guild": 5, "fun-facts": 1 }
   },
   "608584543506530314": {
-    "commandsRun": 285,
+    "commandsRun": 291,
     "firstCommand": "1689996034",
-    "lastUpdated": "1691149644",
+    "lastUpdated": "1691203227",
     "commands": {
       "embed": 24,
       "fun-facts": 133,
@@ -18,7 +18,7 @@
       "about": 15,
       "fun-facts-dev": 84,
       "clear-cache": 5,
-      "servers": 16,
+      "servers": 22,
       "stats": 2
     }
   },
@@ -39,5 +39,11 @@
     "firstCommand": "1690604796",
     "lastUpdated": "1690607342",
     "commands": { "fun-facts": 5, "fun-facts-dev": 1 }
+  },
+  "619208257721860108": {
+    "commandsRun": 1,
+    "firstCommand": "1691199840",
+    "lastUpdated": "1691199840",
+    "commands": { "report-bug": 1 }
   }
 }

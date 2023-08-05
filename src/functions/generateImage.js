@@ -1144,7 +1144,6 @@ async function generateGuild(guildData) {
       return canvas.toBuffer('image/png');
     } else {
       ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
-      console.log(guildData.fixedNamed);
       ctx.drawImage(
         await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
         986,
@@ -1647,7 +1646,6 @@ async function generateServers(servers) {
     const ctx = canvas.getContext('2d');
     for (let i = 0; i < 15; i++) {
       const server = servers[i];
-      console.log(serversXY[i]);
 
       ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = `128px Inter`;
@@ -1690,6 +1688,7 @@ async function generateServers(servers) {
 
 async function generateServerChart(data) {
   try {
+    console.time('generateServerChart');
     const timestamps = data.map((entry) => entry.timestamp);
     const playerCounts = data.map((entry) => entry.value);
 
@@ -1769,16 +1768,18 @@ async function generateServerChart(data) {
       .setWidth(1136)
       .setHeight(428);
 
-    var url = await chart.getShortUrl();
-    return url;
+    console.timeLog('generateServerChart');
+    return await chart.getShortUrl();
   } catch (error) {
     console.log(error);
   }
 }
 
 async function generateServerGraph(server) {
+  console.time('generateServerGraph');
   if (generateServerGraphCache.has(server.id)) {
     cacheMessage('Generate Server Graph', 'hit');
+    console.timeLog('generateServerGraph');
     return generateServerGraphCache.get(server.id);
   } else {
     const canvas = createCanvas(1200, 600);
@@ -1790,8 +1791,20 @@ async function generateServerGraph(server) {
     var url = await generateServerChart(data);
 
     ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
+
+    ctx.fillStyle = 'white';
+    ctx.font = `32px Inter`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+      600,
+      520,
+      1136
+    );
     var buffer = canvas.toBuffer('image/png');
     generateServerGraphCache.set(server.id, buffer);
+    console.timeLog('generateServerGraph');
     return buffer;
   }
 }

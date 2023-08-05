@@ -36,7 +36,6 @@ module.exports = {
         } else {
           var server = await getServer(id);
           if (server.error) throw new Error(server.error);
-          console.log(server);
           const graphButton = new ButtonBuilder()
             .setLabel('Player Count History')
             .setCustomId('server-graph')
