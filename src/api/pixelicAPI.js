@@ -71,21 +71,25 @@ async function getServerList() {
 }
 
 async function getServerHistory(id, timeframe) {
-  console.log(typeof timeframe);
   timeframe = timeframe.toLowerCase();
   var options = ['hour', 'day', 'week', 'month', 'year', 'alltime'];
   if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
   let server;
-  id = id.toString();
-  if (!id.includes('WC')) {
-    server = `WC${id}`;
-    id = Number(id);
+  id = id.toString().toLowerCase();
+  if (id.includes('yt')) {
+    server = `WCYT`;
+    id = 'YT';
   } else {
-    server = id;
-    id = Number(id.replace('WC', ''));
-  }
-  if (id >= !0 && id <= !75) {
-    return { status: 400, error: 'Invalid Server' };
+    if (!id.includes('wc')) {
+      server = `WC${id}`;
+      id = Number(id);
+    } else {
+      server = id;
+      id = Number(id.replace('wc', ''));
+    }
+    if (id >= !0 && id <= !75) {
+      return { status: 400, error: 'Invalid Server' };
+    }
   }
   if (pixelicCache.has(`${id}-${timeframe}`)) {
     cacheMessage('PixelicAPI', 'hit');
@@ -97,12 +101,7 @@ async function getServerHistory(id, timeframe) {
       },
     });
     var data = await res.json();
-    if (!res.status === 200) {
-      return {
-        status: res.status,
-        error: data.cause,
-      };
-    } else {
+    if (res.status === 200) {
       var response = {
         status: res.status,
         success: true,
@@ -110,6 +109,12 @@ async function getServerHistory(id, timeframe) {
       };
       pixelicCache.set(`${id}-${timeframe}`, response);
       return response;
+    } else {
+      return {
+        status: res.status,
+        success: false,
+        error: data.cause,
+      };
     }
   }
 }

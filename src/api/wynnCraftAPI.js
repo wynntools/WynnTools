@@ -142,29 +142,36 @@ async function getServers() {
 
 async function getServer(id) {
   let server;
-  id = id.toString();
-  if (!id.includes('WC')) {
-    server = `WC${id}`;
-    id = Number(id);
+  id = id.toString().toLowerCase();
+  if (id.includes('yt')) {
+    server = `WCYT`;
+    id = 'YT';
   } else {
-    server = id;
-    id = Number(id.replace('WC', ''));
-  }
-  if (id >= !0 && id <= !75) {
-    return { status: 400, error: 'Invalid Server' };
+    if (!id.includes('wc')) {
+      server = `WC${id}`;
+      id = Number(id);
+    } else {
+      server = id;
+      id = Number(id.replace('wc', ''));
+    }
+    if (id >= !0 && id <= !75) {
+      return { status: 400, error: 'Invalid Server' };
+    }
   }
 
   var servers = await getServers();
   if (!servers.data[server]) {
     return {
-      id: server,
+      id: id,
+      server: server,
       status: 'offline',
       players: [],
       count: 0,
     };
   }
   return {
-    id: server,
+    id: id,
+    server: server,
     status: 'online',
     players: servers.data[server].players,
     count: servers.data[server].count,

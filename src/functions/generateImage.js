@@ -1389,9 +1389,9 @@ async function generateMemberJoin(data) {
 
 async function generateServer(server) {
   try {
-    if (generateServerCache.has(server.id)) {
+    if (generateServerCache.has(server.server)) {
       cacheMessage('Generate Server', 'hit');
-      return generateServerCache.get(server.id);
+      return generateServerCache.get(server.server);
     } else {
       const canvas = createCanvas(1200, 600);
       const ctx = canvas.getContext('2d');
@@ -1405,7 +1405,7 @@ async function generateServer(server) {
       } else if (server.status === 'offline') {
         ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 96, 118, 256, 256);
       }
-      ctx.fillText(server.id, 514, 169);
+      ctx.fillText(server.server, 514, 169);
       ctx.fillText(server.count, 946, 169);
 
       ctx.font = `32px Inter`;
@@ -1418,7 +1418,7 @@ async function generateServer(server) {
         1136
       );
       var buffer = canvas.toBuffer('image/png');
-      generateServerCache.set(server.id, buffer);
+      generateServerCache.set(server.server, buffer);
       return buffer;
     }
   } catch (error) {
@@ -1646,6 +1646,9 @@ async function generateServers(servers) {
     const ctx = canvas.getContext('2d');
     for (let i = 0; i < 15; i++) {
       const server = servers[i];
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
 
       ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = `128px Inter`;
@@ -1688,19 +1691,21 @@ async function generateServers(servers) {
 
 async function generateServerChart(data) {
   try {
-    console.time('generateServerChart');
-    const timestamps = data.map((entry) => entry.timestamp);
     const playerCounts = data.map((entry) => entry.value);
 
-    // Convert timestamps to relative time in hours
+    const timestamps = data.map((entry) => entry.timestamp);
     const relativeTimes = timestamps.map((timestamp) => getRelativeTime(timestamp, 's'));
+    const modifiedTimes = relativeTimes.map((time) => {
+      const match = time.match(/(\d+) (minutes|hours) ago/);
+      return match ? `-${match[1]}${match[2][0]}` : '';
+    });
 
     const chart = new QuickChart();
     chart
       .setConfig({
         type: 'line',
         data: {
-          labels: relativeTimes,
+          labels: modifiedTimes,
           datasets: [
             {
               label: 'Player Count',
@@ -1725,7 +1730,7 @@ async function generateServerChart(data) {
                 },
                 scaleLabel: {
                   display: true,
-                  labelString: '# Hours ago',
+                  labelString: '# Time ago (H = hours, M = minutes)',
                   fontSize: 16,
                   fontColor: '#ffffff',
                   fontStyle: 'bold',
@@ -1740,6 +1745,8 @@ async function generateServerChart(data) {
                 },
                 ticks: {
                   fontColor: '#ffffff',
+                  min: Math.min(...playerCounts) - 3,
+                  max: Math.max(...playerCounts) + 3,
                   fontSize: 16,
                 },
                 scaleLabel: {
@@ -1768,7 +1775,6 @@ async function generateServerChart(data) {
       .setWidth(1136)
       .setHeight(428);
 
-    console.timeLog('generateServerChart');
     return await chart.getShortUrl();
   } catch (error) {
     console.log(error);
@@ -1776,22 +1782,53 @@ async function generateServerChart(data) {
 }
 
 async function generateServerGraph(server) {
-  console.time('generateServerGraph');
-  if (generateServerGraphCache.has(server.id)) {
+  if (generateServerGraphCache.has(server.server)) {
     cacheMessage('Generate Server Graph', 'hit');
-    console.timeLog('generateServerGraph');
-    return generateServerGraphCache.get(server.id);
+    return generateServerGraphCache.get(server.server);
   } else {
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
 
-    var badData = await getServerHistory(server.id, 'day');
-    var data = await cleanUpTimestampData(badData);
-    var url = await generateServerChart(data);
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    var badData = await getServerHistory(server.server, 'day');
+    if (badData.success) {
+      ctx.font = `16px Inter`;
+      if (server.status === 'online') {
+        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 1078, 48, 32, 32);
+      } else {
+        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 1078, 48, 32, 32);
+      }
+      ctx.fillText(server.server, 1118, 55);
 
-    ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
+      var data = await cleanUpTimestampData(badData);
+      var url = await generateServerChart(data);
 
+      ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
+    } else {
+      ctx.font = `32px Inter`;
+      if (server.status === 'online') {
+        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 525, 88, 64, 64);
+      } else {
+        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 525, 88, 64, 64);
+      }
+      ctx.fillText(server.server, 605, 102);
+      if (badData.error === 'No data was found about the specified server') {
+        const text = `No data was found about\nthe specified server`;
+        const textLines = text.split('\n');
+        ctx.font = '64px Inter';
+        ctx.fillText(textLines[0], 218, 184);
+        ctx.fillText(
+          textLines[1],
+          218 + (ctx.measureText(textLines[0]).width - ctx.measureText(textLines[1]).width) / 2,
+          184 + parseInt(ctx.font, 10)
+        );
+      } else {
+        ctx.fillText(badData.error, 218, 184);
+      }
+    }
     ctx.fillStyle = 'white';
     ctx.font = `32px Inter`;
     ctx.textAlign = 'center';
@@ -1803,8 +1840,7 @@ async function generateServerGraph(server) {
       1136
     );
     var buffer = canvas.toBuffer('image/png');
-    generateServerGraphCache.set(server.id, buffer);
-    console.timeLog('generateServerGraph');
+    generateServerGraphCache.set(server.server, buffer);
     return buffer;
   }
 }
