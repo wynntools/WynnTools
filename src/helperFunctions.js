@@ -73,6 +73,7 @@ async function blacklistCheck(id) {
     return false;
   }
 }
+
 function countLinesAndCharacters(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const lines = fileContent.split('\n');

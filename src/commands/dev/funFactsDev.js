@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { blacklistCheck, generateID, writeAt } = require('../../helperFunctions.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { generateID, writeAt } = require('../../helperFunctions.js');
 const { getUsername } = require('../../api/discordAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -105,8 +105,6 @@ module.exports = {
     }
 
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { blacklistCheck, countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
+const { countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
 const packageJson = require('../../../package.json');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -13,11 +13,6 @@ module.exports = {
     .setDMPermission(false),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
-        throw new Error('No Perms');
-      }
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
       const channel = await interaction.client.channels.fetch(config.discord.channels.stats);
       const message = await channel.messages.fetch(config.discord.messages.stats);

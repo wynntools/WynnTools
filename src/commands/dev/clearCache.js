@@ -7,10 +7,10 @@ const {
 } = require('../../functions/generateImage.js');
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
-const { generateID, blacklistCheck } = require('../../helperFunctions.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
+const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 module.exports = {
@@ -39,18 +39,6 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) {
-        const blacklisted = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
-          .setDescription('You are blacklisted')
-          .setFooter({
-            text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
-          });
-        await interaction.reply({ embeds: [blacklisted], ephemeral: true });
-        return;
-      }
       if (!interaction.user.id == config.discord.devId) {
         await interaction.reply({ content: 'No Perms?' });
         return;

@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { blacklistCheck, countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
+const { countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
 const packageJson = require('../../../package.json');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -10,9 +10,6 @@ module.exports = {
   data: new SlashCommandBuilder().setName('about').setDescription('Shows info about the bot').setDMPermission(false),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
-
       const commands = [];
       fs.readdirSync(path.resolve(__dirname, '../general')).forEach((file) => {
         if (!file.endsWith('.js')) return;

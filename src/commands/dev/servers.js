@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
-const { blacklistCheck, generateID } = require('../../helperFunctions.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
+const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 
@@ -22,8 +22,6 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }

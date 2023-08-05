@@ -6,7 +6,7 @@ const {
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
-const { generateID, blacklistCheck } = require('../../helperFunctions.js');
+const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
@@ -54,15 +54,14 @@ module.exports = {
     try {
       const subcommand = interaction.options.getSubcommand();
       await interaction.deferReply();
-      var blacklistTest = await blacklistCheck(interaction.user.id);
-      if (blacklistTest) throw new Error('You are blacklisted');
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       if (subcommand === 'source') {
-        const messageLink = interaction.options.getString('message-link').split('/');
-        const messageId = messageLink.pop();
-        const channelId = messageLink.pop();
+        const messageLink = interaction.options.getString('message-link');
+        const messageLinkSplit = messageLink.split('/');
+        const messageId = messageLinkSplit.pop();
+        const channelId = messageLinkSplit.pop();
         const channel = await interaction.client.channels.fetch(channelId);
         const message = await channel.messages.fetch(messageId);
         const embedJson = message.embeds;

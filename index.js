@@ -9,8 +9,8 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const { discordMessage, commandMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { writeAt, toFixed, generateID, blacklistCheck } = require('./src/helperFunctions.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
-const { writeAt, toFixed, generateID } = require('./src/helperFunctions.js');
 const { generateMemberJoin } = require('./src/functions/generateImage.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const config = require('./config.json');
@@ -108,6 +108,17 @@ async function start() {
             commandMessage(
               `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
             );
+          }
+          var blacklistTest = await blacklistCheck(interaction.user.id);
+          if (blacklistTest) {
+            const blacklisted = new EmbedBuilder()
+              .setColor(config.discord.embeds.red)
+              .setDescription('You are blacklisted')
+              .setFooter({
+                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              });
+            return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
           }
           await command.execute(interaction);
         } catch (error) {
