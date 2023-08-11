@@ -1,1 +1,51 @@
-{"894034804503351366":{"commandsRun":12,"firstCommand":"1689890965","lastUpdated":"1691545900","commands":{"guild":5,"fun-facts":1,"about":1,"user":1,"stats":4}},"608584543506530314":{"commandsRun":200,"firstCommand":"1689996034","lastUpdated":"1691717417","commands":{"embed":28,"fun-facts":46,"user":5,"update-stats":4,"report-bug":2,"about":19,"fun-facts-dev":24,"clear-cache":6,"servers":49,"stats":10,"guild":4,"blacklist":3}},"501976955998961664":{"commandsRun":3,"firstCommand":"1690189233","lastUpdated":"1690189405","commands":{"fun-facts":3}},"964967961263767652":{"commandsRun":2,"firstCommand":"1690284549","lastUpdated":"1690285115","commands":{"fun-facts":2}},"933349617054126110":{"commandsRun":6,"firstCommand":"1690604796","lastUpdated":"1690607342","commands":{"fun-facts":5,"fun-facts-dev":1}},"619208257721860108":{"commandsRun":1,"firstCommand":"1691199840","lastUpdated":"1691199840","commands":{"report-bug":1}}}
+{
+  "894034804503351366": {
+    "commandsRun": 12,
+    "firstCommand": "1689890965",
+    "lastUpdated": "1691545900",
+    "commands": { "guild": 5, "fun-facts": 1, "about": 1, "user": 1, "stats": 4 }
+  },
+  "608584543506530314": {
+    "commandsRun": 200,
+    "firstCommand": "1689996034",
+    "lastUpdated": "1691717417",
+    "commands": {
+      "embed": 28,
+      "fun-facts": 46,
+      "user": 5,
+      "update-stats": 4,
+      "report-bug": 2,
+      "about": 19,
+      "fun-facts-dev": 24,
+      "clear-cache": 6,
+      "servers": 49,
+      "stats": 10,
+      "guild": 4,
+      "blacklist": 3
+    }
+  },
+  "501976955998961664": {
+    "commandsRun": 3,
+    "firstCommand": "1690189233",
+    "lastUpdated": "1690189405",
+    "commands": { "fun-facts": 3 }
+  },
+  "964967961263767652": {
+    "commandsRun": 2,
+    "firstCommand": "1690284549",
+    "lastUpdated": "1690285115",
+    "commands": { "fun-facts": 2 }
+  },
+  "933349617054126110": {
+    "commandsRun": 6,
+    "firstCommand": "1690604796",
+    "lastUpdated": "1690607342",
+    "commands": { "fun-facts": 5, "fun-facts-dev": 1 }
+  },
+  "619208257721860108": {
+    "commandsRun": 1,
+    "firstCommand": "1691199840",
+    "lastUpdated": "1691199840",
+    "commands": { "report-bug": 1 }
+  }
+}
