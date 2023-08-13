@@ -6,23 +6,17 @@
     "commands": { "guild": 5, "fun-facts": 1, "about": 1, "user": 1, "stats": 4 }
   },
   "608584543506530314": {
-    "commandsRun": 230,
+    "commandsRun": 71,
     "firstCommand": "1689996034",
     "lastUpdated": "1691904063",
     "commands": {
-      "embed": 28,
-      "fun-facts": 46,
+      "fun-facts": 23,
       "user": 8,
       "update-stats": 4,
       "report-bug": 2,
       "about": 19,
-      "fun-facts-dev": 24,
-      "clear-cache": 6,
-      "servers": 59,
       "stats": 11,
-      "guild": 4,
-      "blacklist": 3,
-      "register": 16
+      "guild": 4
     }
   },
   "501976955998961664": {
