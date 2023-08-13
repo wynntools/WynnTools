@@ -79,15 +79,18 @@ module.exports = {
         await interaction.editReply(link + '.json');
       } else if (subcommand === 'send') {
         const embedInput = interaction.options.getString('embed');
-        if (embedInput.startsWith('https://starb.in')) {
+        const validHosts = ['starb.in'];
+        if (validHosts.some((host) => embedInput.startsWith(`https://${host}`))) {
+          const pathSegments = embedInput.split('/');
+          if (!pathSegments.length >= 4 && pathSegments[3] === 'raw') return;
+          const rawPath = pathSegments.slice(4).join('/');
+          const url = `http://${validHosts[0]}/raw/${rawPath}`;
+
+          // Proceed with using the sanitized URL
           const fetch = (...args) =>
             import('node-fetch')
               .then(({ default: fetch }) => fetch(...args))
               .catch((err) => console.log(err));
-
-          // const url = embedInput.replace(/starb.in/g, "starb.in/raw");
-          const url = `http://starb.in/raw/${embedInput.split('.')[1].split('/')[1]}`;
-          // console.log(url);
 
           const response = await fetch(url);
           const data = await response.text();
