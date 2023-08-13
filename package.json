@@ -18,7 +18,7 @@
     "canvas": "^2.11.2",
     "chart.js": "^4.3.3",
     "cli-color": "^2.0.3",
-    "discord.js": "^14.11.0",
+    "discord.js": "^14.12.1",
     "fs-extra": "^11.1.1",
     "hastebin": "^0.2.1",
     "moment": "^2.29.4",
@@ -33,7 +33,6 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
     "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^3.0.1",
     "prettier": "3.0.1"
   }
 }

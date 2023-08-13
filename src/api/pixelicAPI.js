@@ -24,16 +24,18 @@ async function register(uuid) {
         'X-API-Key': config.api.pixelicAPIKey,
       },
     });
-    if (!res.status === 200) {
+    console.log(res.status);
+    if (res.status === 201) {
+      return {
+        status: res.status,
+        success: true,
+        info: 'Registered',
+      };
+    } else {
       var data = await res.json();
       return {
         status: res.status,
         error: data.cause,
-      };
-    } else {
-      return {
-        status: res.status,
-        success: true,
       };
     }
   } catch (error) {
@@ -43,79 +45,155 @@ async function register(uuid) {
 }
 
 async function getServerList() {
-  if (pixelicCache.has('serverList')) {
-    cacheMessage('PixelicAPI', 'hit');
-    return pixelicCache.get('serverList');
-  } else {
-    var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/list`, {
-      headers: {
-        'X-API-Key': config.api.pixelicAPIKey,
-      },
-    });
-    var data = await res.json();
-    if (!res.status === 200) {
-      return {
-        status: res.status,
-        error: data.cause,
-      };
+  try {
+    if (pixelicCache.has('serverList')) {
+      cacheMessage('PixelicAPI', 'hit');
+      return pixelicCache.get('serverList');
     } else {
-      console.log(data);
-      var response = {
-        status: res.status,
-        success: true,
-      };
-      pixelicCache.set('serverList', response);
-      return response;
+      var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/list`, {
+        headers: {
+          'X-API-Key': config.api.pixelicAPIKey,
+        },
+      });
+      var data = await res.json();
+      if (!res.status === 200) {
+        return {
+          status: res.status,
+          error: data.cause,
+        };
+      } else {
+        console.log(data);
+        var response = {
+          status: res.status,
+          success: true,
+        };
+        pixelicCache.set('serverList', response);
+        return response;
+      }
     }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 }
 
 async function getServerHistory(id, timeframe) {
-  timeframe = timeframe.toLowerCase();
-  var options = ['hour', 'day', 'week', 'month', 'year', 'alltime'];
-  if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
-  let server;
-  id = id.toString().toLowerCase();
-  if (id.includes('yt')) {
-    server = `WCYT`;
-    id = 'YT';
-  } else {
-    if (!id.includes('wc')) {
-      server = `WC${id}`;
-      id = Number(id);
+  try {
+    timeframe = timeframe.toLowerCase();
+    var options = ['hour', 'day', 'week', 'month', 'year', 'alltime'];
+    if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
+    let server;
+    id = id.toString().toLowerCase();
+    if (id.includes('yt')) {
+      server = `WCYT`;
+      id = 'YT';
     } else {
-      server = id;
-      id = Number(id.replace('wc', ''));
+      if (!id.includes('wc')) {
+        server = `WC${id}`;
+        id = Number(id);
+      } else {
+        server = id;
+        id = Number(id.replace('wc', ''));
+      }
+      if (id >= !0 && id <= !75) {
+        return { status: 400, error: 'Invalid Server' };
+      }
     }
-    if (id >= !0 && id <= !75) {
-      return { status: 400, error: 'Invalid Server' };
+    if (pixelicCache.has(`${id}-${timeframe}`)) {
+      cacheMessage('PixelicAPI', 'hit');
+      return pixelicCache.get(`${id}-${timeframe}`);
+    } else {
+      var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/${server}/${timeframe}`, {
+        headers: {
+          'X-API-Key': config.api.pixelicAPIKey,
+        },
+      });
+      var data = await res.json();
+      if (res.status === 200) {
+        var response = {
+          status: res.status,
+          success: true,
+          data: data.data,
+        };
+        pixelicCache.set(`${id}-${timeframe}`, response);
+        return response;
+      } else {
+        return {
+          status: res.status,
+          success: false,
+          error: data.cause,
+        };
+      }
     }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
-  if (pixelicCache.has(`${id}-${timeframe}`)) {
-    cacheMessage('PixelicAPI', 'hit');
-    return pixelicCache.get(`${id}-${timeframe}`);
-  } else {
-    var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/${server}/${timeframe}`, {
-      headers: {
-        'X-API-Key': config.api.pixelicAPIKey,
-      },
-    });
-    var data = await res.json();
-    if (res.status === 200) {
-      var response = {
-        status: res.status,
-        success: true,
-        data: data.data,
+}
+
+async function getServerUptimes() {
+  try {
+    if (pixelicCache.has('serverUptimes')) {
+      cacheMessage('PixelicAPI', 'hit');
+      return pixelicCache.get('serverUptimes');
+    } else {
+      var res = await fetch(`https://api.pixelic.de/wynncraft/v1/server/list/uptime`, {
+        headers: {
+          'X-API-Key': config.api.pixelicAPIKey,
+        },
+      });
+      var data = await res.json();
+      if (res.status === 200) {
+        var response = {
+          status: res.status,
+          success: true,
+          servers: data.servers,
+        };
+        pixelicCache.set('serverUptimes', response);
+        return response;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+async function getServerUptime(id) {
+  try {
+    let serverName;
+    id = id.toString().toLowerCase();
+    if (id.includes('yt')) {
+      serverName = `YT`;
+      id = 'YT';
+    } else {
+      if (!id.includes('wc')) {
+        serverName = `WC${id}`;
+        id = Number(id);
+      } else {
+        serverName = id.toUpperCase();
+        id = Number(id.replace('wc', ''));
+      }
+      if (id >= !0 && id <= !75) {
+        return { status: 400, error: 'Invalid Server' };
+      }
+    }
+    var servers = await getServerUptimes();
+    var server = servers.servers.find((server) => server.name === serverName);
+    if (server) {
+      return {
+        name: server.name,
+        onlineSince: server.onlineSince,
       };
-      pixelicCache.set(`${id}-${timeframe}`, response);
-      return response;
     } else {
       return {
-        status: res.status,
-        success: false,
-        error: data.cause,
+        name: serverName,
+        offlineSince: null,
       };
     }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 }
 
@@ -127,6 +205,8 @@ async function clearPixelicCache() {
 module.exports = {
   register,
   getServerList,
-  clearPixelicCache,
   getServerHistory,
+  getServerUptimes,
+  getServerUptime,
+  clearPixelicCache,
 };
