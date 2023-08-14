@@ -9,6 +9,7 @@ const {
 const { generateStats, generateProfileImage } = require('../../functions/generateImage.js');
 const { getProfiles } = require('../../api/wynnCraftAPI.js');
 const { generateID } = require('../../helperFunctions.js');
+const { register } = require('../../api/pixelicAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
@@ -56,6 +57,7 @@ module.exports = {
           components: [row],
         });
       });
+      await register(uuid);
     } catch (error) {
       var errorId = generateID(10);
       errorMessage(`Error Id - ${errorId}`);

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { generateGuild } = require('../../functions/generateImage.js');
+const { registerGuild } = require('../../api/pixelicAPI.js');
 const { generateID } = require('../../helperFunctions.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
@@ -20,6 +21,7 @@ module.exports = {
       if (guild.status != 200) {
         await interaction.editReply({ content: guild.error });
       } else {
+        await registerGuild(guild);
         await interaction.editReply({ files: [await generateGuild(guild)] });
       }
     } catch (error) {

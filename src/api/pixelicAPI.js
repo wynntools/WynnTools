@@ -1,3 +1,4 @@
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { cacheMessage } = require('../logger.js');
 const config = require('../../config.json');
@@ -14,7 +15,7 @@ async function register(uuid) {
   try {
     var check = await validateUUID(uuid);
     if (!check) {
-      await getUUID(uuid).then((res) => (uuid = res));
+      await getUUID(uuid);
       check = await validateUUID(uuid);
     }
     if (!check) return { status: 400, error: 'Invalid UUID' };
@@ -39,6 +40,22 @@ async function register(uuid) {
   } catch (error) {
     console.log(error);
     return error;
+  }
+}
+
+async function registerGuild(guild) {
+  try {
+    var members = guild.members.map((member) => member.uuid);
+    var chunks = [];
+    while (members.length) {
+      chunks.push(members.splice(0, 20));
+    }
+    for (const chunk of chunks) {
+      await Promise.all(chunk.map((uuid) => register(uuid)));
+      await delay(60000);
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -119,6 +136,40 @@ async function getServerHistory(id, timeframe) {
   }
 }
 
+async function getHistoryStats(uuid, timeframe) {
+  try {
+    var check = await validateUUID(uuid);
+    if (!check) {
+      await getUUID(uuid);
+      check = await validateUUID(uuid);
+    }
+    timeframe = timeframe.toLowerCase();
+    var options = ['daily', 'weekly', 'monthly'];
+    if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
+    var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/history/${timeframe}`, {
+      headers: {
+        'X-API-Key': config.api.pixelicAPIKey,
+      },
+    });
+    var data = await res.json();
+    if (!res.status === 200) {
+      return {
+        status: res.status,
+        error: data.cause,
+      };
+    } else {
+      return {
+        status: res.status,
+        success: true,
+        data: data.data,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 async function clearPixelicCache() {
   cacheMessage('PixelicAPI', 'Cleared');
   pixelicCache.flushAll();
@@ -126,7 +177,9 @@ async function clearPixelicCache() {
 
 module.exports = {
   register,
+  registerGuild,
   getServerList,
-  clearPixelicCache,
   getServerHistory,
+  getHistoryStats,
+  clearPixelicCache,
 };
