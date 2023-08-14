@@ -74,32 +74,9 @@ async function start() {
         const command = client.commands.get(interaction.commandName);
 
         if (!command) return;
+
+        // ! logging
         try {
-          var userData = JSON.parse(fs.readFileSync('data/userData.json'));
-          let data;
-          if (userData[interaction.user.id]) {
-            data = {
-              commandsRun: userData[interaction.user.id].commandsRun + 1,
-              firstCommand: userData[interaction.user.id].firstCommand,
-              lastUpdated: toFixed(new Date().getTime() / 1000, 0),
-              commands: userData[interaction.user.id].commands,
-            };
-            const commands = data.commands;
-            if (commands[interaction.commandName]) {
-              commands[interaction.commandName]++;
-            } else {
-              commands[interaction.commandName] = 1;
-            }
-            await writeAt('data/userData.json', interaction.user.id, data);
-          } else {
-            data = {
-              commandsRun: 1,
-              firstCommand: toFixed(new Date().getTime() / 1000, 0),
-              lastUpdated: toFixed(new Date().getTime() / 1000, 0),
-              commands: { [interaction.commandName]: 1 },
-            };
-            await writeAt('data/userData.json', interaction.user.id, data);
-          }
           if (interaction.user.discriminator == '0') {
             commandMessage(
               `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`
@@ -109,6 +86,45 @@ async function start() {
               `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
             );
           }
+        } catch (error) {
+          console.log(error);
+        }
+
+        // ! Command Tracking
+        try {
+          if (!config.discord.channels.noCommandTracking.includes(interaction.channel.id)) {
+            var userData = JSON.parse(fs.readFileSync('data/userData.json'));
+            let data;
+            if (userData[interaction.user.id]) {
+              data = {
+                commandsRun: userData[interaction.user.id].commandsRun + 1,
+                firstCommand: userData[interaction.user.id].firstCommand,
+                lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+                commands: userData[interaction.user.id].commands,
+              };
+              const commands = data.commands;
+              if (commands[interaction.commandName]) {
+                commands[interaction.commandName]++;
+              } else {
+                commands[interaction.commandName] = 1;
+              }
+              await writeAt('data/userData.json', interaction.user.id, data);
+            } else {
+              data = {
+                commandsRun: 1,
+                firstCommand: toFixed(new Date().getTime() / 1000, 0),
+                lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+                commands: { [interaction.commandName]: 1 },
+              };
+              await writeAt('data/userData.json', interaction.user.id, data);
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        // ! blacklist check / command execution
+        try {
           var blacklistTest = await blacklistCheck(interaction.user.id);
           if (blacklistTest) {
             const blacklisted = new EmbedBuilder()

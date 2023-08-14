@@ -1,8 +1,7 @@
 const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('../helperFunctions.js');
+const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
-const { getServerHistory } = require('../api/pixelicAPI.js');
-const { getDisplayName } = require('../api/discordAPI.js');
 const { AttachmentBuilder } = require('discord.js');
 const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
@@ -1336,6 +1335,7 @@ async function generateGuild(guildData) {
 async function generateMemberJoin(data) {
   try {
     var member = data.user;
+    console.log(member);
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
 
@@ -1358,15 +1358,14 @@ async function generateMemberJoin(data) {
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    var displayName = await getDisplayName(member.id);
-    if (displayName === null) {
+    if (member.globalName === null || member.globalName === member.username) {
       ctx.font = `96px Inter`;
       ctx.fillText(`@${member.username}`, 448, 171);
       ctx.font = `48px Inter`;
       ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
     } else {
       ctx.font = `96px Inter`;
-      ctx.fillText(await displayName, 448, 130);
+      ctx.fillText(member.globalName, 448, 130);
       ctx.font = `48px Inter`;
       ctx.fillText(`@${member.username}`, 448, 229);
       ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
@@ -1407,6 +1406,9 @@ async function generateServer(server) {
       }
       ctx.fillText(server.server, 514, 169);
       ctx.fillText(server.count, 946, 169);
+      var uptime = await getServerUptime(server.server);
+      ctx.font = `48px Inter`;
+      ctx.fillText(`Uptime - ${getRelativeTime(uptime.onlineSince, 's')}`, 347, 374);
 
       ctx.font = `32px Inter`;
       ctx.textAlign = 'center';
