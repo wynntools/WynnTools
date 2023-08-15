@@ -7,8 +7,9 @@ const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
 var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null)
+if (!config.other.timezone == null) {
   timezoneStuff = { scheduled: true, timezone: config.other.timezone };
+}
 cron.schedule(
   '*/5 * * * *',
   async function () {

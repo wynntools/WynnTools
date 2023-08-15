@@ -6,8 +6,9 @@ const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
 var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null)
+if (!config.other.timezone == null) {
   timezoneStuff = { scheduled: true, timezone: config.other.timezone };
+}
 var num = 0;
 const commands = [];
 fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
