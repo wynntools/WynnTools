@@ -214,13 +214,52 @@ function generateID(length) {
   return result;
 }
 
-async function cleanUpTimestampData(data) {
+async function cleanUpTimestampData(data, inputTimeframe) {
   try {
-    const twelveHoursAgo = Math.floor(Date.now() / 1000) - 12 * 60 * 60;
-    const filteredData = data.data.filter((entry) => {
-      return entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0;
-    });
-    return filteredData;
+    console.log(inputTimeframe);
+    if (inputTimeframe === '12h') {
+      const twelveHoursAgo = Math.floor(Date.now() / 1000) - 12 * 60 * 60;
+      const filteredData = data.data.filter((entry) => {
+        return entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getUTCMinutes() === 0;
+      });
+      return filteredData;
+    } else if (inputTimeframe === '7d') {
+      const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+      const filteredData = data.data.filter((entry) => {
+        return (
+          entry.timestamp >= sevenDaysAgo &&
+          new Date(entry.timestamp * 1000).getUTCHours() === 0 &&
+          new Date(entry.timestamp * 1000).getUTCMinutes() === 0
+        );
+      });
+      return filteredData;
+    } else if (inputTimeframe === '14d') {
+      const now = new Date();
+      const fourteenDaysAgo = new Date(now);
+      fourteenDaysAgo.setUTCDate(now.getUTCDate() - 14);
+      const fourteenDaysAgoTimestamp = Math.floor(fourteenDaysAgo.getTime() / 1000);
+      const filteredData = data.data.filter((entry) => {
+        return (
+          entry.timestamp >= fourteenDaysAgoTimestamp &&
+          new Date(entry.timestamp * 1000).getUTCHours() === 0 &&
+          new Date(entry.timestamp * 1000).getUTCMinutes() === 0
+        );
+      });
+      return filteredData;
+    } else if (inputTimeframe === '30d') {
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setUTCDate(now.getUTCDate() - 30);
+      const thirtyDaysAgoTimestamp = Math.floor(thirtyDaysAgo.getTime() / 1000);
+      const filteredData = data.data.filter((entry) => {
+        return (
+          entry.timestamp >= thirtyDaysAgoTimestamp &&
+          new Date(entry.timestamp * 1000).getUTCHours() === 0 &&
+          new Date(entry.timestamp * 1000).getUTCMinutes() === 0
+        );
+      });
+      return filteredData;
+    }
   } catch (error) {
     console.log(error);
   }

@@ -26,6 +26,7 @@ module.exports = {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
+      let row = null;
       if (subcommand === 'get') {
         var id = interaction.options.getString('server-id');
         if (id === null) {
@@ -39,7 +40,7 @@ module.exports = {
             .setCustomId('server-graph')
             .setStyle(ButtonStyle.Primary);
 
-          const row = new ActionRowBuilder().addComponents(graphButton);
+          row = new ActionRowBuilder().addComponents(graphButton);
 
           var msg = await interaction.reply({ files: [await generateServer(server)], components: [row] });
           const collectorFilter = (i) => i.user.id === interaction.user.id;
@@ -47,7 +48,29 @@ module.exports = {
             const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
             if (confirmation.customId == 'server-graph') {
               await confirmation.update({ components: [] });
-              await interaction.editReply({ files: [await generateServerGraph(server)] });
+
+              const graphButton12h = new ButtonBuilder()
+                .setLabel('12h')
+                .setCustomId('server-graph-12h')
+                .setStyle(ButtonStyle.Primary);
+
+              const graphButton7d = new ButtonBuilder()
+                .setLabel('7d')
+                .setCustomId('server-graph-7d')
+                .setStyle(ButtonStyle.Primary);
+
+              const graphButton14d = new ButtonBuilder()
+                .setLabel('14d')
+                .setCustomId('server-graph-14d')
+                .setStyle(ButtonStyle.Primary);
+
+              const graphButton30d = new ButtonBuilder()
+                .setLabel('30d')
+                .setCustomId('server-graph-30d')
+                .setStyle(ButtonStyle.Primary);
+
+              row = new ActionRowBuilder().addComponents(graphButton12h, graphButton7d, graphButton14d, graphButton30d);
+              await interaction.editReply({ files: [await generateServerGraph(server, '12h')], components: [row] });
             }
           } catch (error) {
             console.log(error);

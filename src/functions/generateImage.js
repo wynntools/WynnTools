@@ -1783,8 +1783,8 @@ async function generateServerChart(data) {
   }
 }
 
-async function generateServerGraph(server) {
-  if (generateServerGraphCache.has(server.server)) {
+async function generateServerGraph(server, timeframe) {
+  if (generateServerGraphCache.has(`${server.server}-${timeframe}`)) {
     cacheMessage('Generate Server Graph', 'hit');
     return generateServerGraphCache.get(server.server);
   } else {
@@ -1795,7 +1795,18 @@ async function generateServerGraph(server) {
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    var badData = await getServerHistory(server.server, 'day');
+    let inputTimeframe = null;
+    if (timeframe === '12h') {
+      inputTimeframe = '12h';
+      timeframe = 'day';
+    } else if (timeframe === '14d') {
+      inputTimeframe = '14d';
+      timeframe = 'month';
+    } else if (timeframe === '30d') {
+      inputTimeframe = '30d';
+      timeframe = 'month';
+    }
+    var badData = await getServerHistory(server.server, timeframe);
     if (badData.success) {
       ctx.font = `16px Inter`;
       if (server.status === 'online') {
@@ -1805,7 +1816,7 @@ async function generateServerGraph(server) {
       }
       ctx.fillText(server.server, 1118, 55);
 
-      var data = await cleanUpTimestampData(badData);
+      var data = await cleanUpTimestampData(badData, inputTimeframe);
       var url = await generateServerChart(data);
 
       ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
@@ -1842,7 +1853,7 @@ async function generateServerGraph(server) {
       1136
     );
     var buffer = canvas.toBuffer('image/png');
-    generateServerGraphCache.set(server.server, buffer);
+    generateServerGraphCache.set(`${server.server}-${timeframe}`, buffer);
     return buffer;
   }
 }
