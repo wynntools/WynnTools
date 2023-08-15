@@ -6,19 +6,19 @@ const config = require('../../config.json');
 const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
-
 var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null) timezoneStuff = { scheduled: true, timezone: config.other.timezone };
-
+if (!config.other.timezone == null)
+  timezoneStuff = { scheduled: true, timezone: config.other.timezone };
 cron.schedule(
   '*/5 * * * *',
   async function () {
     try {
       scriptMessage('Updating stats embed/message');
-      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
+      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(
+        process.cwd()
+      );
       const channel = await client.channels.fetch(config.discord.channels.stats);
       const message = await channel.messages.fetch(config.discord.messages.stats);
-
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var totalCommandsRun = 0;
       for (const entry in userData) {
@@ -30,23 +30,21 @@ cron.schedule(
         if (file.toLowerCase().includes('disabled')) return;
         genCommands.push(file);
       });
-
       const devCommands = [];
       fs.readdirSync(path.resolve(__dirname, '../commands/dev')).forEach((file) => {
         if (!file.endsWith('.js')) return;
         if (file.toLowerCase().includes('disabled')) return;
         devCommands.push(file);
       });
-
-      const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
-
+      const invite = new ButtonBuilder()
+        .setLabel('invite')
+        .setURL(config.discord.botInvite)
+        .setStyle(ButtonStyle.Link);
       const source = new ButtonBuilder()
         .setLabel('source')
         .setURL('https://github.com/Kathund/WynnTools')
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(invite, source);
-
       var embed = new EmbedBuilder()
         .setTitle(`WynnTools Stats`)
         .setColor(config.discord.embeds.green)
@@ -71,13 +69,16 @@ cron.schedule(
             )}\`\nCharacters - \`${addNotation(
               'oneLetters',
               totalCharacters
-            )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
+            )}\`\nCharacters with out spaces - \`${addNotation(
+              'oneLetters',
+              totalCharacters - totalWhitespace
+            )}\``,
             inline: true,
           }
         )
         .setFooter({
           text: `by @kathund | Stats maybe inaccurate/outdated/cached`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          iconURL: config.other.logo,
         });
       await message.edit({ embeds: [embed], components: [row] });
     } catch (error) {

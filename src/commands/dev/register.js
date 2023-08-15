@@ -1,22 +1,32 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const { register, registerGuild } = require('../../api/pixelicAPI.js');
 const { getUsername, getUUID } = require('../../api/mojangAPI.js');
 const { generateID } = require('../../helperFunctions.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('register')
     .setDMPermission(false)
     .setDescription('Register a someone to the pixelic api')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('player')
         .setDescription('Register a player to the pixelic api')
         .addStringOption((option) =>
-          option.setName('username').setDescription('The Username of the person you want to register').setRequired(true)
+          option
+            .setName('username')
+            .setDescription('The Username of the person you want to register')
+            .setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -27,10 +37,13 @@ module.exports = {
           option.setName('guild').setDescription('The guild you want to register').setRequired(true)
         )
     ),
-
   async execute(interaction) {
     try {
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+      if (
+        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
+          config.discord.roles.dev
+        )
+      ) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
@@ -58,7 +71,6 @@ module.exports = {
             text: `by @kathund | ${config.discord.supportInvite} for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
-
         return await interaction.reply({ embeds: [embed] });
       } else if (subcommand === 'guild') {
         var guildName = interaction.options.getString('guild');
@@ -71,7 +83,6 @@ module.exports = {
             text: `by @kathund | ${config.discord.supportInvite} for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
-
         await interaction.reply({ embeds: [embed] });
         registerData = await registerGuild(guild);
         embed = new EmbedBuilder()
@@ -82,7 +93,6 @@ module.exports = {
             text: `by @kathund | ${config.discord.supportInvite} for support`,
             iconURL: 'https://i.imgur.com/uUuZx2E.png',
           });
-
         return await interaction.editReply({ embeds: [embed] });
       }
     } catch (error) {
@@ -95,20 +105,19 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error
+            .toString()
+            .replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
           iconURL: 'https://i.imgur.com/uUuZx2E.png',
         });
-
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

@@ -8,7 +8,13 @@ const {
   EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { discordMessage, commandMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const {
+  discordMessage,
+  commandMessage,
+  scriptMessage,
+  warnMessage,
+  errorMessage,
+} = require('./src/logger.js');
 const { writeAt, toFixed, generateID, blacklistCheck } = require('./src/helperFunctions.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const { generateMemberJoin } = require('./src/functions/generateImage.js');
@@ -16,14 +22,13 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
-
 async function start() {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
-
+  const client = new Client({
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  });
   client.commands = new Collection();
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
-
   for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
@@ -33,21 +38,19 @@ async function start() {
       if ('data' in command && 'execute' in command) {
         client.commands.set(command.data.name, command);
       } else {
-        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+        warnMessage(
+          `The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
       }
     }
   }
-
   deployCommands();
   deployDevCommands();
-
   await delay(3000);
-
   client.once(Events.ClientReady, async () => {
     global.uptime = toFixed(new Date().getTime() / 1000, 0);
     global.client = client;
     discordMessage(`Client Logged in as ${client.user.tag}`);
-
     const scriptFiles = fs.readdirSync('./src/scripts').filter((file) => file.endsWith('.js'));
     scriptMessage(`Found ${scriptFiles.length} scripts and running them all`);
     var skipped = 0;
@@ -65,17 +68,15 @@ async function start() {
         console.log(error);
       }
     }
-    scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
+    scriptMessage(
+      `Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`
+    );
   });
-
   client.on(Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
         const command = client.commands.get(interaction.commandName);
-
         if (!command) return;
-
-        // ! logging
         try {
           if (interaction.user.discriminator == '0') {
             commandMessage(
@@ -89,8 +90,6 @@ async function start() {
         } catch (error) {
           console.log(error);
         }
-
-        // ! Command Tracking
         try {
           if (!config.discord.channels.noCommandTracking.includes(interaction.channel.id)) {
             var userData = JSON.parse(fs.readFileSync('data/userData.json'));
@@ -122,8 +121,6 @@ async function start() {
         } catch (error) {
           console.log(error);
         }
-
-        // ! blacklist check / command execution
         try {
           var blacklistTest = await blacklistCheck(interaction.user.id);
           if (blacklistTest) {
@@ -132,7 +129,7 @@ async function start() {
               .setDescription('You are blacklisted')
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
-                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
           }
@@ -145,23 +142,22 @@ async function start() {
               ephemeral: true,
             });
           } else {
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.reply({
+              content: 'There was an error while executing this command!',
+              ephemeral: true,
+            });
           }
         }
       }
-
       if (interaction.isButton()) {
         try {
-          // ? Setup Guide for Fun Facts
           if (interaction.customId.includes('setupGuideFunFacts')) {
             const setupGuideCommand = interaction.client.commands.get('fun-facts');
-
             if (setupGuideCommand === undefined) {
               throw new Error(
                 'Setup guide command is missing. Please make a bug report or join the support server and make a ticket'
               );
             }
-
             await setupGuideCommand.execute(interaction);
           }
         } catch (error) {
@@ -170,7 +166,6 @@ async function start() {
             content: 'There was an error while executing this command!',
             ephemeral: true,
           });
-
           var errorId = generateID(10);
           errorMessage(`Error Id - ${errorId}`);
           console.log(error);
@@ -180,20 +175,19 @@ async function start() {
             .setDescription(
               `Use </report-bug:${
                 config.discord.commands['report-bug']
-              }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+              }> to report it\nError id - ${errorId}\nError Info - \`${error
+                .toString()
+                .replaceAll('Error: ', '')}\``
             )
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           const supportDisc = new ButtonBuilder()
             .setLabel('Support Discord')
             .setURL(config.discord.supportInvite)
             .setStyle(ButtonStyle.Link);
-
           const row = new ActionRowBuilder().addComponents(supportDisc);
-
           await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
         }
       }
@@ -201,7 +195,27 @@ async function start() {
       console.log(error);
     }
   });
-
+  client.on(Events.MessageCreate, async (message) => {
+    try {
+      if (message.author.bot) return;
+      if (message.channel.type === 'DM') return;
+      if (config.discord.pain.servers.includes(message.guild.id)) {
+        if (
+          message.content.toLowerCase().startsWith("i'm") |
+          message.content.toLowerCase().startsWith('i am') |
+          message.content.toLowerCase().startsWith('im') |
+          message.content.toLowerCase().startsWith('i’m')
+        ) {
+          message.reply(`Hi ${message.content.slice(message.content.indexOf(' ') + 1)}, I'm dad!`);
+        }
+      }
+      if (config.discord.pain.users.includes(message.author.id)) {
+        message.react('🤡');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
   client.on(Events.GuildMemberAdd, async (member) => {
     try {
       if (member.guild.id != config.discord.devServer) return;
@@ -214,7 +228,6 @@ async function start() {
       console.log(error);
     }
   });
-
   client.login(config.discord.token);
 }
 start();

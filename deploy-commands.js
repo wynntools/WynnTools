@@ -3,13 +3,11 @@ const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
-
 function deployCommands() {
   const commands = [];
   let skipped = 0;
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
-
   for (const folder of commandFolders) {
     if (folder == 'dev') continue;
     const commandsPath = path.join(foldersPath, folder);
@@ -24,21 +22,21 @@ function deployCommands() {
       if ('data' in command && 'execute' in command) {
         commands.push(command.data.toJSON());
       } else {
-        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+        warnMessage(
+          `The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
       }
     }
   }
-
   const rest = new REST().setToken(config.discord.token);
-
   (async () => {
     try {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands and skipped over ${skipped} commands.`
       );
-
-      const data = await rest.put(Routes.applicationCommands(config.discord.clientId), { body: commands });
-
+      const data = await rest.put(Routes.applicationCommands(config.discord.clientId), {
+        body: commands,
+      });
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands and skipped over ${skipped} commands.`
       );
@@ -47,13 +45,11 @@ function deployCommands() {
     }
   })();
 }
-
 function deployDevCommands() {
   const commands = [];
   let skipped = 0;
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
-
   for (const folder of commandFolders) {
     if (folder != 'dev') continue;
     const commandsPath = path.join(foldersPath, folder);
@@ -68,23 +64,22 @@ function deployDevCommands() {
       if ('data' in command && 'execute' in command) {
         commands.push(command.data.toJSON());
       } else {
-        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+        warnMessage(
+          `The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
       }
     }
   }
-
   const rest = new REST().setToken(config.discord.token);
-
   (async () => {
     try {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
-
-      const data = await rest.put(Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer), {
-        body: commands,
-      });
-
+      const data = await rest.put(
+        Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer),
+        { body: commands }
+      );
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );

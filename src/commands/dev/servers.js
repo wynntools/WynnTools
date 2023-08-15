@@ -1,14 +1,21 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
 const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('servers')
     .setDescription('Fun Facts but the dev commands (Dev Only)')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('get')
@@ -22,7 +29,11 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+      if (
+        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
+          config.discord.roles.dev
+        )
+      ) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
@@ -38,13 +49,17 @@ module.exports = {
             .setLabel('Player Count History')
             .setCustomId('server-graph')
             .setStyle(ButtonStyle.Primary);
-
           const row = new ActionRowBuilder().addComponents(graphButton);
-
-          var msg = await interaction.reply({ files: [await generateServer(server)], components: [row] });
+          var msg = await interaction.reply({
+            files: [await generateServer(server)],
+            components: [row],
+          });
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
-            const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
+            const confirmation = await msg.awaitMessageComponent({
+              filter: collectorFilter,
+              time: 15_000,
+            });
             if (confirmation.customId == 'server-graph') {
               await confirmation.update({ components: [] });
               await interaction.editReply({ files: [await generateServerGraph(server)] });
@@ -64,20 +79,19 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error
+            .toString()
+            .replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          iconURL: config.other.logo,
         });
-
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

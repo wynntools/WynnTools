@@ -1,15 +1,22 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { generateID, writeAt } = require('../../helperFunctions.js');
 const { getUsername } = require('../../api/discordAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('fun-facts-dev')
     .setDescription('Fun Facts but the dev commands (Dev Only)')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('list')
@@ -22,7 +29,9 @@ module.exports = {
             .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
         )
     )
-    .addSubcommand((subcommand) => subcommand.setName('send').setDescription('force send fun facts'))
+    .addSubcommand((subcommand) =>
+      subcommand.setName('send').setDescription('force send fun facts')
+    )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('view')
@@ -34,19 +43,25 @@ module.exports = {
             .setRequired(true)
             .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
         )
-        .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
+        .addStringOption((option) =>
+          option.setName('id').setDescription('The ID of the fun fact').setRequired(true)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('approve')
         .setDescription('Approve a fun fact')
-        .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
+        .addStringOption((option) =>
+          option.setName('id').setDescription('The ID of the fun fact').setRequired(true)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName('deny')
         .setDescription('Deny a fun fact')
-        .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
+        .addStringOption((option) =>
+          option.setName('id').setDescription('The ID of the fun fact').setRequired(true)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -59,7 +74,9 @@ module.exports = {
             .setRequired(true)
             .addChoices({ name: 'Facts', value: 'suggested' }, { name: 'List', value: 'list' })
         )
-        .addStringOption((option) => option.setName('id').setDescription('The ID of the fun fact').setRequired(true))
+        .addStringOption((option) =>
+          option.setName('id').setDescription('The ID of the fun fact').setRequired(true)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -78,16 +95,15 @@ module.exports = {
     function checkFunFact(fact) {
       try {
         if (fact.lastSent + 1209600 < startTime) {
-          return true; // Older than 14 days
+          return true;
         } else {
-          return false; // Younger than 14 days
+          return false;
         }
       } catch (error) {
         console.error(error);
         return false;
       }
     }
-
     const funFactList = JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'));
     function getRandomFact() {
       try {
@@ -103,13 +119,15 @@ module.exports = {
         return null;
       }
     }
-
     try {
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+      if (
+        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
+          config.discord.roles.dev
+        )
+      ) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
-
       const suggestedData = JSON.parse(fs.readFileSync('data/funFacts/suggested.json'));
       const listData = JSON.parse(fs.readFileSync('data/funFacts/list.json'));
       const factList = listData.facts;
@@ -128,14 +146,13 @@ module.exports = {
               list += '\n';
             }
           }
-
           const listEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle('Fun Facts List')
             .setDescription(list)
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [listEmbed] });
         } else if (type === 'suggested') {
@@ -144,14 +161,13 @@ module.exports = {
           for (i = 0; i < objects.length; i++) {
             list += `**${i + 1}** -  ID: ${objects[i]}\n`;
           }
-
           const listEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle('Fun Facts List')
             .setDescription(list)
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [listEmbed] });
         }
@@ -162,31 +178,31 @@ module.exports = {
           .setDescription('This will send fun-facts to every setup server')
           .setFooter({
             text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
+            iconURL: config.other.logo,
           });
-
         const confirmButton = new ButtonBuilder()
           .setLabel('Confirm')
           .setCustomId('funFactsDevSendConfirm')
           .setStyle(ButtonStyle.Success);
-
         const cancelButton = new ButtonBuilder()
           .setLabel('Cancel')
           .setCustomId('funFactsDevSendCancel')
           .setStyle(ButtonStyle.Danger);
-
         const row = new ActionRowBuilder().addComponents(confirmButton, cancelButton);
-
         msg = await interaction.reply({ embeds: [confirmEmbed], components: [row] });
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
-          const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 30_000 });
+          const confirmation = await msg.awaitMessageComponent({
+            filter: collectorFilter,
+            time: 30_000,
+          });
           if (confirmation.customId == 'funFactsDevSendConfirm') {
             try {
               let funFact;
               let numCheckedFacts = 0;
-              const totalFacts = Object.keys(JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))).length;
-
+              const totalFacts = Object.keys(
+                JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))
+              ).length;
               do {
                 funFact = getRandomFact();
                 if (funFact && checkFunFact(funFact)) {
@@ -196,36 +212,32 @@ module.exports = {
                 }
                 numCheckedFacts++;
               } while (funFact && !checkFunFact(funFact) && numCheckedFacts < totalFacts);
-
               if (!funFact || (funFact && !checkFunFact(funFact))) {
                 console.log('No valid fun facts found.');
               }
-
-              const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
+              const funFactConfigs = JSON.parse(
+                fs.readFileSync('data/funFacts/config.json', 'utf8')
+              );
               const funFactConfigsObject = Object.keys(funFactConfigs);
-
               const setup = new ButtonBuilder()
                 .setCustomId('setupGuideFunFacts')
                 .setLabel('How to setup')
                 .setStyle(ButtonStyle.Primary);
-
               const row = new ActionRowBuilder().addComponents(setup);
-
               var requestedByString = '';
               if (funFact.requestedBy && funFact.hidden != false) {
                 requestedByString = `Requested by ${await getUsername(funFact.requestedBy)} | `;
               }
-
               const funFactEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription(
-                  `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${
-                    startTime + 86400
-                  }:R>`
+                  `**Today's Fun fact is** \n${
+                    funFact.fact
+                  }\n\n${requestedByString}Next fun fact <t:${startTime + 86400}:R>`
                 )
                 .setFooter({
-                  text: `by @kathund | https://discord.gg/ub63JjGGSN for support`,
-                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: config.other.logo,
                 });
               let currentConfig;
               for (let i = 0; i < funFactConfigsObject.length; i++) {
@@ -253,7 +265,11 @@ module.exports = {
                     await delay(300);
                     await channel.send({ embeds: [funFactEmbed], components: [row] });
                   } else {
-                    await channel.send({ embeds: [funFactEmbed], components: [row], content: role });
+                    await channel.send({
+                      embeds: [funFactEmbed],
+                      components: [row],
+                      content: role,
+                    });
                   }
                 }
                 await delay(300);
@@ -262,32 +278,22 @@ module.exports = {
                 'data/funFacts/list.json',
                 'facts',
                 funFactList.facts.map((fact) =>
-                  fact.id === funFact.id
-                    ? {
-                        ...fact,
-                        lastSent: startTime,
-                      }
-                    : fact
+                  fact.id === funFact.id ? { ...fact, lastSent: startTime } : fact
                 )
               );
               await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
             } catch (error) {
               console.error(error);
             }
-
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.green)
               .setDescription('Sent all Fun Facts')
               .setTimestamp()
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
-                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                iconURL: config.other.logo,
               });
-
-            await confirmation.update({
-              embeds: [updatedEmbed],
-              components: [],
-            });
+            await confirmation.update({ embeds: [updatedEmbed], components: [] });
           } else if (confirmation.customId == 'funFactsDevSendCancel') {
             const cancelEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
@@ -295,13 +301,9 @@ module.exports = {
               .setTimestamp()
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
-                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                iconURL: config.other.logo,
               });
-
-            await confirmation.update({
-              embeds: [cancelEmbed],
-              components: [],
-            });
+            await confirmation.update({ embeds: [cancelEmbed], components: [] });
           }
         } catch (error) {
           const cancelEmbed = new EmbedBuilder()
@@ -310,13 +312,9 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
-          await interaction.editReply({
-            embeds: [cancelEmbed],
-            components: [],
-          });
+          await interaction.editReply({ embeds: [cancelEmbed], components: [] });
         }
       } else if (subcommand === 'view') {
         var facType = interaction.options.getString('type');
@@ -334,7 +332,6 @@ module.exports = {
           } else {
             requestedByString = `${requestedByString} | Never been sent`;
           }
-
           const factEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle(`Fun Fact #${fact.id}`)
@@ -342,26 +339,25 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         } else if (facType === 'suggested') {
           fact = suggestedData[facId];
           if (!fact) throw new Error('Invalid ID');
-
           const factEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle(`Fun Fact #${fact.id}`)
             .setDescription(
-              `${fact.fact}\n\nRequested by ${await getUsername(fact.by)} | Requested at <t:${fact.at}:R>`
+              `${fact.fact}\n\nRequested by ${await getUsername(fact.by)} | Requested at <t:${
+                fact.at
+              }:R>`
             )
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         }
       } else if (subcommand === 'approve') {
@@ -378,11 +374,9 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
-
           const factEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle('Fun Fact Approved')
@@ -392,9 +386,8 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         } else {
           const factEmbed = new EmbedBuilder()
@@ -406,12 +399,10 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         }
-
         await writeAt('data/funFacts/list.json', id, {
           requestedBy: fact.by,
           fact: fact.fact,
@@ -434,11 +425,9 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
-
           const factEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
             .setTitle('Fun Fact Denied')
@@ -448,9 +437,8 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         } else {
           const factEmbed = new EmbedBuilder()
@@ -462,12 +450,10 @@ module.exports = {
             .setTimestamp()
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              iconURL: config.other.logo,
             });
-
           await interaction.reply({ embeds: [factEmbed] });
         }
-
         delete suggestedData[id];
         fs.writeFileSync('data/funFacts/suggested.json', JSON.stringify(suggestedData));
       } else if (subcommand === 'delete') {
@@ -483,21 +469,17 @@ module.exports = {
           .setTimestamp()
           .setFooter({
             text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: 'https://i.imgur.com/uUuZx2E.png',
+            iconURL: config.other.logo,
           });
-
         const confirmButton = new ButtonBuilder()
           .setLabel('Confirm')
           .setStyle(ButtonStyle.Danger)
           .setCustomId('confirm');
-
         const cancelButton = new ButtonBuilder()
           .setLabel('Cancel')
           .setStyle(ButtonStyle.Secondary)
           .setCustomId('cancel');
-
         const row = new ActionRowBuilder().addComponents(confirmButton, cancelButton);
-
         msg = await interaction.reply({ embeds: [factEmbed], components: [row] });
       } else if (subcommand === 'configs') {
         var serverId = interaction.options.getString('server-id');
@@ -526,31 +508,30 @@ module.exports = {
           string += `\n**Delete Messages:** ${
             currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
           }`;
-          string += `\n**Disabled:** ${currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no}`;
+          string += `\n**Disabled:** ${
+            currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
           const configEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
-            .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
+            .setTitle(
+              `Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`
+            )
             .setDescription(string);
-
           const leftButton = new ButtonBuilder()
             .setEmoji('1135038841426825297')
             .setStyle(ButtonStyle.Secondary)
             .setCustomId('leftButtonConfigs');
-
           const trashButton = new ButtonBuilder()
             .setEmoji('1135050640524066837')
             .setStyle(ButtonStyle.Danger)
             .setCustomId('trashButtonConfigs');
-
           const rightButton = new ButtonBuilder()
             .setEmoji('1135038844706762799')
             .setStyle(ButtonStyle.Secondary)
             .setCustomId('rightButtonConfigs');
-
           const row = new ActionRowBuilder().addComponents(leftButton, trashButton, rightButton);
           msg = await interaction.reply({ embeds: [configEmbed], components: [row] });
           const TIMEOUT_S = 15;
-
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             let confirmation;
@@ -587,9 +568,12 @@ module.exports = {
                 }`;
                 const configEmbed = new EmbedBuilder()
                   .setColor(config.discord.embeds.green)
-                  .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
+                  .setTitle(
+                    `Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${
+                      configsObject.length
+                    }`
+                  )
                   .setDescription(string);
-
                 await confirmation.update({ embeds: [configEmbed], components: [row] });
               } else if (confirmation.customId === 'trashButtonConfigs') {
                 currentConfig = configs[configsObject[num]];
@@ -601,26 +585,22 @@ module.exports = {
                   )
                   .setFooter({
                     text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    iconURL: config.other.logo,
                   });
-
                 const confirmYesButton = new ButtonBuilder()
                   .setLabel('Yes')
                   .setStyle(ButtonStyle.Danger)
                   .setCustomId('confirmYesButtonConfigs');
-
                 const confirmNoButton = new ButtonBuilder()
                   .setLabel('No')
                   .setStyle(ButtonStyle.Secondary)
                   .setCustomId('confirmNoButtonConfigs');
-
                 const row = new ActionRowBuilder().addComponents(confirmYesButton, confirmNoButton);
                 var confirmMessage = await confirmation.reply({
                   embeds: [confirmEmbed],
                   components: [row],
                   ephemeral: true,
                 });
-
                 const collectorFilter = (i) => i.user.id === interaction.user.id;
                 try {
                   const confirmationDelete = await confirmMessage.awaitMessageComponent({
@@ -630,14 +610,13 @@ module.exports = {
                   if (confirmationDelete.customId === 'confirmYesButtonConfigs') {
                     delete configs[configsObject[num]];
                     fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
-
                     const deletedEmbed = new EmbedBuilder()
                       .setColor(config.discord.embeds.green)
                       .setTitle('Config Deleted')
                       .setDescription(`The config for ${currentConfig.serverId} has been deleted`)
                       .setFooter({
                         text: `by @kathund | ${config.discord.supportInvite} for support`,
-                        iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        iconURL: config.other.logo,
                       });
                     return await confirmationDelete.update({
                       embeds: [deletedEmbed],
@@ -677,9 +656,12 @@ module.exports = {
                 }`;
                 const configEmbed = new EmbedBuilder()
                   .setColor(config.discord.embeds.green)
-                  .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
+                  .setTitle(
+                    `Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${
+                      configsObject.length
+                    }`
+                  )
                   .setDescription(string);
-
                 await confirmation.update({ embeds: [configEmbed], components: [row] });
               }
             }
@@ -708,20 +690,19 @@ module.exports = {
           string += `\n**Delete Messages:** ${
             currentConfig.deleteMsgs ? config.discord.emojis.yes : config.discord.emojis.no
           }`;
-          string += `\n**Disabled:** ${currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no}`;
+          string += `\n**Disabled:** ${
+            currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
+          }`;
           const configEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
             .setDescription(string);
-
           const trashButton = new ButtonBuilder()
             .setEmoji('1135050640524066837')
             .setStyle(ButtonStyle.Danger)
             .setCustomId('trashButtonConfig');
-
           const row = new ActionRowBuilder().addComponents(trashButton);
           msg = await interaction.reply({ embeds: [configEmbed], components: [row] });
-
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             var confirm = await msg.awaitMessageComponent({
@@ -732,32 +713,27 @@ module.exports = {
               const confirmAgainEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.red)
                 .setTitle('Are you sure?')
-
                 .setDescription(
                   `Are you sure you want to delete the config for ${currentConfig.serverId}? **This cannot be undone**`
                 )
                 .setFooter({
                   text: `by @kathund | ${config.discord.supportInvite} for support`,
-                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  iconURL: config.other.logo,
                 });
-
               const confirmYesButton = new ButtonBuilder()
                 .setLabel('Yes')
                 .setStyle(ButtonStyle.Danger)
                 .setCustomId('confirmYesButtonConfig');
-
               const confirmNoButton = new ButtonBuilder()
                 .setLabel('No')
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId('confirmNoButtonConfig');
-
               const row = new ActionRowBuilder().addComponents(confirmYesButton, confirmNoButton);
               var confirmAgainMessage = await confirm.followUp({
                 embeds: [confirmAgainEmbed],
                 components: [row],
                 ephemeral: true,
               });
-
               const collectorFilter = (i) => i.user.id === interaction.user.id;
               try {
                 const confirmationDelete = await confirmAgainMessage.awaitMessageComponent({
@@ -767,14 +743,13 @@ module.exports = {
                 if (confirmationDelete.customId === 'confirmYesButtonConfig') {
                   delete configs[serverId];
                   fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
-
                   const deletedEmbed = new EmbedBuilder()
                     .setColor(config.discord.embeds.green)
                     .setTitle('Config Deleted')
                     .setDescription(`The config for ${currentConfig.serverId} has been deleted`)
                     .setFooter({
                       text: `by @kathund | ${config.discord.supportInvite} for support`,
-                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                      iconURL: config.other.logo,
                     });
                   return await confirmationDelete.update({
                     embeds: [deletedEmbed],
@@ -788,7 +763,7 @@ module.exports = {
                     .setDescription(`Cancelled deleting the config for ${currentConfig.serverId}`)
                     .setFooter({
                       text: `by @kathund | ${config.discord.supportInvite} for support`,
-                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                      iconURL: config.other.logo,
                     });
                   return await confirmationDelete.update({
                     embeds: [deletedEmbed],
@@ -804,7 +779,7 @@ module.exports = {
                   .setDescription(`Cancelled deleting the config for ${currentConfig.serverId}`)
                   .setFooter({
                     text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    iconURL: config.other.logo,
                   });
                 return await confirm.update({
                   embeds: [deletedEmbed],
@@ -841,7 +816,6 @@ module.exports = {
               .setColor(config.discord.embeds.green)
               .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
               .setDescription(string);
-
             await interaction.editReply({ embeds: [configEmbed], components: [row] });
           }
         }
@@ -856,20 +830,19 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error
+            .toString()
+            .replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          iconURL: config.other.logo,
         });
-
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

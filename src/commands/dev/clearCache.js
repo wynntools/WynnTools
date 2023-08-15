@@ -5,7 +5,14 @@ const {
   clearGenerateServerCache,
   clearGenerateServerGraphCache,
 } = require('../../functions/generateImage.js');
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
@@ -18,6 +25,7 @@ module.exports = {
     .setName('clear-cache')
     .setDescription('Clear Cache (Dev Only)')
     .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addStringOption((option) =>
       option
         .setName('cache')
@@ -99,20 +107,19 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error
+            .toString()
+            .replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          iconURL: config.other.logo,
         });
-
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

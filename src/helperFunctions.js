@@ -5,16 +5,10 @@ const mkdirp = require('mkdirp');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
-
 const getDirName = require('path').dirname;
-
 function getCurrentTime() {
   if (config.other.timezone === null) {
-    return new Date().toLocaleString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    });
+    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
   } else {
     return new Date().toLocaleString('en-US', {
       hour: 'numeric',
@@ -24,11 +18,9 @@ function getCurrentTime() {
     });
   }
 }
-
 function formatUUID(uuid) {
   return uuid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
 }
-
 async function writeAt(filePath, jsonPath, value) {
   mkdirp.sync(getDirName(filePath));
   try {
@@ -37,13 +29,11 @@ async function writeAt(filePath, jsonPath, value) {
     return await fsExtra.writeJson(filePath, json);
   } catch (error) {
     console.log(error);
-    // eslint-disable-next-line
     const json_1 = {};
     set(json_1, jsonPath, value);
     return await fsExtra.writeJson(filePath, json_1);
   }
 }
-
 function generateDate(timestamp) {
   if (timestamp == null) timestamp = Date.now();
   return new Date(timestamp).toLocaleString('en-US', {
@@ -56,15 +46,12 @@ function generateDate(timestamp) {
     timeZoneName: 'short',
   });
 }
-
 function getRelativeTime(timestamp, type) {
-  // s = unix-seconds, ms = unix-milliseconds
   if (type == 's') {
     timestamp = Math.floor(timestamp * 1000);
   }
   return moment(timestamp).fromNow();
 }
-
 async function blacklistCheck(id) {
   const blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
   if (blacklist[id]) {
@@ -73,7 +60,6 @@ async function blacklistCheck(id) {
     return false;
   }
 }
-
 function countLinesAndCharacters(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const lines = fileContent.split('\n');
@@ -82,23 +68,18 @@ function countLinesAndCharacters(filePath) {
   const totalWhitespace = fileContent.match(/\s/g)?.length || 0;
   return { totalLines, totalCharacters, totalWhitespace };
 }
-
 function isJavaScriptFile(file) {
   return path.extname(file) === '.js';
 }
-
 function countStatsInDirectory(dirPath) {
   let totalFiles = 0;
   let totalLines = 0;
   let totalCharacters = 0;
   let totalWhitespace = 0;
-
   const files = fs.readdirSync(dirPath);
-
   files.forEach((file) => {
     const filePath = path.join(dirPath, file);
     const stat = fs.statSync(filePath);
-
     if (stat.isFile()) {
       if (!filePath.includes('node_modules') && isJavaScriptFile(file)) {
         const {
@@ -124,25 +105,20 @@ function countStatsInDirectory(dirPath) {
       totalWhitespace += dirWhitespace;
     }
   });
-
   return { totalFiles, totalLines, totalCharacters, totalWhitespace };
 }
-
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
 function addNotation(type, value) {
   let returnVal = value;
   let notList = [];
   if (type === 'shortScale') {
     notList = [' Thousand', ' Million', ' Billion', ' Trillion', ' Quadrillion', ' Quintillion'];
   }
-
   if (type === 'oneLetters') {
     notList = ['K', 'M', 'B', 'T'];
   }
-
   let checkNum = 1000;
   if (type !== 'none' && type !== 'commas') {
     let notValue = notList[notList.length - 1];
@@ -161,15 +137,12 @@ function addNotation(type, value) {
   } else {
     returnVal = numberWithCommas(value.toFixed(0));
   }
-
   return returnVal;
 }
-
 function toFixed(num, fixed) {
   const response = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
   return num.toString().match(response)[0];
 }
-
 function getMaxMembers(lvl) {
   if (lvl < 2) return 4;
   if (lvl < 6) return 8;
@@ -192,18 +165,14 @@ function getMaxMembers(lvl) {
   if (lvl < 114) return 126;
   if (lvl < 117) return 130;
   if (lvl < 120) return 140;
-
   return 150;
 }
-
 function capitalizeFirstLetter(str) {
   if (typeof str !== 'string' || str.length === 0) {
-    return ''; // Return an empty string if the input is not a valid non-empty string
+    return '';
   }
-
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
 function generateID(length) {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
@@ -213,19 +182,19 @@ function generateID(length) {
   }
   return result;
 }
-
 async function cleanUpTimestampData(data) {
   try {
     const twelveHoursAgo = Math.floor(Date.now() / 1000) - 12 * 60 * 60;
     const filteredData = data.data.filter((entry) => {
-      return entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0;
+      return (
+        entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0
+      );
     });
     return filteredData;
   } catch (error) {
     console.log(error);
   }
 }
-
 module.exports = {
   getCurrentTime,
   formatUUID,

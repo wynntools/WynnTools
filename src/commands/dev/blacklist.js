@@ -1,21 +1,30 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('blacklist')
     .setDescription('Blacklist a user (Dev Only)')
     .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('add')
         .setDescription('Add a user to blacklist')
         .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
         .addStringOption((option) => option.setName('target-id').setDescription('The user'))
-        .addStringOption((option) => option.setName('reason').setDescription('The reason for blacklisting'))
+        .addStringOption((option) =>
+          option.setName('reason').setDescription('The reason for blacklisting')
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -26,10 +35,13 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+      if (
+        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
+          config.discord.roles.dev
+        )
+      ) {
         throw new Error('No Perms');
       }
-
       let userMention;
       let userId;
       let user;
@@ -49,7 +61,10 @@ module.exports = {
           user = await interaction.guild.members.fetch(userId);
         }
         if (blacklist[user.id]) {
-          return await interaction.reply({ content: 'User is already blacklisted', ephemeral: true });
+          return await interaction.reply({
+            content: 'User is already blacklisted',
+            ephemeral: true,
+          });
         }
         var blacklistInfo = {
           id: user.id,
@@ -75,7 +90,10 @@ module.exports = {
         }
         delete blacklist[user.id];
         fs.writeFileSync('data/blacklist.json', JSON.stringify(blacklist));
-        await interaction.reply({ content: 'User has been removed from the blacklist', ephemeral: true });
+        await interaction.reply({
+          content: 'User has been removed from the blacklist',
+          ephemeral: true,
+        });
       }
     } catch (error) {
       var errorId = generateID(10);
@@ -87,20 +105,19 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error
+            .toString()
+            .replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+          iconURL: config.other.logo,
         });
-
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

@@ -2,10 +2,9 @@ const { clearMojangCache } = require('../api/mojangAPI.js');
 const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
-
 var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null) timezoneStuff = { scheduled: true, timezone: config.other.timezone };
-
+if (!config.other.timezone == null)
+  timezoneStuff = { scheduled: true, timezone: config.other.timezone };
 cron.schedule(
   '00 12 * * *',
   async function () {
