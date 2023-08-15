@@ -8,14 +8,9 @@ const fetch = (...args) =>
     .catch((err) => console.log(err));
 
 async function validateUUID(uuid) {
-  var regex;
-  if (uuid.includes('-')) {
-    regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i;
-    return regex.test(uuid);
-  } else {
-    regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
-    return regex.test(uuid);
-  }
+  uuid = uuid.replace(/-/g, '');
+  var regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
+  return regex.test(uuid);
 }
 
 async function getUUID(username) {

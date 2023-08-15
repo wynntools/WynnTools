@@ -13,11 +13,13 @@ const fetch = (...args) =>
 
 async function register(uuid) {
   try {
+    uuid = uuid.replace(/-/g, '');
     var check = await validateUUID(uuid);
     if (!check) {
       await getUUID(uuid);
       check = await validateUUID(uuid);
     }
+    console.log(uuid);
     if (!check) return { status: 400, error: 'Invalid UUID' };
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/register`, {
       method: 'POST',
@@ -47,15 +49,31 @@ async function register(uuid) {
 
 async function registerGuild(guild) {
   try {
-    var members = guild.members.map((member) => member.uuid);
-    var chunks = [];
-    while (members.length) {
-      chunks.push(members.splice(0, 20));
+    console.log(guild.members.OWNER);
+    var members = Object.values(guild.members).flatMap((rankData) => Object.values(rankData).map((data) => data.uuid));
+    console.log(members);
+
+    const chunkSize = 20;
+    let registeredCount = 0;
+
+    for (let i = 0; i < members.length; i += chunkSize) {
+      const chunk = members.slice(i, i + chunkSize);
+
+      for (const uuid of chunk) {
+        console.log(uuid);
+        const registered = await register(uuid);
+        if (registered.success) {
+          registeredCount++;
+        }
+      }
+
+      if (i + chunkSize < members.length) {
+        await delay(1500);
+      }
     }
-    for (const chunk of chunks) {
-      await Promise.all(chunk.map((uuid) => register(uuid)));
-      await delay(60000);
-    }
+
+    console.log(`Total users registered: ${registeredCount}`);
+    return registeredCount;
   } catch (error) {
     console.log(error);
   }

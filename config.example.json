@@ -11,7 +11,8 @@
     "channels": {
       "stats": "STATS_CHANNEL_ID",
       "fun-facts-suggestions": "FUN_FACTS_SUGGESTIONS_CHANNEL_ID",
-      "welcome": "WELCOME_CHANNEL_ID"
+      "welcome": "WELCOME_CHANNEL_ID",
+      "noCommandTracking": ["NO_COMMAND_TRACKING_CHANNEL_ID"]
     },
     "messages": {
       "stats": "STATS_MESSAGE_ID"
@@ -24,7 +25,14 @@
       "dev": "DEV_ROLE_ID"
     },
     "supportInvite": "SUPPORT_SERVER_INVITE",
-    "botInvite": "BOT_INVITE_URL"
+    "botInvite": "BOT_INVITE_URL",
+    "emojis": {
+      "yes": "✅",
+      "no": "❌"
+    }
+  },
+  "api": {
+    "pixelicAPIKey": "PIXELIC_API_KEY"
   },
   "other": {
     "timezone": null
