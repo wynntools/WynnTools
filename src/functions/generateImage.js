@@ -12,12 +12,15 @@ const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
 const nodeCache = require('node-cache');
+
 const generateStatsCache = new nodeCache({ stdTTL: 180 });
 const generateProfileImageCache = new nodeCache({ stdTTL: 180 });
 const generateGuildCache = new nodeCache({ stdTTL: 180 });
 const generateServerCache = new nodeCache({ stdTTL: 180 });
 const generateServerGraphCache = new nodeCache({ stdTTL: 300 });
-registerFont('src/fonts/Inter-Regular.ttf', { family: 'Inter Regular' });
+
+registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
+
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
   if (rectWidth == 0) return;
   ctx.fillStyle = 'rgb(237, 135, 150)';
@@ -40,6 +43,7 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
   ctx.fillStyle = 'white';
   ctx.strokeStyle = 'white';
 }
+
 async function generateStats(uuid) {
   try {
     if (generateStatsCache.has(uuid)) {
@@ -61,7 +65,7 @@ async function generateStats(uuid) {
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
-      ctx.font = '36px Inter';
+      ctx.font = '36px Karla';
       ctx.textAlign = 'left';
       if (stats.rank === 'Media') {
         ctx.fillStyle = '#FF55FF';
@@ -224,10 +228,10 @@ async function generateStats(uuid) {
       } else if (currentProfileStats.gamemode.hunted) {
         ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
       }
-      ctx.font = '24px Inter';
+      ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
       if (stats.data.guild.name != null) {
-        ctx.font = '24px Inter';
+        ctx.font = '24px Karla';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
         ctx.fillText(`${stats.data.guild.rank} of ${stats.data.guild.name}`, 62, 140);
@@ -260,7 +264,7 @@ async function generateStats(uuid) {
           208
         );
       } else {
-        ctx.font = '24px Inter';
+        ctx.font = '24px Karla';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -293,7 +297,7 @@ async function generateStats(uuid) {
           208
         );
       }
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.fillText(
@@ -307,7 +311,7 @@ async function generateStats(uuid) {
         62,
         322
       );
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       var skillsY = 464;
@@ -371,7 +375,7 @@ async function generateStats(uuid) {
             2,
         470 + parseInt(ctx.font, 10)
       );
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
@@ -561,7 +565,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
       ctx.textAlign = 'left';
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -579,6 +583,7 @@ async function generateStats(uuid) {
     console.log(error);
   }
 }
+
 async function generateProfileImage(uuid, profileId) {
   try {
     if (generateProfileImageCache.has(profileId)) {
@@ -587,7 +592,6 @@ async function generateProfileImage(uuid, profileId) {
     } else {
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      registerFont('src/fonts/Inter-Regular.ttf', { family: 'Inter Regular' });
       ctx.drawImage(
         await loadImage('src/assets/statsCommandBackground.png'),
         0,
@@ -600,7 +604,7 @@ async function generateProfileImage(uuid, profileId) {
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
-      ctx.font = '36px Inter';
+      ctx.font = '36px Karla';
       ctx.textAlign = 'left';
       if (stats.rank === 'Media') {
         ctx.fillStyle = '#FF55FF';
@@ -763,10 +767,10 @@ async function generateProfileImage(uuid, profileId) {
       } else if (currentProfileStats.gamemode.hunted) {
         ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
       }
-      ctx.font = '24px Inter';
+      ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
       if (stats.data.guild.name != null) {
-        ctx.font = '24px Inter';
+        ctx.font = '24px Karla';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
         ctx.fillText(`${stats.data.guild.rank} of ${stats.data.guild.name}`, 62, 140);
@@ -799,7 +803,7 @@ async function generateProfileImage(uuid, profileId) {
           208
         );
       } else {
-        ctx.font = '24px Inter';
+        ctx.font = '24px Karla';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -832,7 +836,7 @@ async function generateProfileImage(uuid, profileId) {
           208
         );
       }
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.fillText(
@@ -846,7 +850,7 @@ async function generateProfileImage(uuid, profileId) {
         62,
         322
       );
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       var skillsY = 464;
@@ -910,7 +914,7 @@ async function generateProfileImage(uuid, profileId) {
             2,
         470 + parseInt(ctx.font, 10)
       );
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
@@ -1100,7 +1104,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
       ctx.textAlign = 'left';
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1118,6 +1122,7 @@ async function generateProfileImage(uuid, profileId) {
     console.log(error);
   }
 }
+
 async function generateGuild(guildData) {
   if (generateGuildCache.has(guildData.name)) {
     cacheMessage('Generate Guild', 'hit');
@@ -1125,7 +1130,6 @@ async function generateGuild(guildData) {
   } else {
     const canvas = createCanvas(1200, 800);
     const ctx = canvas.getContext('2d');
-    registerFont('src/fonts/Inter-Regular.ttf', { family: 'Inter Regular' });
     var uuid = Object.values(guildData.members.OWNER)[0].uuid;
     var stats = await getStats(uuid);
     let statsY = 0;
@@ -1140,13 +1144,13 @@ async function generateGuild(guildData) {
         canvas.width,
         canvas.height
       );
-      ctx.font = '64px Inter';
+      ctx.font = '64px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
       ctx.textBaseline = 'top';
-      ctx.font = '32px Inter';
+      ctx.font = '32px Karla';
       ctx.textAlign = 'left';
       ctx.fillText(`Owner - `, 64, 150);
       if (stats.rank === 'Media') {
@@ -1282,7 +1286,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = 'white';
         ctx.fillText(stats.username, 207, 150);
       }
-      ctx.font = `24px Inter`;
+      ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
       ctx.fillText(
         `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
@@ -1293,14 +1297,14 @@ async function generateGuild(guildData) {
         197
       );
       await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 1072), 28);
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillText(`Level - ${guildData.level}`, 80, 234);
       ctx.fillText(`${guildData.xp}%`, 1058, 234);
       statsY = 530;
       memberX = 162;
       onlineMemberX = 578.22;
       territoriesX = 916;
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       const textMember = `Members\n${guildData.totalMembers}/${getMaxMembers(guildData.level)}`;
       const textLinesMember = textMember.split('\n');
       ctx.fillText(textLinesMember[0], memberX, statsY);
@@ -1333,7 +1337,7 @@ async function generateGuild(guildData) {
             2,
         statsY + parseInt(ctx.font, 10)
       );
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1359,13 +1363,13 @@ async function generateGuild(guildData) {
         150,
         300
       );
-      ctx.font = '64px Inter';
+      ctx.font = '64px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText(`[${guildData.prefix}] ${guildData.name}`, 64, 64);
       ctx.textBaseline = 'top';
-      ctx.font = '32px Inter';
+      ctx.font = '32px Karla';
       ctx.textAlign = 'left';
       ctx.fillText(`Owner - `, 64, 150);
       if (stats.rank === 'Media') {
@@ -1501,7 +1505,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = 'white';
         ctx.fillText(stats.username, 207, 150);
       }
-      ctx.font = `24px Inter`;
+      ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
       ctx.fillText(
         `Created - ${generateDate(guildData.created).split(' at ')[0]} (${getRelativeTime(
@@ -1512,14 +1516,14 @@ async function generateGuild(guildData) {
         197
       );
       await bar(ctx, 64, 234, Math.floor((guildData.xp / 100) * 866), 28);
-      ctx.font = `22px Inter`;
+      ctx.font = '22px Karla';
       ctx.fillText(`Level - ${guildData.level}`, 80, 234);
       ctx.fillText(`${guildData.xp}%`, 868, 234);
       statsY = 530;
       memberX = 162;
       onlineMemberX = 505.5;
       territoriesX = 816;
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       const textMember = `Members\n${guildData.totalMembers}/${getMaxMembers(guildData.level)}`;
       const textLinesMember = textMember.split('\n');
       ctx.fillText(textLinesMember[0], memberX, statsY);
@@ -1552,7 +1556,7 @@ async function generateGuild(guildData) {
             2,
         statsY + parseInt(ctx.font, 10)
       );
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -1568,6 +1572,7 @@ async function generateGuild(guildData) {
     }
   }
 }
+
 async function generateMemberJoin(data) {
   try {
     var member = data.user;
@@ -1600,18 +1605,18 @@ async function generateMemberJoin(data) {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     if (member.globalName === null || member.globalName === member.username) {
-      ctx.font = `96px Inter`;
+      ctx.font = '96px Karla';
       ctx.fillText(`@${member.username}`, 448, 171);
-      ctx.font = `48px Inter`;
+      ctx.font = '48px Karla';
       ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
     } else {
-      ctx.font = `96px Inter`;
+      ctx.font = '96px Karla';
       ctx.fillText(member.globalName, 448, 130);
-      ctx.font = `48px Inter`;
+      ctx.font = '48px Karla';
       ctx.fillText(`@${member.username}`, 448, 229);
       ctx.fillText(`Member - ${data.guild.memberCount}`, 448, 287);
     }
-    ctx.font = `32px Inter`;
+    ctx.font = '32px Karla';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(
@@ -1625,6 +1630,7 @@ async function generateMemberJoin(data) {
     console.log(error);
   }
 }
+
 async function generateServer(server) {
   try {
     if (generateServerCache.has(server.server)) {
@@ -1643,7 +1649,7 @@ async function generateServer(server) {
         canvas.width,
         canvas.height
       );
-      ctx.font = `128px Inter`;
+      ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
       } else if (server.status === 'offline') {
@@ -1652,9 +1658,9 @@ async function generateServer(server) {
       ctx.fillText(server.server, 514, 169);
       ctx.fillText(server.count, 946, 169);
       var uptime = await getServerUptime(server.server);
-      ctx.font = `48px Inter`;
+      ctx.font = '48px Karla';
       ctx.fillText(`Uptime - ${getRelativeTime(uptime.onlineSince, 's')}`, 347, 374);
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(
@@ -1671,6 +1677,7 @@ async function generateServer(server) {
     console.log(error);
   }
 }
+
 const serversXY = [
   { circle: { x: 99, y: 105 }, id: { x: 224, y: 121 }, count: { x: 355, y: 121 } },
   { circle: { x: 447, y: 105 }, id: { x: 571, y: 121 }, count: { x: 704, y: 121 } },
@@ -1688,6 +1695,7 @@ const serversXY = [
   { circle: { x: 447, y: 908 }, id: { x: 571, y: 923 }, count: { x: 704, y: 923 } },
   { circle: { x: 796, y: 908 }, id: { x: 918, y: 923 }, count: { x: 1052, y: 923 } },
 ];
+
 async function generateServers(servers) {
   try {
     const canvas = createCanvas(1200, 1200);
@@ -1704,7 +1712,7 @@ async function generateServers(servers) {
         canvas.width,
         canvas.height
       );
-      ctx.font = `128px Inter`;
+      ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(
           await loadImage('src/assets/serverOnlineIcon.png'),
@@ -1725,7 +1733,7 @@ async function generateServers(servers) {
       ctx.fillText(server.id, serversXY[i].id.x, serversXY[i].id.y);
       ctx.fillText(server.count, serversXY[i].count.x, serversXY[i].count.y);
     }
-    ctx.font = `32px Inter`;
+    ctx.font = '32px Karla';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(
@@ -1740,6 +1748,7 @@ async function generateServers(servers) {
     console.log(error);
   }
 }
+
 async function generateServerChart(data) {
   try {
     const playerCounts = data.map((entry) => entry.value);
@@ -1812,6 +1821,7 @@ async function generateServerChart(data) {
     console.log(error);
   }
 }
+
 async function generateServerGraph(server) {
   if (generateServerGraphCache.has(server.server)) {
     cacheMessage('Generate Server Graph', 'hit');
@@ -1831,7 +1841,7 @@ async function generateServerGraph(server) {
     ctx.textBaseline = 'top';
     var badData = await getServerHistory(server.server, 'day');
     if (badData.success) {
-      ctx.font = `16px Inter`;
+      ctx.font = '16px Karla';
       if (server.status === 'online') {
         ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 1078, 48, 32, 32);
       } else {
@@ -1842,7 +1852,7 @@ async function generateServerGraph(server) {
       var url = await generateServerChart(data);
       ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
     } else {
-      ctx.font = `32px Inter`;
+      ctx.font = '32px Karla';
       if (server.status === 'online') {
         ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 525, 88, 64, 64);
       } else {
@@ -1852,7 +1862,7 @@ async function generateServerGraph(server) {
       if (badData.error === 'No data was found about the specified server') {
         const text = `No data was found about\nthe specified server`;
         const textLines = text.split('\n');
-        ctx.font = '64px Inter';
+        ctx.font = '64px Karla';
         ctx.fillText(textLines[0], 218, 184);
         ctx.fillText(
           textLines[1],
@@ -1864,7 +1874,7 @@ async function generateServerGraph(server) {
       }
     }
     ctx.fillStyle = 'white';
-    ctx.font = `32px Inter`;
+    ctx.font = '32px Karla';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(
@@ -1878,6 +1888,7 @@ async function generateServerGraph(server) {
     return buffer;
   }
 }
+
 async function clearGenerateStatsCache() {
   try {
     cacheMessage('Generate Stats', 'Cleared');
@@ -1887,6 +1898,7 @@ async function clearGenerateStatsCache() {
     return error;
   }
 }
+
 async function clearGenerateProfileImageCache() {
   try {
     cacheMessage('Generate Profile Image', 'Cleared');
@@ -1896,6 +1908,7 @@ async function clearGenerateProfileImageCache() {
     return error;
   }
 }
+
 async function clearGenerateGuildCache() {
   try {
     cacheMessage('Generate Guild', 'Cleared');
@@ -1905,6 +1918,7 @@ async function clearGenerateGuildCache() {
     return error;
   }
 }
+
 async function clearGenerateServerCache() {
   try {
     cacheMessage('Generate Server', 'Cleared');
@@ -1914,6 +1928,7 @@ async function clearGenerateServerCache() {
     return error;
   }
 }
+
 async function clearGenerateServerGraphCache() {
   try {
     cacheMessage('Generate Server Graph', 'Cleared');
@@ -1923,6 +1938,7 @@ async function clearGenerateServerGraphCache() {
     return error;
   }
 }
+
 module.exports = {
   bar,
   generateStats,
