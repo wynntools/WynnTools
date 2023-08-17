@@ -4,37 +4,25 @@
     "clientId": "DISCORD_BOT_CLIENT_ID",
     "devServer": "DEV_SERVER_ID_FOR_TESTING",
     "devId": "DEV_USER_ID",
-    "embeds": {
-      "red": "#EF3333",
-      "green": "#33EF33"
-    },
+    "embeds": { "red": "#EF3333", "green": "#33EF33" },
     "channels": {
       "stats": "STATS_CHANNEL_ID",
       "fun-facts-suggestions": "FUN_FACTS_SUGGESTIONS_CHANNEL_ID",
       "welcome": "WELCOME_CHANNEL_ID",
       "noCommandTracking": ["NO_COMMAND_TRACKING_CHANNEL_ID"]
     },
-    "messages": {
-      "stats": "STATS_MESSAGE_ID"
-    },
+    "messages": { "stats": "STATS_MESSAGE_ID" },
     "commands": {
       "report-bug": "REPORT_BUG_COMMAND_ID",
-      "fun-facts": "FUN_FACTS_COMMAND_ID"
+      "fun-facts": "FUN_FACTS_COMMAND_ID",
+      "server-uptime": "SERVER_UPTIME_COMMAND-_ID"
     },
-    "roles": {
-      "dev": "DEV_ROLE_ID"
-    },
+    "roles": { "dev": "DEV_ROLE_ID" },
     "supportInvite": "SUPPORT_SERVER_INVITE",
     "botInvite": "BOT_INVITE_URL",
-    "emojis": {
-      "yes": "✅",
-      "no": "❌"
-    }
+    "emojis": { "yes": "✅", "no": "❌" },
+    "buttonTimeout": 30
   },
-  "api": {
-    "pixelicAPIKey": "PIXELIC_API_KEY"
-  },
-  "other": {
-    "timezone": null
-  }
+  "api": { "pixelicAPIKey": "PIXELIC_API_KEY" },
+  "other": { "logo": "https://i.imgur.com/uUuZx2E.png", "timezone": null }
 }

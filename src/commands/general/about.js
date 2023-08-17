@@ -1,9 +1,9 @@
 const {
+  SlashCommandBuilder,
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonStyle,
-  SlashCommandBuilder,
   EmbedBuilder,
+  ButtonStyle,
 } = require('discord.js');
 const { countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
 const packageJson = require('../../../package.json');

@@ -1,8 +1,8 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
 const { capitalizeFirstLetter, generateID } = require('../../helperFunctions.js');

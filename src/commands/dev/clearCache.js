@@ -7,11 +7,11 @@ const {
 } = require('../../functions/generateImage.js');
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
+  PermissionFlagsBits,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
-  PermissionFlagsBits,
 } = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');

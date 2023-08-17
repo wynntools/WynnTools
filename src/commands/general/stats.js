@@ -1,9 +1,9 @@
 const {
+  StringSelectMenuBuilder,
   SlashCommandBuilder,
   ActionRowBuilder,
-  StringSelectMenuBuilder,
-  EmbedBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
 const { generateStats, generateProfileImage } = require('../../functions/generateImage.js');

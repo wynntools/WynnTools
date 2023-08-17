@@ -1,8 +1,8 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
 const { generateGuild } = require('../../functions/generateImage.js');

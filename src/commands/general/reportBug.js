@@ -1,13 +1,13 @@
 /* eslint-disable */ const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-  Events,
   SlashCommandBuilder,
+  TextInputBuilder,
+  ActionRowBuilder,
+  TextInputStyle,
   ButtonBuilder,
+  EmbedBuilder,
+  ModalBuilder,
   ButtonStyle,
+  Events,
 } = require('discord.js');
 /* eslint-enable */ const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');

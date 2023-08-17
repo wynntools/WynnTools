@@ -1,10 +1,10 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
+  PermissionFlagsBits,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
-  PermissionFlagsBits,
 } = require('discord.js');
 const { register, registerGuild } = require('../../api/pixelicAPI.js');
 const { getUsername, getUUID } = require('../../api/mojangAPI.js');
