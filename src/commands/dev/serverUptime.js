@@ -108,8 +108,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await overrideConfigMessage.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
               filter: collectorFilter,
-              time: 30_000,
             });
             if (confirmation.customId == 'serverUptimeSetupOverrideYes') {
               const confirmOverrideYes = new ButtonBuilder()
@@ -139,8 +139,8 @@ module.exports = {
               try {
                 const confirmOverrideConfirmation =
                   await overrideConfigMessage.awaitMessageComponent({
+                    time: config.discord.buttonTimeout * 1000,
                     filter: collectorFilter,
-                    time: 15_000,
                   });
                 if (confirmOverrideConfirmation.customId == 'serverUptimeSetupConfirmOverrideYes') {
                   await writeAt('data/serverUptime/config.json', interaction.guild.id, {
@@ -296,8 +296,8 @@ module.exports = {
             const collectorFilter = (i) => i.user.id === interaction.user.id;
             try {
               const confirmation = await disabledMessage.awaitMessageComponent({
+                time: config.discord.buttonTimeout * 1000,
                 filter: collectorFilter,
-                time: 15_000,
               });
               if (confirmation.customId == 'serverUptimeDeleteConfigYes') {
                 delete serverUptimeConfig[interaction.guild.id];

@@ -41,8 +41,10 @@ module.exports = {
       const row = new ActionRowBuilder().addComponents(select);
       var msg = await interaction.reply({ files: [await generateStats(uuid)], components: [row] });
       const filter = (i) => i.isStringSelectMenu(i);
-      const keepAlive = 15;
-      const collector = msg.createMessageComponentCollector({ filter, time: keepAlive * 1000 });
+      const collector = msg.createMessageComponentCollector({
+        time: config.discord.buttonTimeout * 1000,
+        filter,
+      });
       collector.on('collect', async function (i) {
         const selectedProfile = i.values[0];
         await i.update({

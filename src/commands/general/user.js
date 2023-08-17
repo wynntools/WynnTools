@@ -120,8 +120,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await msg.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
               filter: collectorFilter,
-              time: 60_000,
             });
             if (confirmation.customId == 'deleteData') {
               const updatedEmbed = new EmbedBuilder()
@@ -134,8 +134,8 @@ module.exports = {
               const collectorFilter = (i) => i.user.id === interaction.user.id;
               try {
                 const confirmation = await msg.awaitMessageComponent({
+                  time: config.discord.buttonTimeout * 1000,
                   filter: collectorFilter,
-                  time: 60_000,
                 });
                 if (confirmation.customId == 'yes') {
                   delete userData[user.id];

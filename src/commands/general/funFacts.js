@@ -130,8 +130,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await msg.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
               filter: collectorFilter,
-              time: 30_000,
             });
             if (confirmation.customId == 'funFactsSetupOverrideYes') {
               const confirmOverrideYes = new ButtonBuilder()
@@ -160,8 +160,8 @@ module.exports = {
               const collectorFilter = (i) => i.user.id === interaction.user.id;
               try {
                 const confirmOverrideConfirmation = await msg.awaitMessageComponent({
+                  time: config.discord.buttonTimeout * 1000,
                   filter: collectorFilter,
-                  time: 15_000,
                 });
                 if (confirmOverrideConfirmation.customId == 'funFactsSetupConfirmOverrideYes') {
                   await writeAt('data/funFacts/config.json', interaction.guild.id, {
@@ -284,8 +284,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await msg.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
               filter: collectorFilter,
-              time: 60_000,
             });
             if (confirmation.customId == 'funFactsSetupYes') {
               const exampleEmbed = new EmbedBuilder()
@@ -383,8 +383,8 @@ module.exports = {
             const collectorFilter = (i) => i.user.id === interaction.user.id;
             try {
               const confirmation = await msg.awaitMessageComponent({
+                time: config.discord.buttonTimeout * 1000,
                 filter: collectorFilter,
-                time: 15_000,
               });
               if (confirmation.customId == 'funFactsDeleteConfigYes') {
                 delete funFactsConfig[interaction.guild.id];
@@ -519,8 +519,8 @@ module.exports = {
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
           const confirmation = await msg.awaitMessageComponent({
+            time: config.discord.buttonTimeout * 1000,
             filter: collectorFilter,
-            time: 15_000,
           });
           if (confirmation.customId == 'funFactsSuggestYes') {
             const notifyEmbed = new EmbedBuilder()
@@ -556,8 +556,8 @@ module.exports = {
               );
               let suggestionEmbed;
               const confirmation = await msg.awaitMessageComponent({
+                time: config.discord.buttonTimeout * 1000,
                 filter: collectorFilter,
-                time: 15_000,
               });
               var generatedFactId = generateID(10);
               if (confirmation.customId == 'funFactsSuggestNotifyYes') {
@@ -693,8 +693,8 @@ module.exports = {
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
           const confirmation = await msg.awaitMessageComponent({
+            time: config.discord.buttonTimeout * 1000,
             filter: collectorFilter,
-            time: 60_000,
           });
           if (confirmation.customId == 'quickSetupFunFacts') {
             const updatedEmbed = new EmbedBuilder()

@@ -193,8 +193,8 @@ module.exports = {
         const collectorFilter = (i) => i.user.id === interaction.user.id;
         try {
           const confirmation = await msg.awaitMessageComponent({
+            time: config.discord.buttonTimeout * 1000,
             filter: collectorFilter,
-            time: 30_000,
           });
           if (confirmation.customId == 'funFactsDevSendConfirm') {
             try {
@@ -550,8 +550,8 @@ module.exports = {
             let confirmation;
             while (true) {
               confirmation = await msg.awaitMessageComponent({
-                filter: collectorFilter,
                 time: config.discord.buttonTimeout * 1000,
+                filter: collectorFilter,
               });
               if (confirmation.customId === 'leftButtonConfigs') {
                 num = num - 1;
@@ -662,8 +662,8 @@ module.exports = {
                 try {
                   while (true) {
                     var editMessageConfirmation = await editMessage.awaitMessageComponent({
-                      filter: collectorFilter,
                       time: config.discord.buttonTimeout * 1000,
+                      filter: collectorFilter,
                     });
                     if (editMessageConfirmation.customId === 'deleteConfigButton') {
                       delete configs[configsObject[num]];
@@ -960,8 +960,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             var inputIdConfirm = await inputIdMessage.awaitMessageComponent({
-              filter: collectorFilter,
               time: config.discord.buttonTimeout * 1000,
+              filter: collectorFilter,
             });
             if (inputIdConfirm.customId === 'editButtonConfig') {
               // ! aa
@@ -1036,8 +1036,8 @@ module.exports = {
                 while (true) {
                   var editMessageInputIdConfirmation =
                     await editInputIdMessage.awaitMessageComponent({
-                      filter: collectorFilter,
                       time: config.discord.buttonTimeout * 1000,
+                      filter: collectorFilter,
                     });
                   if (editMessageInputIdConfirmation.customId === 'deleteConfigInputIdButton') {
                     delete configs[configsObject[num]];

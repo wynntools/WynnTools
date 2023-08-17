@@ -57,8 +57,8 @@ module.exports = {
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await msg.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
               filter: collectorFilter,
-              time: 15_000,
             });
             if (confirmation.customId == 'server-graph') {
               await confirmation.update({ components: [] });
