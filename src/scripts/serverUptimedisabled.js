@@ -3,9 +3,12 @@ const { countStatsInDirectory, addNotation } = require('../helperFunctions.js');
 const packageJson = require('../../package.json');
 const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
+// const nodeCache = require('node-cache');
 const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
+
+// const serverCache = new nodeCache();
 
 let timezoneStuff = null;
 if (config.other.timezone == null) {
@@ -18,7 +21,7 @@ cron.schedule(
   '*/5 * * * *',
   async function () {
     try {
-      scriptMessage('Updating stats embed/message');
+      scriptMessage('Checking server Uptime');
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(
         process.cwd()
       );

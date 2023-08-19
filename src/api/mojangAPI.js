@@ -5,11 +5,13 @@ const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
+
 async function validateUUID(uuid) {
   uuid = uuid.replace(/-/g, '');
   var regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
   return regex.test(uuid);
 }
+
 async function getUUID(username) {
   if (mojangCache.has(username.toLowerCase())) {
     cacheMessage('MojangAPI', 'Cache hit');
@@ -25,6 +27,7 @@ async function getUUID(username) {
     return data.id;
   }
 }
+
 async function getUsername(uuid) {
   if (mojangCache.has(uuid)) {
     cacheMessage('MojangAPI', 'Cache hit');
@@ -40,8 +43,10 @@ async function getUsername(uuid) {
     return data.name;
   }
 }
+
 async function clearMojangCache() {
   cacheMessage('MojangAPI', 'Cleared');
   mojangCache.flushAll();
 }
+
 module.exports = { validateUUID, getUUID, getUsername, clearMojangCache };

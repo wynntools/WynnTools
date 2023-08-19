@@ -5,10 +5,14 @@ const config = require('../../config.json');
 const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
-var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null) {
+
+let timezoneStuff = null;
+if (config.other.timezone == null) {
+  timezoneStuff = { scheduled: true };
+} else {
   timezoneStuff = { scheduled: true, timezone: config.other.timezone };
 }
+
 var num = 0;
 const commands = [];
 fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {

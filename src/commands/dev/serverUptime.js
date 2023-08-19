@@ -374,6 +374,19 @@ module.exports = {
             return await interaction.reply({ embeds: [embed] });
           }
         }
+      } else if (subcommand === 'setup-guide') {
+        const embed = new EmbedBuilder()
+          .setColor(config.discord.embeds.green)
+          .setTitle('Server Uptime Logging Setup Guide')
+          .setDescription(
+            `**Step 1:** Create a channel where you want the server uptime logging to be sent into\n**Step 2:** Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the channel\n**Step 3:** (Optional) Create a role to be pinged when the server changes state\n**Step 4:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the role\n**Step 5:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the ghost ping\n**Step 6:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the delete previous messages\n**Step 7:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the disable\n**Step 8:** Use </server-uptime enable:${config.discord.commands['server-uptime']}> to enable the server uptime logging\n**Step 9:** (Optional) Use </server-uptime disable:${config.discord.commands['server-uptime']}> to disable the server uptime logging`
+          )
+          .setTimestamp()
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        return await interaction.reply({ embeds: [embed] });
       }
     } catch (error) {
       var errorId = generateID(10);

@@ -6,10 +6,14 @@ const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
-var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null) {
+
+let timezoneStuff = null;
+if (config.other.timezone == null) {
+  timezoneStuff = { scheduled: true };
+} else {
   timezoneStuff = { scheduled: true, timezone: config.other.timezone };
 }
+
 cron.schedule(
   '00 00 * * *',
   async function () {
