@@ -1,5 +1,5 @@
-const { generateMemberJoin } = require('./src/functions/generateImage.js');
-const config = require('./config.json');
+const { generateMemberJoin } = require('../functions/generateImage.js');
+const config = require('../../config.json');
 
 module.exports = {
   name: 'GuildMemberAdd',
