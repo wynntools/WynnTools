@@ -1,3 +1,4 @@
+// Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
 var { getCurrentTime } = require('./helperFunctions.js');
 var cli = require('cli-color');
 
@@ -35,6 +36,18 @@ function cacheMessage(type, message) {
   );
 }
 
+async function updateMessage() {
+  const columns = process.stdout.columns;
+  const warning = 'IMPORTANT!';
+  const message2 = 'Bot has updated, please restart the bot to apply changes!';
+  const padding = ' '.repeat(Math.floor((columns - warning.length) / 2));
+  const padding2 = ' '.repeat(Math.floor((columns - message2.length) / 2));
+
+  // console.log(cli.bgRed.black(' '.repeat(columns).repeat(3)));
+  console.log(cli.bgRed.black(padding + warning + padding + '\n' + padding2 + message2 + padding2));
+  // console.log(cli.bgRed.black(' '.repeat(columns).repeat(3)));
+}
+
 module.exports = {
   discordMessage,
   commandMessage,
@@ -42,4 +55,5 @@ module.exports = {
   errorMessage,
   scriptMessage,
   cacheMessage,
+  updateMessage,
 };
