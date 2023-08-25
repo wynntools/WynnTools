@@ -22,6 +22,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
+
 async function start() {
   const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -195,39 +196,20 @@ async function start() {
       console.log(error);
     }
   });
-  client.on(Events.MessageCreate, async (message) => {
-    try {
-      if (message.author.bot) return;
-      if (message.channel.type === 'DM') return;
-      if (config.discord.pain.servers.includes(message.guild.id)) {
-        if (
-          message.content.toLowerCase().startsWith("i'm") |
-          message.content.toLowerCase().startsWith('i am') |
-          message.content.toLowerCase().startsWith('im') |
-          message.content.toLowerCase().startsWith('i’m')
-        ) {
-          message.reply(`Hi ${message.content.slice(message.content.indexOf(' ') + 1)}, I'm dad!`);
-        }
-      }
-      if (config.discord.pain.users.includes(message.author.id)) {
-        message.react('🤡');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
-  client.on(Events.GuildMemberAdd, async (member) => {
-    try {
-      if (member.guild.id != config.discord.devServer) return;
-      var welcomeChannel = await client.channels.fetch(config.discord.channels.welcome);
-      await welcomeChannel.send({
-        content: `Welcome <@${member.user.id}> to WynnTools Support`,
-        files: [await generateMemberJoin(member)],
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  });
+
+  const eventsPath = path.join(__dirname, 'src/events');
+  const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
+  console.log(eventsPath);
+  console.log(eventFiles);
+
+  for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const event = require(filePath);
+    event.once
+      ? client.once(event.name, (...args) => event.execute(...args))
+      : client.on(event.name, (...args) => event.execute(...args));
+  }
+
   client.login(config.discord.token);
 }
 start();
