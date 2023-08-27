@@ -1,21 +1,14 @@
-const {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-  ButtonStyle,
-} = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { countStatsInDirectory, addNotation, generateID } = require('../../helperFunctions.js');
 const packageJson = require('../../../package.json');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');
+
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('about')
-    .setDescription('Shows info about the bot')
-    .setDMPermission(false),
+  data: new SlashCommandBuilder().setName('about').setDescription('Shows info about the bot').setDMPermission(false),
+
   async execute(interaction) {
     try {
       const commands = [];
@@ -27,18 +20,13 @@ module.exports = {
         .setLabel('support')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-      const invite = new ButtonBuilder()
-        .setLabel('invite')
-        .setURL(config.discord.botInvite)
-        .setStyle(ButtonStyle.Link);
+      const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
       const source = new ButtonBuilder()
         .setLabel('source')
         .setURL('https://github.com/Kathund/WynnTools')
         .setStyle(ButtonStyle.Link);
       const row = new ActionRowBuilder().addComponents(support, invite, source);
-      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(
-        process.cwd()
-      );
+      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var totalCommandsRun = 0;
       for (const entry in userData) {
@@ -83,17 +71,11 @@ module.exports = {
             )}\`\nCharacters - \`${addNotation(
               'oneLetters',
               totalCharacters
-            )}\`\nCharacters with out spaces - \`${addNotation(
-              'oneLetters',
-              totalCharacters - totalWhitespace
-            )}\``,
+            )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
             inline: true,
           }
         )
-        .setFooter({
-          text: `by @kathund | Stats maybe inaccurate/outdated/cached`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | Stats maybe inaccurate/outdated/cached`, iconURL: config.other.logo });
       await interaction.reply({ embeds: [embed], components: [row] });
     } catch (error) {
       var errorId = generateID(10);
@@ -105,14 +87,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

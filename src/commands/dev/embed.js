@@ -11,6 +11,7 @@ const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('embed')
@@ -33,17 +34,12 @@ module.exports = {
         .setName('send')
         .setDescription('Send an embed')
         .addStringOption((option) =>
-          option
-            .setName('embed')
-            .setDescription('The starb.in link for the embed')
-            .setRequired(true)
+          option.setName('embed').setDescription('The starb.in link for the embed').setRequired(true)
         )
         .addChannelOption((option) =>
           option
             .setName('channel')
-            .setDescription(
-              'the channel to send your embed in, if empty it will take the current channel'
-            )
+            .setDescription('the channel to send your embed in, if empty it will take the current channel')
             .addChannelTypes(ChannelType.GuildText)
         )
     )
@@ -52,24 +48,16 @@ module.exports = {
         .setName('edit')
         .setDescription('Edit an embed to a new embed')
         .addStringOption((option) =>
-          option
-            .setName('message-link')
-            .setDescription("The link of the message you'd like to edit")
-            .setRequired(true)
+          option.setName('message-link').setDescription("The link of the message you'd like to edit").setRequired(true)
         )
-        .addStringOption((option) =>
-          option.setName('embed').setDescription('The new embed').setRequired(true)
-        )
+        .addStringOption((option) => option.setName('embed').setDescription('The new embed').setRequired(true))
     ),
+
   async execute(interaction) {
     try {
       const subcommand = interaction.options.getSubcommand();
       await interaction.deferReply();
-      if (
-        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
-          config.discord.roles.dev
-        )
-      ) {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       if (subcommand === 'source') {
@@ -108,10 +96,7 @@ module.exports = {
           const embed = new EmbedBuilder(JSON.parse(data));
           try {
             await channel.send({ embeds: [embed] });
-            await interaction.editReply({
-              content: `Successfully sent embed to ${channel}`,
-              ephemeral: true,
-            });
+            await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
           } catch (error) {
             console.error(error);
             interaction.editReply('This is not a valid embed!');
@@ -121,10 +106,7 @@ module.exports = {
           const channel = interaction.options.getChannel('channel') ?? interaction.channel;
           const embed = new EmbedBuilder(JSON.parse(embedInput));
           channel.send({ embeds: [embed] });
-          await interaction.editReply({
-            content: `Successfully sent embed to ${channel}`,
-            ephemeral: true,
-          });
+          await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
         }
       } else if (subcommand === 'edit') {
         const newEmbed = interaction.options.getString('embed');
@@ -161,14 +143,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

@@ -6,6 +6,7 @@ const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
 const getDirName = require('path').dirname;
+
 function getCurrentTime() {
   if (config.other.timezone === null) {
     return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
@@ -18,9 +19,11 @@ function getCurrentTime() {
     });
   }
 }
+
 function formatUUID(uuid) {
   return uuid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
 }
+
 async function writeAt(filePath, jsonPath, value) {
   mkdirp.sync(getDirName(filePath));
   try {
@@ -34,6 +37,7 @@ async function writeAt(filePath, jsonPath, value) {
     return await fsExtra.writeJson(filePath, json_1);
   }
 }
+
 function generateDate(timestamp) {
   if (timestamp == null) timestamp = Date.now();
   return new Date(timestamp).toLocaleString('en-US', {
@@ -46,12 +50,14 @@ function generateDate(timestamp) {
     timeZoneName: 'short',
   });
 }
+
 function getRelativeTime(timestamp, type) {
   if (type == 's') {
     timestamp = Math.floor(timestamp * 1000);
   }
   return moment(timestamp).fromNow();
 }
+
 async function blacklistCheck(id) {
   const blacklist = await JSON.parse(fs.readFileSync('data/blacklist.json', 'utf8'));
   if (blacklist[id]) {
@@ -60,6 +66,7 @@ async function blacklistCheck(id) {
     return false;
   }
 }
+
 function countLinesAndCharacters(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const lines = fileContent.split('\n');
@@ -68,9 +75,11 @@ function countLinesAndCharacters(filePath) {
   const totalWhitespace = fileContent.match(/\s/g)?.length || 0;
   return { totalLines, totalCharacters, totalWhitespace };
 }
+
 function isJavaScriptFile(file) {
   return path.extname(file) === '.js';
 }
+
 function countStatsInDirectory(dirPath) {
   let totalFiles = 0;
   let totalLines = 0;
@@ -107,9 +116,11 @@ function countStatsInDirectory(dirPath) {
   });
   return { totalFiles, totalLines, totalCharacters, totalWhitespace };
 }
+
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
 function addNotation(type, value) {
   let returnVal = value;
   let notList = [];
@@ -139,10 +150,12 @@ function addNotation(type, value) {
   }
   return returnVal;
 }
+
 function toFixed(num, fixed) {
   const response = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
   return num.toString().match(response)[0];
 }
+
 function getMaxMembers(lvl) {
   if (lvl < 2) return 4;
   if (lvl < 6) return 8;
@@ -167,12 +180,14 @@ function getMaxMembers(lvl) {
   if (lvl < 120) return 140;
   return 150;
 }
+
 function capitalizeFirstLetter(str) {
   if (typeof str !== 'string' || str.length === 0) {
     return '';
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
 function generateID(length) {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
@@ -182,19 +197,19 @@ function generateID(length) {
   }
   return result;
 }
+
 async function cleanUpTimestampData(data) {
   try {
     const twelveHoursAgo = Math.floor(Date.now() / 1000) - 12 * 60 * 60;
     const filteredData = data.data.filter((entry) => {
-      return (
-        entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0
-      );
+      return entry.timestamp >= twelveHoursAgo && new Date(entry.timestamp * 1000).getMinutes() === 0;
     });
     return filteredData;
   } catch (error) {
     console.log(error);
   }
 }
+
 module.exports = {
   getCurrentTime,
   formatUUID,

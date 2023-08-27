@@ -50,9 +50,7 @@ cron.schedule(
       scriptMessage('Sending fun facts');
       let funFact;
       let numCheckedFacts = 0;
-      const totalFacts = Object.keys(
-        JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))
-      ).length;
+      const totalFacts = Object.keys(JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))).length;
       do {
         funFact = getRandomFact();
         if (funFact && checkFunFact(funFact)) {
@@ -79,9 +77,7 @@ cron.schedule(
       const funFactEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.green)
         .setDescription(
-          `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${
-            startTime + 86400
-          }:R>`
+          `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${startTime + 86400}:R>`
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -121,9 +117,7 @@ cron.schedule(
       await writeAt(
         'data/funFacts/list.json',
         'facts',
-        funFactList.facts.map((fact) =>
-          fact.id === funFact.id ? { ...fact, lastSent: startTime } : fact
-        )
+        funFactList.facts.map((fact) => (fact.id === funFact.id ? { ...fact, lastSent: startTime } : fact))
       );
       await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
     } catch (error) {

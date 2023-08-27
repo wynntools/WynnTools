@@ -52,9 +52,7 @@ cron.schedule(
       userData = Object.keys(JSON.parse(fs.readFileSync('data/userData.json')));
       totalUsers = userData.length;
       client.user.setPresence({
-        activities: [
-          { name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] },
-        ],
+        activities: [{ name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] }],
       });
     } else {
       client.user.setPresence({

@@ -11,6 +11,7 @@ const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
 const { generateID } = require('../../helperFunctions.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('servers')
@@ -27,13 +28,10 @@ module.exports = {
             .setRequired(false)
         )
     ),
+
   async execute(interaction) {
     try {
-      if (
-        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
-          config.discord.roles.dev
-        )
-      ) {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
@@ -50,10 +48,7 @@ module.exports = {
             .setCustomId('server-graph')
             .setStyle(ButtonStyle.Primary);
           const row = new ActionRowBuilder().addComponents(graphButton);
-          var msg = await interaction.reply({
-            files: [await generateServer(server)],
-            components: [row],
-          });
+          var msg = await interaction.reply({ files: [await generateServer(server)], components: [row] });
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
             const confirmation = await msg.awaitMessageComponent({
@@ -79,14 +74,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

@@ -76,10 +76,7 @@ module.exports = {
               ephemeral: true,
             });
           } else {
-            await interaction.reply({
-              content: 'There was an error while executing this command!',
-              ephemeral: true,
-            });
+            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
           }
         }
       }
@@ -96,10 +93,7 @@ module.exports = {
           }
         } catch (error) {
           console.error(error);
-          await interaction.followUp({
-            content: 'There was an error while executing this command!',
-            ephemeral: true,
-          });
+          await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
           var errorId = generateID(10);
           errorMessage(`Error Id - ${errorId}`);
           console.log(error);
@@ -109,9 +103,7 @@ module.exports = {
             .setDescription(
               `Use </report-bug:${
                 config.discord.commands['report-bug']
-              }> to report it\nError id - ${errorId}\nError Info - \`${error
-                .toString()
-                .replaceAll('Error: ', '')}\``
+              }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
             )
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,

@@ -3,11 +3,13 @@ const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { cacheMessage } = require('../logger.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
-const pixelicCache = new nodeCache({ stdTTL: 180 });
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
+
+const pixelicCache = new nodeCache({ stdTTL: 180 });
+
 async function register(uuid) {
   try {
     uuid = uuid.replace(/-/g, '');
@@ -34,20 +36,16 @@ async function register(uuid) {
     return error;
   }
 }
+
 async function registerGuild(guild) {
   try {
     console.log(guild.members.OWNER);
-    var members = Object.values(guild.members).flatMap((rankData) =>
-      Object.values(rankData).map((data) => data.uuid)
-    );
+    var members = Object.values(guild.members).flatMap((rankData) => Object.values(rankData).map((data) => data.uuid));
     console.log(members);
-
     const chunkSize = 20;
     let registeredCount = 0;
-
     for (let i = 0; i < members.length; i += chunkSize) {
       const chunk = members.slice(i, i + chunkSize);
-
       for (const uuid of chunk) {
         console.log(uuid);
         const registered = await register(uuid);
@@ -55,18 +53,17 @@ async function registerGuild(guild) {
           registeredCount++;
         }
       }
-
       if (i + chunkSize < members.length) {
         await delay(1500);
       }
     }
-
     console.log(`Total users registered: ${registeredCount}`);
     return registeredCount;
   } catch (error) {
     console.log(error);
   }
 }
+
 async function getServerList() {
   try {
     if (pixelicCache.has('serverList')) {
@@ -91,6 +88,7 @@ async function getServerList() {
     return error;
   }
 }
+
 async function getServerHistory(id, timeframe) {
   try {
     timeframe = timeframe.toLowerCase();
@@ -134,6 +132,7 @@ async function getServerHistory(id, timeframe) {
     return error;
   }
 }
+
 async function getServerUptimes() {
   try {
     if (pixelicCache.has('serverUptimes')) {
@@ -155,6 +154,7 @@ async function getServerUptimes() {
     return error;
   }
 }
+
 async function getServerUptime(id) {
   try {
     let serverName;
@@ -186,6 +186,7 @@ async function getServerUptime(id) {
     return error;
   }
 }
+
 async function getHistoryStats(uuid, timeframe) {
   try {
     var check = await validateUUID(uuid);
@@ -196,10 +197,9 @@ async function getHistoryStats(uuid, timeframe) {
     timeframe = timeframe.toLowerCase();
     var options = ['daily', 'weekly', 'monthly'];
     if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
-    var res = await fetch(
-      `https://api.pixelic.de/wynncraft/v1/player/${uuid}/history/${timeframe}`,
-      { headers: { 'X-API-Key': config.api.pixelicAPIKey } }
-    );
+    var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/history/${timeframe}`, {
+      headers: { 'X-API-Key': config.api.pixelicAPIKey },
+    });
     var data = await res.json();
     if (!res.status === 200) {
       return { status: res.status, error: data.cause };
@@ -211,10 +211,12 @@ async function getHistoryStats(uuid, timeframe) {
     return error;
   }
 }
+
 async function clearPixelicCache() {
   cacheMessage('PixelicAPI', 'Cleared');
   pixelicCache.flushAll();
 }
+
 module.exports = {
   register,
   registerGuild,

@@ -12,6 +12,7 @@ const { generateID } = require('../../helperFunctions.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('register')
@@ -23,10 +24,7 @@ module.exports = {
         .setName('player')
         .setDescription('Register a player to the pixelic api')
         .addStringOption((option) =>
-          option
-            .setName('username')
-            .setDescription('The Username of the person you want to register')
-            .setRequired(true)
+          option.setName('username').setDescription('The Username of the person you want to register').setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -37,13 +35,10 @@ module.exports = {
           option.setName('guild').setDescription('The guild you want to register').setRequired(true)
         )
     ),
+
   async execute(interaction) {
     try {
-      if (
-        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
-          config.discord.roles.dev
-        )
-      ) {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
@@ -105,9 +100,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,

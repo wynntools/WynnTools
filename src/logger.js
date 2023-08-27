@@ -3,27 +3,19 @@ var { getCurrentTime } = require('./helperFunctions.js');
 var cli = require('cli-color');
 
 function discordMessage(message) {
-  return console.log(
-    cli.bgMagenta.black(`[${getCurrentTime()}] Discord >`) + ' ' + cli.magenta(message)
-  );
+  return console.log(cli.bgMagenta.black(`[${getCurrentTime()}] Discord >`) + ' ' + cli.magenta(message));
 }
 
 function commandMessage(message) {
-  return console.log(
-    cli.bgGreenBright.black(`[${getCurrentTime()}] Command >`) + ' ' + cli.greenBright(message)
-  );
+  return console.log(cli.bgGreenBright.black(`[${getCurrentTime()}] Command >`) + ' ' + cli.greenBright(message));
 }
 
 function warnMessage(message) {
-  return console.log(
-    cli.bgGreenBright.black(`[${getCurrentTime()}] Warning >`) + ' ' + cli.yellow(message)
-  );
+  return console.log(cli.bgGreenBright.black(`[${getCurrentTime()}] Warning >`) + ' ' + cli.yellow(message));
 }
 
 function errorMessage(message) {
-  return console.log(
-    cli.bgRedBright.black(`[${getCurrentTime()}] Error >`) + ' ' + cli.redBright(message)
-  );
+  return console.log(cli.bgRedBright.black(`[${getCurrentTime()}] Error >`) + ' ' + cli.redBright(message));
 }
 
 function scriptMessage(message) {
@@ -31,9 +23,7 @@ function scriptMessage(message) {
 }
 
 function cacheMessage(type, message) {
-  return console.log(
-    cli.bgYellow.black(`[${getCurrentTime()}] ${type} Cache >`) + ' ' + cli.yellow(message)
-  );
+  return console.log(cli.bgYellow.black(`[${getCurrentTime()}] ${type} Cache >`) + ' ' + cli.yellow(message));
 }
 
 async function updateMessage() {
@@ -42,10 +32,7 @@ async function updateMessage() {
   const message2 = 'Bot has updated, please restart the bot to apply changes!';
   const padding = ' '.repeat(Math.floor((columns - warning.length) / 2));
   const padding2 = ' '.repeat(Math.floor((columns - message2.length) / 2));
-
-  // console.log(cli.bgRed.black(' '.repeat(columns).repeat(3)));
   console.log(cli.bgRed.black(padding + warning + padding + '\n' + padding2 + message2 + padding2));
-  // console.log(cli.bgRed.black(' '.repeat(columns).repeat(3)));
 }
 
 module.exports = {

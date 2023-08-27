@@ -8,9 +8,7 @@ const path = require('path');
 const fs = require('fs');
 
 async function start() {
-  const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
-  });
+  const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
   client.commands = new Collection();
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
@@ -23,15 +21,16 @@ async function start() {
       if ('data' in command && 'execute' in command) {
         client.commands.set(command.data.name, command);
       } else {
-        warnMessage(
-          `The command at ${filePath} is missing a required "data" or "execute" property.`
-        );
+        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
   }
+
   deployCommands();
   deployDevCommands();
+
   await delay(3000);
+
   client.once(Events.ClientReady, async () => {
     global.uptime = toFixed(new Date().getTime() / 1000, 0);
     global.client = client;
@@ -53,14 +52,11 @@ async function start() {
         console.log(error);
       }
     }
-    scriptMessage(
-      `Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`
-    );
+    scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
   });
 
   const eventsPath = path.join(__dirname, 'src/events');
   const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
-
   for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
     const event = require(filePath);
@@ -69,4 +65,5 @@ async function start() {
 
   client.login(config.discord.token);
 }
+
 start();

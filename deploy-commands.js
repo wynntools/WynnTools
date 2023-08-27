@@ -3,6 +3,7 @@ const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
+
 function deployCommands() {
   const commands = [];
   let skipped = 0;
@@ -22,13 +23,13 @@ function deployCommands() {
       if ('data' in command && 'execute' in command) {
         commands.push(command.data.toJSON());
       } else {
-        warnMessage(
-          `The command at ${filePath} is missing a required "data" or "execute" property.`
-        );
+        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
   }
+
   const rest = new REST().setToken(config.discord.token);
+
   (async () => {
     try {
       discordMessage(
@@ -45,6 +46,7 @@ function deployCommands() {
     }
   })();
 }
+
 function deployDevCommands() {
   const commands = [];
   let skipped = 0;
@@ -64,22 +66,21 @@ function deployDevCommands() {
       if ('data' in command && 'execute' in command) {
         commands.push(command.data.toJSON());
       } else {
-        warnMessage(
-          `The command at ${filePath} is missing a required "data" or "execute" property.`
-        );
+        warnMessage(`The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
   }
+
   const rest = new REST().setToken(config.discord.token);
+
   (async () => {
     try {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
-      const data = await rest.put(
-        Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer),
-        { body: commands }
-      );
+      const data = await rest.put(Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer), {
+        body: commands,
+      });
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
@@ -88,4 +89,5 @@ function deployDevCommands() {
     }
   })();
 }
+
 module.exports = { deployCommands, deployDevCommands };
