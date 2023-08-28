@@ -16,7 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.11.2",
-    "chart.js": "^4.3.3",
     "cli-color": "^2.0.3",
     "discord.js": "^14.12.1",
     "fs-extra": "^11.1.1",

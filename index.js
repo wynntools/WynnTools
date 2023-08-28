@@ -1,5 +1,5 @@
-const { discordMessage, scriptMessage, warnMessage } = require('./src/logger.js');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { discordMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { toFixed } = require('./src/functions/helper.js');
@@ -40,19 +40,26 @@ async function start() {
     var skipped = 0;
     for (const file of scriptFiles) {
       try {
-        if (file.toLowerCase().includes('disabled')) {
+        var { config } = require(`./src/scripts/${file}`);
+        if (file.toLowerCase().includes('disabled') || config.disabled) {
           skipped++;
           scriptMessage(`Skipped ${file} script`);
           continue;
         }
-        scriptMessage(`Started ${file} script`);
-        require(`./src/scripts/${file}`);
+        if (config.type === 'cron') {
+          var { task } = require(`./src/scripts/${file}`);
+          task.start();
+          scriptMessage(`Started ${file} script`);
+        } else {
+          errorMessage(`Unknown script type for ${file} script`);
+        }
         await delay(300);
       } catch (error) {
         console.log(error);
       }
     }
     scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
+    client.user.setPresence({ activities: [{ name: 'to crys', type: ActivityType.Listening }] });
   });
 
   const eventsPath = path.join(__dirname, 'src/events');

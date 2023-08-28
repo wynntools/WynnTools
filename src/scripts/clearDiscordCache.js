@@ -3,18 +3,22 @@ const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 
-let timezoneStuff = null;
-if (config.other.timezone == null) {
-  timezoneStuff = { scheduled: true };
-} else {
-  timezoneStuff = { scheduled: true, timezone: config.other.timezone };
-}
-
-cron.schedule(
-  '00 12 * * *',
-  async function () {
-    scriptMessage('Clearing Discord Cache');
-    await clearDiscordCache();
+module.exports = {
+  config: {
+    running: false,
+    enabled: false,
+    type: 'cron',
+    name: 'clearDiscordCache',
   },
-  timezoneStuff
-);
+  task: cron.schedule(
+    '00 12 * * *',
+    async function () {
+      scriptMessage('Clearing Discord Cache');
+      await clearDiscordCache();
+    },
+    {
+      scheduled: false,
+      timezone: config.other.timezone ? config.other.timezone : null,
+    }
+  ),
+};
