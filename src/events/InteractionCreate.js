@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { writeAt, toFixed, generateID, blacklistCheck } = require('../helperFunctions.js');
+const { writeAt, toFixed, generateID, blacklistCheck } = require('../functions/helper.js');
 const { commandMessage, errorMessage } = require('../logger.js');
 const config = require('../../config.json');
 const fs = require('fs');

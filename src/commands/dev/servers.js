@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 

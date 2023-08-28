@@ -1,4 +1,4 @@
-const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('../helperFunctions.js');
+const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');

@@ -6,7 +6,7 @@ const {
   EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
+const { writeAt, toFixed, generateID } = require('../../functions/helper.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');

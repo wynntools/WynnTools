@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { generateGuild } = require('../../functions/generateImage.js');
 const { registerGuild } = require('../../api/pixelicAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');

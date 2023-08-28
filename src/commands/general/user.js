@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { capitalizeFirstLetter, generateID } = require('../../helperFunctions.js');
+const { capitalizeFirstLetter, generateID } = require('../../functions/helper.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');

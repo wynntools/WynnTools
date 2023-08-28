@@ -1,5 +1,5 @@
 const { validateUUID, getUUID } = require('./mojangAPI.js');
-const { formatUUID } = require('../helperFunctions.js');
+const { formatUUID } = require('../functions/helper.js');
 const { cacheMessage } = require('../logger.js');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>

@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const { generateStats, generateProfileImage } = require('../../functions/generateImage.js');
 const { getProfiles } = require('../../api/wynnCraftAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { register } = require('../../api/pixelicAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
 const { errorMessage } = require('../../logger.js');

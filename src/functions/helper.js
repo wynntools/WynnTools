@@ -1,4 +1,4 @@
-const config = require('../config.json');
+const config = require('../../config.json');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');

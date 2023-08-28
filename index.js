@@ -2,7 +2,7 @@ const { discordMessage, scriptMessage, warnMessage } = require('./src/logger.js'
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { toFixed } = require('./src/helperFunctions.js');
+const { toFixed } = require('./src/functions/helper.js');
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');

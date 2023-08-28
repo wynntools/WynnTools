@@ -17,7 +17,7 @@ const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wyn
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
 

@@ -7,7 +7,7 @@ const {
   ButtonStyle,
 } = require('discord.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { generateID, writeAt } = require('../../helperFunctions.js');
+const { generateID, writeAt } = require('../../functions/helper.js');
 const { getUsername } = require('../../api/discordAPI.js');
 const { errorMessage } = require('../../logger.js');
 const config = require('../../../config.json');
