@@ -1,8 +1,8 @@
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { writeAt, generateID } = require('../functions/helper.js');
+const { scriptMessage, errorMessage } = require('../logger.js');
 const { getUsername } = require('../api/discordAPI.js');
-const { writeAt } = require('../functions/helper.js');
-const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
@@ -26,7 +26,9 @@ cron.schedule(
           return false;
         }
       } catch (error) {
-        console.error(error);
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        console.log(error);
         return false;
       }
     }
@@ -42,6 +44,8 @@ cron.schedule(
         const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
         return randomFact;
       } catch (error) {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
         console.log(error);
         return null;
       }
@@ -121,7 +125,9 @@ cron.schedule(
       );
       await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
     } catch (error) {
-      console.error(error);
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
+      console.log(error);
     }
   },
   timezoneStuff

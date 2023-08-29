@@ -1,4 +1,5 @@
-const { discordMessage, warnMessage } = require('./src/logger.js');
+const { discordMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { generateID } = require('./src/functions/helper.js');
 const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const path = require('path');
@@ -42,6 +43,8 @@ function deployCommands() {
         `Successfully reloaded ${data.length} application (/) commands and skipped over ${skipped} commands.`
       );
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
       console.error(error);
     }
   })();
@@ -85,6 +88,8 @@ function deployDevCommands() {
         `Successfully reloaded ${data.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
       console.error(error);
     }
   })();

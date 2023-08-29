@@ -22,6 +22,8 @@ module.exports = {
             );
           }
         } catch (error) {
+          var errorId = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorId}`);
           console.log(error);
         }
         try {
@@ -53,6 +55,8 @@ module.exports = {
             }
           }
         } catch (error) {
+          var errorId = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorId}`);
           console.log(error);
         }
         try {
@@ -69,14 +73,30 @@ module.exports = {
           }
           await command.execute(interaction);
         } catch (error) {
-          console.error(error);
-          if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({
-              content: 'There was an error while executing this command!',
-              ephemeral: true,
+          var errorId = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorId}`);
+          console.log(error);
+          const errorEmbed = new EmbedBuilder()
+            .setColor(config.discord.embeds.red)
+            .setTitle('An error occurred')
+            .setDescription(
+              `Use </report-bug:${
+                config.discord.commands['report-bug']
+              }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+            )
+            .setFooter({
+              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              iconURL: config.other.logo,
             });
+          const supportDisc = new ButtonBuilder()
+            .setLabel('Support Discord')
+            .setURL(config.discord.supportInvite)
+            .setStyle(ButtonStyle.Link);
+          const row = new ActionRowBuilder().addComponents(supportDisc);
+          if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
           } else {
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
           }
         }
       }
@@ -92,9 +112,7 @@ module.exports = {
             await setupGuideCommand.execute(interaction);
           }
         } catch (error) {
-          console.error(error);
-          await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-          var errorId = generateID(10);
+          var errorId = generateID(config.other.errorIdLength);
           errorMessage(`Error Id - ${errorId}`);
           console.log(error);
           const errorEmbed = new EmbedBuilder()
@@ -114,10 +132,16 @@ module.exports = {
             .setURL(config.discord.supportInvite)
             .setStyle(ButtonStyle.Link);
           const row = new ActionRowBuilder().addComponents(supportDisc);
-          await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+          if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+          } else {
+            await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+          }
         }
       }
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
     }
   },

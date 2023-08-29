@@ -104,7 +104,7 @@ module.exports = {
         await interaction.reply({ embeds: [embed], ephemeral: true });
       });
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

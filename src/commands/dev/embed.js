@@ -94,13 +94,8 @@ module.exports = {
           const data = await response.text();
           const channel = interaction.options.getChannel('channel') ?? interaction.channel;
           const embed = new EmbedBuilder(JSON.parse(data));
-          try {
-            await channel.send({ embeds: [embed] });
-            await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
-          } catch (error) {
-            console.error(error);
-            interaction.editReply('This is not a valid embed!');
-          }
+          await channel.send({ embeds: [embed] });
+          await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
         } else {
           const embedInput = interaction.options.getString('embed');
           const channel = interaction.options.getChannel('channel') ?? interaction.channel;
@@ -134,7 +129,7 @@ module.exports = {
         });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

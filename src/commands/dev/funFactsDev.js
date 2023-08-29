@@ -92,7 +92,9 @@ module.exports = {
           return false;
         }
       } catch (error) {
-        console.error(error);
+        var errorIdCheckFact = generateID(config.other.errorIdLength);
+        errorMessage(`Error ID: ${errorIdCheckFact}`);
+        console.log(error);
         return false;
       }
     }
@@ -107,6 +109,8 @@ module.exports = {
         const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
         return randomFact;
       } catch (error) {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error ID: ${errorId}`);
         console.log(error);
         return null;
       }
@@ -258,7 +262,9 @@ module.exports = {
               );
               await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
             } catch (error) {
-              console.error(error);
+              var errorIdSendFacts = generateID(config.other.errorIdLength);
+              errorMessage(`Error ID: ${errorIdSendFacts}`);
+              console.log(error);
             }
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.green)
@@ -281,6 +287,9 @@ module.exports = {
             await confirmation.update({ embeds: [cancelEmbed], components: [] });
           }
         } catch (error) {
+          var errorIdSendingFacts = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdSendingFacts}`);
+          console.log(error);
           const cancelEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
             .setDescription('Cancelled sending Fun Facts')
@@ -739,6 +748,8 @@ module.exports = {
                     }
                   }
                 } catch (error) {
+                  var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
+                  errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
                   console.log(error);
                 }
               } else if (confirmation.customId === 'rightButtonConfigs') {
@@ -806,6 +817,8 @@ module.exports = {
               }
             }
           } catch (error) {
+            var errorIdChangingConfigs = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdChangingConfigs}`);
             console.log(error);
           }
         } else {
@@ -1056,10 +1069,14 @@ module.exports = {
                   }
                 }
               } catch (error) {
+                var errorIdEditingConfigData = generateID(config.other.errorIdLength);
+                errorMessage(`Error ID: ${errorIdEditingConfigData}`);
                 console.log(error);
               }
             }
           } catch (error) {
+            var errorIdEditConfig = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdEditConfig}`);
             console.log(error);
             const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
             const channel = guild.channels.cache.get(currentConfig.channelId);
@@ -1092,7 +1109,7 @@ module.exports = {
         }
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

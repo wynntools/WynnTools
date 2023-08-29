@@ -161,7 +161,10 @@ module.exports = {
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideCancel], components: [] });
                 }
-              } catch (e) {
+              } catch (error) {
+                var errorIdOverrideData = generateID(config.other.errorIdLength);
+                errorMessage(`Error Id - ${errorIdOverrideData}`);
+                console.log(error);
                 const overrideCancel = new EmbedBuilder()
                   .setColor(config.discord.embeds.red)
                   .setDescription('Data override cancelled')
@@ -184,6 +187,9 @@ module.exports = {
               return await confirmation.update({ embeds: [updatedEmbed], components: [] });
             }
           } catch (error) {
+            var errorIdServerUptimeOverride = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdServerUptimeOverride}`);
+            console.log(error);
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Data override cancelled')
@@ -293,6 +299,9 @@ module.exports = {
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
               }
             } catch (error) {
+              var errorIdDisable = generateID(config.other.errorIdLength);
+              errorMessage(`Error ID: ${errorIdDisable}`);
+              console.log(error);
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('server uptime logging has been disabled')
@@ -353,7 +362,7 @@ module.exports = {
         return await interaction.reply({ embeds: [embed] });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

@@ -178,7 +178,10 @@ module.exports = {
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideCancel], components: [] });
                 }
-              } catch (e) {
+              } catch (error) {
+                var errorIdSetup = generateID(config.other.errorIdLength);
+                errorMessage(`Error Id - ${errorIdSetup}`);
+                console.log(error);
                 const overrideCancel = new EmbedBuilder()
                   .setColor(config.discord.embeds.red)
                   .setDescription('Data override cancelled')
@@ -201,6 +204,9 @@ module.exports = {
               return await confirmation.update({ embeds: [updatedEmbed], components: [] });
             }
           } catch (error) {
+            var errorIdSetupOverride = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdSetupOverride}`);
+            console.log(error);
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Data override cancelled')
@@ -298,6 +304,8 @@ module.exports = {
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
             }
           } catch (error) {
+            var errorIdSetupFirstTime = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdSetupFirstTime}`);
             console.log(error);
           }
         }
@@ -369,6 +377,9 @@ module.exports = {
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
               }
             } catch (error) {
+              var errorIdDisable = generateID(config.other.errorIdLength);
+              errorMessage(`Error ID: ${errorIdDisable}`);
+              console.log(error);
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('Fun facts have been disabled')
@@ -552,6 +563,9 @@ module.exports = {
                 return await confirmation.update({ embeds: [embed], components: [] });
               }
             } catch (error) {
+              var errorIdSuggest = generateID(config.other.errorIdLength);
+              errorMessage(`Error ID: ${errorIdSuggest}`);
+              console.log(error);
               const embed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('Fun fact suggestion cancelled')
@@ -576,6 +590,8 @@ module.exports = {
             return await confirmation.update({ embeds: [embed], components: [] });
           }
         } catch (error) {
+          var errorIdSuggestNotify = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdSuggestNotify}`);
           console.log(error);
           const embed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
@@ -648,7 +664,10 @@ module.exports = {
             });
             await confirmation.reply({ embeds: [updatedEmbed], components: [] });
           }
-        } catch (e) {
+        } catch (error) {
+          var errorIdQuickSetup = generateID(config.other.errorIdLength);
+          errorMessage(`Error Id - ${errorIdQuickSetup}`);
+          console.log(error);
           await interaction.editReply({ embeds: [guideEmbed], components: [] });
         }
       } else if (subcommand === 'button-setup-guide') {
@@ -687,7 +706,7 @@ module.exports = {
         await interaction.followUp({ embeds: [guildButtonEmbed], components: [row], ephemeral: true });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

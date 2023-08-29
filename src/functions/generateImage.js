@@ -1,11 +1,12 @@
-const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('./helper.js');
+const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, generateID } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { cacheMessage, errorMessage } = require('../logger.js');
 const { AttachmentBuilder } = require('discord.js');
-const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
+const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
 const generateStatsCache = new nodeCache({ stdTTL: 180 });
@@ -432,6 +433,8 @@ async function generateStats(uuid) {
       return attachment;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -834,6 +837,8 @@ async function generateProfileImage(uuid, profileId) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1244,6 +1249,8 @@ async function generateMemberJoin(data) {
     );
     return canvas.toBuffer('image/png');
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1285,6 +1292,8 @@ async function generateServer(server) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1350,6 +1359,8 @@ async function generateServers(servers) {
     var buffer = canvas.toBuffer('image/png');
     return buffer;
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1423,6 +1434,8 @@ async function generateServerChart(data) {
       .setHeight(428);
     return await chart.getShortUrl();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1493,6 +1506,8 @@ async function clearGenerateStatsCache() {
     cacheMessage('Generate Stats', 'Cleared');
     generateStatsCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1503,6 +1518,8 @@ async function clearGenerateProfileImageCache() {
     cacheMessage('Generate Profile Image', 'Cleared');
     generateProfileImageCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1513,6 +1530,8 @@ async function clearGenerateGuildCache() {
     cacheMessage('Generate Guild', 'Cleared');
     generateGuildCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1523,6 +1542,8 @@ async function clearGenerateServerCache() {
     cacheMessage('Generate Server', 'Cleared');
     generateServerCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1533,6 +1554,8 @@ async function clearGenerateServerGraphCache() {
     cacheMessage('Generate Server Graph', 'Cleared');
     generateServerGraphCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }

@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { countStatsInDirectory, addNotation } = require('../functions/helper.js');
+const { countStatsInDirectory, addNotation, generateID } = require('../functions/helper.js');
+const { scriptMessage, errorMessage } = require('../logger.js');
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const path = require('path');
@@ -79,6 +79,8 @@ cron.schedule(
         });
       await message.edit({ embeds: [embed], components: [row] });
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
     }
   },

@@ -1,4 +1,6 @@
 const { generateMemberJoin } = require('../functions/generateImage.js');
+const { generateID } = require('../functions/helper.js');
+const { errorMessage } = require('../logger.js');
 const config = require('../../config.json');
 
 module.exports = {
@@ -12,6 +14,8 @@ module.exports = {
         files: [await generateMemberJoin(member)],
       });
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
       console.log(error);
     }
   },

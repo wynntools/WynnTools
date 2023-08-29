@@ -1,6 +1,7 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { cacheMessage, errorMessage } = require('../logger.js');
 const { validateUUID, getUUID } = require('./mojangAPI.js');
-const { cacheMessage } = require('../logger.js');
+const { generateID } = require('../functions/helper.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
@@ -19,19 +20,20 @@ async function register(uuid) {
       check = await validateUUID(uuid);
     }
     console.log(uuid);
-    if (!check) return { status: 400, error: 'Invalid UUID' };
+    if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/register`, {
       method: 'POST',
       headers: { 'X-API-Key': config.api.pixelicAPIKey },
     });
-    console.log(res.status);
     if (res.status === 201) {
       return { status: res.status, success: true, info: 'Registered' };
     } else {
       var data = await res.json();
-      return { status: res.status, error: data.cause };
+      throw new Error({ status: res.status, error: data.cause });
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
@@ -57,9 +59,10 @@ async function registerGuild(guild) {
         await delay(1500);
       }
     }
-    console.log(`Total users registered: ${registeredCount}`);
     return registeredCount;
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
   }
 }
@@ -74,16 +77,18 @@ async function getServerList() {
         headers: { 'X-API-Key': config.api.pixelicAPIKey },
       });
       var data = await res.json();
-      if (!res.status === 200) {
-        return { status: res.status, error: data.cause };
-      } else {
+      if (res.status === 200) {
         console.log(data);
         var response = { status: res.status, success: true };
         pixelicCache.set('serverList', response);
         return response;
+      } else {
+        throw new Error({ status: res.status, error: data.cause });
       }
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
@@ -93,7 +98,7 @@ async function getServerHistory(id, timeframe) {
   try {
     timeframe = timeframe.toLowerCase();
     var options = ['hour', 'day', 'week', 'month', 'year', 'alltime'];
-    if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
+    if (!options.includes(timeframe)) throw new Error({ status: 400, error: 'Invalid timeframe' });
     let server;
     id = id.toString().toLowerCase();
     if (id.includes('yt')) {
@@ -108,7 +113,7 @@ async function getServerHistory(id, timeframe) {
         id = Number(id.replace('wc', ''));
       }
       if (id >= !0 && id <= !75) {
-        return { status: 400, error: 'Invalid Server' };
+        throw new Error({ status: 400, error: 'Invalid Server' });
       }
     }
     if (pixelicCache.has(`${id}-${timeframe}`)) {
@@ -124,10 +129,12 @@ async function getServerHistory(id, timeframe) {
         pixelicCache.set(`${id}-${timeframe}`, response);
         return response;
       } else {
-        return { status: res.status, success: false, error: data.cause };
+        throw new Error({ status: res.status, success: false, error: data.cause });
       }
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
@@ -147,9 +154,13 @@ async function getServerUptimes() {
         var response = { status: res.status, success: true, servers: data.servers };
         pixelicCache.set('serverUptimes', response);
         return response;
+      } else {
+        throw new Error({ status: res.status, success: false, error: data.cause });
       }
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
@@ -171,7 +182,7 @@ async function getServerUptime(id) {
         id = Number(id.replace('wc', ''));
       }
       if (id >= !0 && id <= !75) {
-        return { status: 400, error: 'Invalid Server' };
+        throw new Error({ status: 400, error: 'Invalid Server' });
       }
     }
     var servers = await getServerUptimes();
@@ -182,6 +193,8 @@ async function getServerUptime(id) {
       return { name: serverName, offlineSince: null };
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
@@ -196,25 +209,33 @@ async function getHistoryStats(uuid, timeframe) {
     }
     timeframe = timeframe.toLowerCase();
     var options = ['daily', 'weekly', 'monthly'];
-    if (!options.includes(timeframe)) return { status: 400, error: 'Invalid timeframe' };
+    if (!options.includes(timeframe)) throw new Error({ status: 400, error: 'Invalid timeframe' });
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/history/${timeframe}`, {
       headers: { 'X-API-Key': config.api.pixelicAPIKey },
     });
     var data = await res.json();
-    if (!res.status === 200) {
-      return { status: res.status, error: data.cause };
-    } else {
+    if (res.status === 200) {
       return { status: res.status, success: true, data: data.data };
+    } else {
+      throw new Error({ status: res.status, error: data.cause });
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
     console.log(error);
     return error;
   }
 }
 
 async function clearPixelicCache() {
-  cacheMessage('PixelicAPI', 'Cleared');
-  pixelicCache.flushAll();
+  try {
+    cacheMessage('PixelicAPI', 'Cleared');
+    pixelicCache.flushAll();
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
+    console.log(error);
+  }
 }
 
 module.exports = {
