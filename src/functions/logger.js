@@ -1,5 +1,5 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
-var { getCurrentTime } = require('./functions/helper.js');
+var { getCurrentTime } = require('./helper.js');
 var cli = require('cli-color');
 
 function discordMessage(message) {

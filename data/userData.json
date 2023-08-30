@@ -1,9 +1,17 @@
 {
   "608584543506530314": {
-    "commandsRun": 71,
+    "commandsRun": 74,
     "firstCommand": "1689996034",
-    "lastUpdated": "1691904063",
-    "commands": { "fun-facts": 23, "user": 8, "update-stats": 4, "report-bug": 2, "about": 19, "stats": 11, "guild": 4 }
+    "lastUpdated": "1693310713",
+    "commands": {
+      "fun-facts": 23,
+      "user": 8,
+      "update-stats": 4,
+      "report-bug": 2,
+      "about": 22,
+      "stats": 11,
+      "guild": 4
+    }
   },
   "894034804503351366": {
     "commandsRun": 12,
