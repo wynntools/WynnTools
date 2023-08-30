@@ -8,8 +8,8 @@ const fetch = (...args) =>
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
 
-const wynncraftPlayerCache = new nodeCache({ stdTTL: 180 });
-const wynncraftGuildCache = new nodeCache({ stdTTL: 180 });
+const wynncraftPlayerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const wynncraftGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
 function formatData(data) {
   try {
@@ -206,10 +206,11 @@ async function getServer(id) {
   }
 }
 
-async function clearWynnCraftCache() {
+function clearWynnCraftCache() {
   try {
     cacheMessage('WynnCraft API Player', 'Cleared');
     wynncraftPlayerCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
@@ -218,10 +219,11 @@ async function clearWynnCraftCache() {
   }
 }
 
-async function clearWynnCraftGuildCache() {
+function clearWynnCraftGuildCache() {
   try {
     cacheMessage('WynnCraft API Guild', 'Cleared');
     wynncraftGuildCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);

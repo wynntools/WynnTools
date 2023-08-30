@@ -9,11 +9,11 @@ const QuickChart = require('quickchart-js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
-const generateStatsCache = new nodeCache({ stdTTL: 180 });
-const generateProfileImageCache = new nodeCache({ stdTTL: 180 });
-const generateGuildCache = new nodeCache({ stdTTL: 180 });
-const generateServerCache = new nodeCache({ stdTTL: 180 });
-const generateServerGraphCache = new nodeCache({ stdTTL: 300 });
+const generateStatsCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateServerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateServerGraphCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
 registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
@@ -1501,10 +1501,11 @@ async function generateServerGraph(server) {
   }
 }
 
-async function clearGenerateStatsCache() {
+function clearGenerateStatsCache() {
   try {
     cacheMessage('Generate Stats', 'Cleared');
     generateStatsCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
@@ -1513,10 +1514,11 @@ async function clearGenerateStatsCache() {
   }
 }
 
-async function clearGenerateProfileImageCache() {
+function clearGenerateProfileImageCache() {
   try {
     cacheMessage('Generate Profile Image', 'Cleared');
     generateProfileImageCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
@@ -1525,10 +1527,11 @@ async function clearGenerateProfileImageCache() {
   }
 }
 
-async function clearGenerateGuildCache() {
+function clearGenerateGuildCache() {
   try {
     cacheMessage('Generate Guild', 'Cleared');
     generateGuildCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
@@ -1537,10 +1540,11 @@ async function clearGenerateGuildCache() {
   }
 }
 
-async function clearGenerateServerCache() {
+function clearGenerateServerCache() {
   try {
     cacheMessage('Generate Server', 'Cleared');
     generateServerCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
@@ -1549,10 +1553,11 @@ async function clearGenerateServerCache() {
   }
 }
 
-async function clearGenerateServerGraphCache() {
+function clearGenerateServerGraphCache() {
   try {
     cacheMessage('Generate Server Graph', 'Cleared');
     generateServerGraphCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);

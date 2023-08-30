@@ -55,46 +55,46 @@ module.exports = {
       }
       const cacheCategory = interaction.options.getString('cache');
       if (cacheCategory == 'mojang') {
-        await clearMojangCache();
+        clearMojangCache();
         await interaction.reply({ content: 'Cleared Mojang Cache' });
       } else if (cacheCategory == 'wynncraft') {
-        await clearWynnCraftCache();
+        clearWynnCraftCache();
         await interaction.reply({ content: 'Cleared WynnCraft Cache' });
       } else if (cacheCategory == 'wynncraftGuild') {
-        await clearWynnCraftGuildCache();
+        clearWynnCraftGuildCache();
         await interaction.reply({ content: 'Cleared WynnCraft Guild Cache' });
       } else if (cacheCategory == 'discord') {
-        await clearDiscordCache();
+        clearDiscordCache();
         await interaction.reply({ content: 'Cleared Discord Cache' });
       } else if (cacheCategory == 'pixelic') {
-        await clearPixelicCache();
+        clearPixelicCache();
         await interaction.reply({ content: 'Cleared Pixelic Cache' });
       } else if (cacheCategory === 'clearGenerateStatsCache') {
-        await clearGenerateStatsCache();
+        clearGenerateStatsCache();
         await interaction.reply({ content: 'Cleared Generate Stats Cache' });
       } else if (cacheCategory === 'clearGenerateProfileImageCache') {
-        await clearGenerateProfileImageCache();
+        clearGenerateProfileImageCache();
         await interaction.reply({ content: 'Cleared Generate Profile Image Cache' });
       } else if (cacheCategory === 'clearGenerateGuildCache') {
-        await clearGenerateGuildCache();
+        clearGenerateGuildCache();
         await interaction.reply({ content: 'Cleared Generate Guild Cache' });
       } else if (cacheCategory === 'clearGenerateServerCache') {
-        await clearGenerateServerCache();
+        clearGenerateServerCache();
         await interaction.reply({ content: 'Cleared Generate Server Cache' });
       } else if (cacheCategory === 'clearGenerateServerGraphCache') {
-        await clearGenerateServerGraphCache();
+        clearGenerateServerGraphCache();
         await interaction.reply({ content: 'Cleared Generate Server Graph Cache' });
       } else if (cacheCategory == 'all') {
-        await clearMojangCache();
-        await clearDiscordCache();
-        await clearPixelicCache();
-        await clearWynnCraftCache();
-        await clearWynnCraftGuildCache();
-        await clearGenerateStatsCache();
-        await clearGenerateProfileImageCache();
-        await clearGenerateGuildCache();
-        await clearGenerateServerCache();
-        await clearGenerateServerGraphCache();
+        clearMojangCache();
+        clearDiscordCache();
+        clearPixelicCache();
+        clearWynnCraftCache();
+        clearWynnCraftGuildCache();
+        clearGenerateStatsCache();
+        clearGenerateProfileImageCache();
+        clearGenerateGuildCache();
+        clearGenerateServerCache();
+        clearGenerateServerGraphCache();
         await interaction.reply({ content: 'Cleared All Caches' });
       } else {
         throw new Error('uhhh something went wrong');
