@@ -1,5 +1,5 @@
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../logger.js');
+const { scriptMessage } = require('../functions/logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
 const cron = require('node-cron');

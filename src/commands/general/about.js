@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { countStatsInDirectory, addNotation, generateID } = require('../../functions/helper.js');
 const packageJson = require('../../../package.json');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');

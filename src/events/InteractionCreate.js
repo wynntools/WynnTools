@@ -1,6 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { writeAt, toFixed, generateID, blacklistCheck } = require('../functions/helper.js');
-const { commandMessage, errorMessage } = require('../logger.js');
+const { commandMessage, errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const fs = require('fs');
 
@@ -22,8 +22,8 @@ module.exports = {
             );
           }
         } catch (error) {
-          var errorId = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorId}`);
+          var errorIdLogger = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdLogger}`);
           console.log(error);
         }
         try {
@@ -55,8 +55,8 @@ module.exports = {
             }
           }
         } catch (error) {
-          var errorId = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorId}`);
+          var errorIdLogUserData = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdLogUserData}`);
           console.log(error);
         }
         try {
@@ -73,8 +73,8 @@ module.exports = {
           }
           await command.execute(interaction);
         } catch (error) {
-          var errorId = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorId}`);
+          var errorIdBlacklistCheck = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdBlacklistCheck}`);
           console.log(error);
           const errorEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
@@ -82,7 +82,9 @@ module.exports = {
             .setDescription(
               `Use </report-bug:${
                 config.discord.commands['report-bug']
-              }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+              }> to report it\nError id - ${errorIdBlacklistCheck}\nError Info - \`${error
+                .toString()
+                .replaceAll('Error: ', '')}\``
             )
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -112,8 +114,8 @@ module.exports = {
             await setupGuideCommand.execute(interaction);
           }
         } catch (error) {
-          var errorId = generateID(config.other.errorIdLength);
-          errorMessage(`Error Id - ${errorId}`);
+          var errorIdButtons = generateID(config.other.errorIdLength);
+          errorMessage(`Error Id - ${errorIdButtons}`);
           console.log(error);
           const errorEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
@@ -121,7 +123,9 @@ module.exports = {
             .setDescription(
               `Use </report-bug:${
                 config.discord.commands['report-bug']
-              }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+              }> to report it\nError id - ${errorIdButtons}\nError Info - \`${error
+                .toString()
+                .replaceAll('Error: ', '')}\``
             )
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,

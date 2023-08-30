@@ -1,6 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const { countStatsInDirectory, addNotation, generateID } = require('../functions/helper.js');
-const { scriptMessage, errorMessage } = require('../logger.js');
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const packageJson = require('../../package.json');
 const config = require('../../config.json');
 const cron = require('node-cron');

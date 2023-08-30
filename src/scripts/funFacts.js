@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { writeAt, generateID } = require('../functions/helper.js');
-const { scriptMessage, errorMessage } = require('../logger.js');
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const { getUsername } = require('../api/discordAPI.js');
 const config = require('../../config.json');
 const cron = require('node-cron');

@@ -1,4 +1,4 @@
-const { discordMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { discordMessage, warnMessage, errorMessage } = require('./src/functions/logger.js');
 const { generateID } = require('./src/functions/helper.js');
 const { REST, Routes } = require('discord.js');
 const config = require('./config.json');

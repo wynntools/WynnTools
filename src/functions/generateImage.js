@@ -2,7 +2,7 @@ const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, gene
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
-const { cacheMessage, errorMessage } = require('../logger.js');
+const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { AttachmentBuilder } = require('discord.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');

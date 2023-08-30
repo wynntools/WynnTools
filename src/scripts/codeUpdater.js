@@ -1,5 +1,5 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Updater.js (Edited)
-const { updateMessage, scriptMessage } = require('../logger.js');
+const { updateMessage, scriptMessage } = require('../functions/logger.js');
 const { exec } = require('child_process');
 const cron = require('node-cron');
 

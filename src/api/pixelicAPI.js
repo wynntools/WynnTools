@@ -1,5 +1,5 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { cacheMessage, errorMessage } = require('../logger.js');
+const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { validateUUID, getUUID } = require('./mojangAPI.js');
 const { generateID } = require('../functions/helper.js');
 const config = require('../../config.json');

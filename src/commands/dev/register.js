@@ -10,7 +10,7 @@ const { register, registerGuild } = require('../../api/pixelicAPI.js');
 const { getUsername, getUUID } = require('../../api/mojangAPI.js');
 const { generateID } = require('../../functions/helper.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {

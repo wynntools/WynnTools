@@ -11,7 +11,7 @@ const { getProfiles } = require('../../api/wynnCraftAPI.js');
 const { generateID } = require('../../functions/helper.js');
 const { register } = require('../../api/pixelicAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {

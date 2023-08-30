@@ -1,4 +1,4 @@
-const { errorMessage } = require('../logger.js');
+const { errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');

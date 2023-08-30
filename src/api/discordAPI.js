@@ -1,4 +1,4 @@
-const { cacheMessage } = require('../logger.js');
+const { cacheMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>

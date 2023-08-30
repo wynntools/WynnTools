@@ -9,7 +9,7 @@ const {
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
 const { generateID } = require('../../functions/helper.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {

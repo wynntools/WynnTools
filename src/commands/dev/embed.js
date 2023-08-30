@@ -8,7 +8,7 @@ const {
   ChannelType,
 } = require('discord.js');
 const { generateID } = require('../../functions/helper.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
 

@@ -1,4 +1,4 @@
-const { discordMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { discordMessage, scriptMessage, warnMessage, errorMessage } = require('./src/functions/logger.js');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

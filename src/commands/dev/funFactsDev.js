@@ -9,7 +9,7 @@ const {
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { generateID, writeAt } = require('../../functions/helper.js');
 const { getUsername } = require('../../api/discordAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
