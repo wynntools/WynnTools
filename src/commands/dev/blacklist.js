@@ -1,6 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+} = require('discord.js');
+const { writeAt, toFixed, generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
@@ -9,6 +16,7 @@ module.exports = {
     .setName('blacklist')
     .setDescription('Blacklist a user (Dev Only)')
     .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('add')
@@ -24,12 +32,12 @@ module.exports = {
         .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
         .addStringOption((option) => option.setName('target-id').setDescription('The user'))
     ),
+
   async execute(interaction) {
     try {
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
-
       let userMention;
       let userId;
       let user;
@@ -51,11 +59,7 @@ module.exports = {
         if (blacklist[user.id]) {
           return await interaction.reply({ content: 'User is already blacklisted', ephemeral: true });
         }
-        var blacklistInfo = {
-          id: user.id,
-          reason: reason,
-          timestamp: toFixed(new Date().getTime() / 1000, 0),
-        };
+        var blacklistInfo = { id: user.id, reason: reason, timestamp: toFixed(new Date().getTime() / 1000, 0) };
         await writeAt('data/blacklist.json', user.id, blacklistInfo);
         await interaction.reply({ content: 'User has been blacklisted', ephemeral: true });
       } else if (interaction.options.getSubcommand() === 'remove') {
@@ -78,7 +82,7 @@ module.exports = {
         await interaction.reply({ content: 'User has been removed from the blacklist', ephemeral: true });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -89,18 +93,12 @@ module.exports = {
             config.discord.commands['report-bug']
           }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
-        });
-
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

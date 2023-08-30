@@ -1,26 +1,25 @@
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../logger.js');
+const { scriptMessage } = require('../functions/logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const path = require('path');
 const fs = require('fs');
 
-var timezoneStuff = { scheduled: true };
-if (!config.other.timezone == null) timezoneStuff = { scheduled: true, timezone: config.other.timezone };
+let timezoneStuff = null;
+if (config.other.timezone == null) {
+  timezoneStuff = { scheduled: true };
+} else {
+  timezoneStuff = { scheduled: true, timezone: config.other.timezone };
+}
 
 var num = 0;
-
 const commands = [];
 fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
   if (!file.endsWith('.js')) return;
   commands.push(file);
 });
-
-client.user.setPresence({
-  activities: [{ name: 'to crys', type: ActivityType.Listening }],
-});
-
+client.user.setPresence({ activities: [{ name: 'to crys', type: ActivityType.Listening }] });
 var activities = [
   { id: 'servers', title: `over ${client.guilds.cache.size} servers!`, type: 'Watching' },
   { id: 'commands', title: `${commands.length} commands!`, type: 'Watching' },
@@ -28,7 +27,6 @@ var activities = [
   { id: 'users', type: 'Watching' },
   { id: 'version', title: `version ${packageJson.version}!`, type: 'Playing' },
 ];
-
 cron.schedule(
   '*/5 * * * *',
   async function () {
@@ -43,7 +41,12 @@ cron.schedule(
         totalCommandsRun += userData[entry].commandsRun;
       }
       client.user.setPresence({
-        activities: [{ name: `to ${totalCommandsRun} Total Commands Run`, type: ActivityType[activities[num].type] }],
+        activities: [
+          {
+            name: `to ${totalCommandsRun} Total Commands Run`,
+            type: ActivityType[activities[num].type],
+          },
+        ],
       });
     } else if (activities[num].id === 'users') {
       userData = Object.keys(JSON.parse(fs.readFileSync('data/userData.json')));

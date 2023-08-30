@@ -1,4 +1,5 @@
-const { discordMessage, warnMessage } = require('./src/logger.js');
+const { discordMessage, warnMessage, errorMessage } = require('./src/functions/logger.js');
+const { generateID } = require('./src/functions/helper.js');
 const { REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const path = require('path');
@@ -9,7 +10,6 @@ function deployCommands() {
   let skipped = 0;
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
-
   for (const folder of commandFolders) {
     if (folder == 'dev') continue;
     const commandsPath = path.join(foldersPath, folder);
@@ -36,13 +36,15 @@ function deployCommands() {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands and skipped over ${skipped} commands.`
       );
-
-      const data = await rest.put(Routes.applicationCommands(config.discord.clientId), { body: commands });
-
+      const data = await rest.put(Routes.applicationCommands(config.discord.clientId), {
+        body: commands,
+      });
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands and skipped over ${skipped} commands.`
       );
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
       console.error(error);
     }
   })();
@@ -53,7 +55,6 @@ function deployDevCommands() {
   let skipped = 0;
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
-
   for (const folder of commandFolders) {
     if (folder != 'dev') continue;
     const commandsPath = path.join(foldersPath, folder);
@@ -80,17 +81,18 @@ function deployDevCommands() {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
-
       const data = await rest.put(Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer), {
         body: commands,
       });
-
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
       console.error(error);
     }
   })();
 }
+
 module.exports = { deployCommands, deployDevCommands };

@@ -1,13 +1,14 @@
 const {
   SlashCommandBuilder,
-  EmbedBuilder,
+  PermissionFlagsBits,
   ActionRowBuilder,
   ButtonBuilder,
+  EmbedBuilder,
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
-const { generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const { generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const hastebin = require('hastebin');
 
@@ -16,6 +17,7 @@ module.exports = {
     .setName('embed')
     .setDMPermission(false)
     .setDescription('Handles everything with embeds')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('source')
@@ -50,6 +52,7 @@ module.exports = {
         )
         .addStringOption((option) => option.setName('embed').setDescription('The new embed').setRequired(true))
     ),
+
   async execute(interaction) {
     try {
       const subcommand = interaction.options.getSubcommand();
@@ -74,8 +77,6 @@ module.exports = {
           dataType: 'js',
           contentType: '.json',
         });
-
-        // console.log(`starb.in link: ${link}`);
         await interaction.editReply(link + '.json');
       } else if (subcommand === 'send') {
         const embedInput = interaction.options.getString('embed');
@@ -85,38 +86,22 @@ module.exports = {
           if (!pathSegments.length >= 4 && pathSegments[3] === 'raw') return;
           const rawPath = pathSegments.slice(4).join('/');
           const url = `http://${validHosts[0]}/raw/${rawPath}`;
-
-          // Proceed with using the sanitized URL
           const fetch = (...args) =>
             import('node-fetch')
               .then(({ default: fetch }) => fetch(...args))
               .catch((err) => console.log(err));
-
           const response = await fetch(url);
           const data = await response.text();
-
           const channel = interaction.options.getChannel('channel') ?? interaction.channel;
-
           const embed = new EmbedBuilder(JSON.parse(data));
-          try {
-            await channel.send({ embeds: [embed] });
-            await interaction.editReply({
-              content: `Successfully sent embed to ${channel}`,
-              ephemeral: true,
-            });
-          } catch (error) {
-            console.error(error);
-            interaction.editReply('This is not a valid embed!');
-          }
+          await channel.send({ embeds: [embed] });
+          await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
         } else {
           const embedInput = interaction.options.getString('embed');
           const channel = interaction.options.getChannel('channel') ?? interaction.channel;
           const embed = new EmbedBuilder(JSON.parse(embedInput));
           channel.send({ embeds: [embed] });
-          await interaction.editReply({
-            content: `Successfully sent embed to ${channel}`,
-            ephemeral: true,
-          });
+          await interaction.editReply({ content: `Successfully sent embed to ${channel}`, ephemeral: true });
         }
       } else if (subcommand === 'edit') {
         const newEmbed = interaction.options.getString('embed');
@@ -130,13 +115,9 @@ module.exports = {
             import('node-fetch')
               .then(({ default: fetch }) => fetch(...args))
               .catch((err) => console.log(err));
-
           const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
-          // console.log(url);
-
           const response = await fetch(url);
           const data = await response.text();
-
           embed = new EmbedBuilder(JSON.parse(data));
         } else {
           embed = new EmbedBuilder(JSON.parse(newEmbed));
@@ -148,7 +129,7 @@ module.exports = {
         });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -159,18 +140,12 @@ module.exports = {
             config.discord.commands['report-bug']
           }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
-        });
-
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },

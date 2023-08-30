@@ -1,14 +1,22 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+  PermissionFlagsBits,
+} = require('discord.js');
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
-const { generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const { generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('servers')
     .setDescription('Fun Facts but the dev commands (Dev Only)')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
         .setName('get')
@@ -20,6 +28,7 @@ module.exports = {
             .setRequired(false)
         )
     ),
+
   async execute(interaction) {
     try {
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
@@ -45,7 +54,10 @@ module.exports = {
           var msg = await interaction.reply({ files: [await generateServer(server)], components: [row] });
           const collectorFilter = (i) => i.user.id === interaction.user.id;
           try {
-            const confirmation = await msg.awaitMessageComponent({ filter: collectorFilter, time: 15_000 });
+            const confirmation = await msg.awaitMessageComponent({
+              time: config.discord.buttonTimeout * 1000,
+              filter: collectorFilter,
+            });
             if (confirmation.customId == 'server-graph') {
               await confirmation.update({ components: [] });
 
@@ -73,12 +85,14 @@ module.exports = {
               await interaction.editReply({ files: [await generateServerGraph(server, '12h')], components: [row] });
             }
           } catch (error) {
+            var errorIdGraph = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdGraph}`);
             console.log(error);
           }
         }
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -89,18 +103,12 @@ module.exports = {
             config.discord.commands['report-bug']
           }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: 'https://i.imgur.com/uUuZx2E.png',
-        });
-
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)
         .setStyle(ButtonStyle.Link);
-
       const row = new ActionRowBuilder().addComponents(supportDisc);
-
       await interaction.reply({ embeds: [errorEmbed], rows: [row] });
     }
   },
