@@ -1,8 +1,8 @@
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { writeAt, generateID } = require('../functions/helper.js');
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const { getUsername } = require('../api/discordAPI.js');
-const { writeAt } = require('../helperFunctions.js');
-const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
@@ -26,7 +26,9 @@ cron.schedule(
           return false;
         }
       } catch (error) {
-        console.error(error);
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        console.log(error);
         return false;
       }
     }
@@ -42,6 +44,8 @@ cron.schedule(
         const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
         return randomFact;
       } catch (error) {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
         console.log(error);
         return null;
       }
@@ -50,9 +54,7 @@ cron.schedule(
       scriptMessage('Sending fun facts');
       let funFact;
       let numCheckedFacts = 0;
-      const totalFacts = Object.keys(
-        JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))
-      ).length;
+      const totalFacts = Object.keys(JSON.parse(fs.readFileSync('data/funFacts/list.json', 'utf8'))).length;
       do {
         funFact = getRandomFact();
         if (funFact && checkFunFact(funFact)) {
@@ -79,9 +81,7 @@ cron.schedule(
       const funFactEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.green)
         .setDescription(
-          `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${
-            startTime + 86400
-          }:R>`
+          `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${startTime + 86400}:R>`
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -121,13 +121,13 @@ cron.schedule(
       await writeAt(
         'data/funFacts/list.json',
         'facts',
-        funFactList.facts.map((fact) =>
-          fact.id === funFact.id ? { ...fact, lastSent: startTime } : fact
-        )
+        funFactList.facts.map((fact) => (fact.id === funFact.id ? { ...fact, lastSent: startTime } : fact))
       );
       await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
     } catch (error) {
-      console.error(error);
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
+      console.log(error);
     }
   },
   timezoneStuff

@@ -8,10 +8,11 @@ const {
 } = require('discord.js');
 const { register, registerGuild } = require('../../api/pixelicAPI.js');
 const { getUsername, getUUID } = require('../../api/mojangAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('register')
@@ -23,10 +24,7 @@ module.exports = {
         .setName('player')
         .setDescription('Register a player to the pixelic api')
         .addStringOption((option) =>
-          option
-            .setName('username')
-            .setDescription('The Username of the person you want to register')
-            .setRequired(true)
+          option.setName('username').setDescription('The Username of the person you want to register').setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -37,13 +35,10 @@ module.exports = {
           option.setName('guild').setDescription('The guild you want to register').setRequired(true)
         )
     ),
+
   async execute(interaction) {
     try {
-      if (
-        !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(
-          config.discord.roles.dev
-        )
-      ) {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
         throw new Error('No Perms');
       }
       var subcommand = interaction.options.getSubcommand();
@@ -96,7 +91,7 @@ module.exports = {
         return await interaction.editReply({ embeds: [embed] });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -105,9 +100,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
         .setFooter({
           text: `by @kathund | ${config.discord.supportInvite} for support`,

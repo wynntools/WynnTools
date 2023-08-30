@@ -25,7 +25,7 @@ jobs:
         run: npm i
 
       - name: es-lint
-        run: npm run lint
+        run: npm run lint:check
 
   prettier:
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
         run: npm i
 
       - name: prettier
-        run: npm run prettier
+        run: npm run prettier:check

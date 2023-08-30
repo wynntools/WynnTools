@@ -1,11 +1,13 @@
-const { cacheMessage } = require('../logger.js');
+const { cacheMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
+const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
-const nodeCache = require('node-cache');
+
 const discordCache = new nodeCache();
+
 async function getUsername(id) {
   if (discordCache.has(id)) {
     cacheMessage('DiscordAPI', 'Cache hit');
@@ -17,6 +19,7 @@ async function getUsername(id) {
   discordCache.set(id, data);
   return data.username;
 }
+
 async function getDisplayName(id) {
   if (discordCache.has(id)) {
     cacheMessage('DiscordAPI', 'Cache hit');
@@ -28,8 +31,10 @@ async function getDisplayName(id) {
   discordCache.set(id, data);
   return data.global_name;
 }
+
 async function clearDiscordCache() {
   cacheMessage('DiscordAPI', 'Cleared');
   discordCache.flushAll();
 }
+
 module.exports = { getUsername, getDisplayName, clearDiscordCache };

@@ -17,9 +17,10 @@ const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wyn
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
-const { generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const { generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('clear-cache')
@@ -45,6 +46,7 @@ module.exports = {
           { name: 'All', value: 'all' }
         )
     ),
+
   async execute(interaction) {
     try {
       if (!interaction.user.id == config.discord.devId) {
@@ -98,7 +100,7 @@ module.exports = {
         throw new Error('uhhh something went wrong');
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -107,14 +109,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

@@ -4,6 +4,6 @@ package-lock.json
 exports/
 a.js
 b.js
-test.js
 ecosystem.config.js
 .VSCodeCounter/
+googleCloudLogging.json

@@ -1,14 +1,9 @@
-const {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-  ButtonStyle,
-} = require('discord.js');
-const { capitalizeFirstLetter, generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const { capitalizeFirstLetter, generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('user')
@@ -17,6 +12,7 @@ module.exports = {
     .addUserOption((option) =>
       option.setName('user').setDescription('The user you want to look up').setRequired(false)
     ),
+
   async execute(interaction) {
     try {
       if (!interaction.user.id == config.discord.devId) {
@@ -31,10 +27,7 @@ module.exports = {
         const invalid = new EmbedBuilder()
           .setColor(config.discord.embeds.red)
           .setDescription('User has no data')
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: config.other.logo,
-          });
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
         await interaction.reply({ embeds: [invalid], ephemeral: true });
         return;
       } else {
@@ -48,9 +41,9 @@ module.exports = {
           num = commandsSorted.length;
         }
         for (var i = 0; i < num; i++) {
-          string += `<:arrowright:1132130283613868112> **${capitalizeFirstLetter(
-            commandsSorted[i]
-          )}:** \`${userData[user.id].commands[commandsSorted[i]]}\`\n`;
+          string += `<:arrowright:1132130283613868112> **${capitalizeFirstLetter(commandsSorted[i])}:** \`${
+            userData[user.id].commands[commandsSorted[i]]
+          }\`\n`;
         }
         if (blacklist[user.id]) {
           embed = new EmbedBuilder()
@@ -68,9 +61,9 @@ module.exports = {
             })
             .addFields({
               name: 'Blacklist',
-              value: `Added - <t:${blacklist[user.id].timestamp}:f> (<t:${
-                blacklist[user.id].timestamp
-              }:R>)\nReason - ${blacklist[user.id].reason}`,
+              value: `Added - <t:${blacklist[user.id].timestamp}:f> (<t:${blacklist[user.id].timestamp}:R>)\nReason - ${
+                blacklist[user.id].reason
+              }`,
               inline: true,
             })
             .addFields({ name: 'Commands', value: string, inline: false })
@@ -102,14 +95,8 @@ module.exports = {
           .setCustomId('deleteData')
           .setLabel('Delete data')
           .setStyle(ButtonStyle.Danger);
-        const yes = new ButtonBuilder()
-          .setCustomId('yes')
-          .setLabel('Yes')
-          .setStyle(ButtonStyle.Danger);
-        const cancel = new ButtonBuilder()
-          .setCustomId('cancel')
-          .setLabel('Cancel')
-          .setStyle(ButtonStyle.Secondary);
+        const yes = new ButtonBuilder().setCustomId('yes').setLabel('Yes').setStyle(ButtonStyle.Danger);
+        const cancel = new ButtonBuilder().setCustomId('cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary);
         const row = new ActionRowBuilder().addComponents(deleteData);
         const confirmRow = new ActionRowBuilder().addComponents(yes, cancel);
         var msg;
@@ -127,9 +114,7 @@ module.exports = {
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.red)
                 .setTimestamp()
-                .setDescription(
-                  'Are you sure you want to delete your data? **THIS CANNOT BE UNDONE!**'
-                );
+                .setDescription('Are you sure you want to delete your data? **THIS CANNOT BE UNDONE!**');
               await confirmation.update({ embeds: [updatedEmbed], components: [confirmRow] });
               const collectorFilter = (i) => i.user.id === interaction.user.id;
               try {
@@ -152,17 +137,23 @@ module.exports = {
                     .setDescription('Cancelled');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
                 }
-              } catch (e) {
+              } catch (error) {
+                var errorIdDelete = generateID(config.other.errorIdLength);
+                errorMessage(`Error Id - ${errorIdDelete}`);
+                console.log(error);
                 await interaction.editReply({ embeds: [embed], components: [] });
               }
             }
-          } catch (e) {
+          } catch (error) {
+            var errorIdDeleteData = generateID(config.other.errorIdLength);
+            errorMessage(`Error Id - ${errorIdDeleteData}`);
+            console.log(error);
             await interaction.editReply({ embeds: [embed], components: [] });
           }
         }
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -171,14 +162,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

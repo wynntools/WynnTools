@@ -1,5 +1,5 @@
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../logger.js');
+const { scriptMessage } = require('../functions/logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
@@ -52,9 +52,7 @@ cron.schedule(
       userData = Object.keys(JSON.parse(fs.readFileSync('data/userData.json')));
       totalUsers = userData.length;
       client.user.setPresence({
-        activities: [
-          { name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] },
-        ],
+        activities: [{ name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] }],
       });
     } else {
       client.user.setPresence({

@@ -1,4 +1,4 @@
-/* eslint-disable */ const {
+const {
   SlashCommandBuilder,
   TextInputBuilder,
   ActionRowBuilder,
@@ -9,14 +9,16 @@
   ButtonStyle,
   Events,
 } = require('discord.js');
-/* eslint-enable */ const { writeAt, toFixed, generateID } = require('../../helperFunctions.js');
-const { errorMessage } = require('../../logger.js');
+const { writeAt, toFixed, generateID } = require('../../functions/helper.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setDMPermission(false)
     .setName('report-bug')
     .setDescription('Report a bug to the dev'),
+
   async execute(interaction) {
     try {
       const modal = new ModalBuilder().setCustomId('bugReport').setTitle('Bug Report');
@@ -56,13 +58,7 @@ module.exports = {
       const thirdActionRow = new ActionRowBuilder().addComponents(howDidThisHappen);
       const forthActionRow = new ActionRowBuilder().addComponents(whenDidThisHappen);
       const fifthActionRow = new ActionRowBuilder().addComponents(stepsToReproduce);
-      modal.addComponents(
-        firstActionRow,
-        secondActionRow,
-        thirdActionRow,
-        forthActionRow,
-        fifthActionRow
-      );
+      modal.addComponents(firstActionRow, secondActionRow, thirdActionRow, forthActionRow, fifthActionRow);
       await interaction.showModal(modal);
       interaction.client.on(Events.InteractionCreate, async (interaction) => {
         if (!interaction.isModalSubmit()) return;
@@ -75,10 +71,7 @@ module.exports = {
           .setColor(config.discord.embeds.green)
           .setAuthor({ name: 'Bug Report Submitted' })
           .setDescription(`Your bug report has been successfully sent to the dev.`)
-          .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
-            iconURL: config.other.logo,
-          });
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
         const bugReportEmbed = new EmbedBuilder()
           .setColor(config.discord.embeds.red)
           .setTitle(`BUG REPORT`)
@@ -111,7 +104,7 @@ module.exports = {
         await interaction.reply({ embeds: [embed], ephemeral: true });
       });
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -120,14 +113,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

@@ -24,5 +24,5 @@
     "buttonTimeout": 30
   },
   "api": { "pixelicAPIKey": "PIXELIC_API_KEY" },
-  "other": { "logo": "https://i.imgur.com/uUuZx2E.png", "timezone": null }
+  "other": { "logo": "https://i.imgur.com/uUuZx2E.png", "timezone": null, "errorIdLength": 15 }
 }

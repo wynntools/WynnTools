@@ -1,5 +1,5 @@
 const { clearMojangCache } = require('../api/mojangAPI.js');
-const { scriptMessage } = require('../logger.js');
+const { scriptMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 

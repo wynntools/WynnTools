@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { countStatsInDirectory, addNotation } = require('../helperFunctions.js');
+const { countStatsInDirectory, addNotation, generateID } = require('../functions/helper.js');
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../logger.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const path = require('path');
@@ -19,9 +19,7 @@ cron.schedule(
   async function () {
     try {
       scriptMessage('Updating stats embed/message');
-      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(
-        process.cwd()
-      );
+      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
       const channel = await client.channels.fetch(config.discord.channels.stats);
       const message = await channel.messages.fetch(config.discord.messages.stats);
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
@@ -41,10 +39,7 @@ cron.schedule(
         if (file.toLowerCase().includes('disabled')) return;
         devCommands.push(file);
       });
-      const invite = new ButtonBuilder()
-        .setLabel('invite')
-        .setURL(config.discord.botInvite)
-        .setStyle(ButtonStyle.Link);
+      const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
       const source = new ButtonBuilder()
         .setLabel('source')
         .setURL('https://github.com/Kathund/WynnTools')
@@ -74,10 +69,7 @@ cron.schedule(
             )}\`\nCharacters - \`${addNotation(
               'oneLetters',
               totalCharacters
-            )}\`\nCharacters with out spaces - \`${addNotation(
-              'oneLetters',
-              totalCharacters - totalWhitespace
-            )}\``,
+            )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
             inline: true,
           }
         )
@@ -87,6 +79,8 @@ cron.schedule(
         });
       await message.edit({ embeds: [embed], components: [row] });
     } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
       console.log(error);
     }
   },

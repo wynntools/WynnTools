@@ -1,10 +1,11 @@
-const { cacheMessage } = require('../logger.js');
+const { cacheMessage } = require('../functions/logger.js');
 const nodeCache = require('node-cache');
-const mojangCache = new nodeCache();
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
+
+const mojangCache = new nodeCache();
 
 async function validateUUID(uuid) {
   uuid = uuid.replace(/-/g, '');
@@ -17,9 +18,7 @@ async function getUUID(username) {
     cacheMessage('MojangAPI', 'Cache hit');
     return mojangCache.get(username.toLowerCase()).id;
   } else {
-    const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then(
-      (res) => res.json()
-    );
+    const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then((res) => res.json());
     if (data.id == undefined) return 'Invalid Username';
     else if (data.name == undefined) return 'Invalid Username';
     mojangCache.set(data.id, data);
@@ -33,9 +32,9 @@ async function getUsername(uuid) {
     cacheMessage('MojangAPI', 'Cache hit');
     return mojangCache.get(uuid).name;
   } else {
-    const data = await fetch(
-      `https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`
-    ).then((res) => res.json());
+    const data = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`).then((res) =>
+      res.json()
+    );
     if (data.id == undefined) return 'Invalid UUID';
     else if (data.name == undefined) return 'Invalid UUID';
     mojangCache.set(uuid, data);

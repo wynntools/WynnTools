@@ -8,32 +8,28 @@ const {
 } = require('discord.js');
 const { generateStats, generateProfileImage } = require('../../functions/generateImage.js');
 const { getProfiles } = require('../../api/wynnCraftAPI.js');
-const { generateID } = require('../../helperFunctions.js');
+const { generateID } = require('../../functions/helper.js');
 const { register } = require('../../api/pixelicAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('stats')
     .setDescription('Display Stats about a user')
     .setDMPermission(false)
     .addStringOption((option) =>
-      option
-        .setName('username')
-        .setDescription('Username of user you want to see the stats for')
-        .setRequired(true)
+      option.setName('username').setDescription('Username of user you want to see the stats for').setRequired(true)
     ),
+
   async execute(interaction) {
     try {
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
       var profiles = await getProfiles(uuid);
       const sortedData = profiles.sort((a, b) => b.level - a.level);
-      const options = sortedData.map((entry) => ({
-        label: `${entry.type} - ${entry.level}`,
-        value: entry.key,
-      }));
+      const options = sortedData.map((entry) => ({ label: `${entry.type} - ${entry.level}`, value: entry.key }));
       const select = new StringSelectMenuBuilder()
         .setCustomId('profileSelection')
         .setPlaceholder('Select what profile')
@@ -41,20 +37,14 @@ module.exports = {
       const row = new ActionRowBuilder().addComponents(select);
       var msg = await interaction.reply({ files: [await generateStats(uuid)], components: [row] });
       const filter = (i) => i.isStringSelectMenu(i);
-      const collector = msg.createMessageComponentCollector({
-        time: config.discord.buttonTimeout * 1000,
-        filter,
-      });
+      const collector = msg.createMessageComponentCollector({ time: config.discord.buttonTimeout * 1000, filter });
       collector.on('collect', async function (i) {
         const selectedProfile = i.values[0];
-        await i.update({
-          files: [await generateProfileImage(uuid, selectedProfile)],
-          components: [row],
-        });
+        await i.update({ files: [await generateProfileImage(uuid, selectedProfile)], components: [row] });
       });
       await register(uuid);
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
@@ -63,14 +53,9 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error
-            .toString()
-            .replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
         )
-        .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
-          iconURL: config.other.logo,
-        });
+        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()
         .setLabel('Support Discord')
         .setURL(config.discord.supportInvite)

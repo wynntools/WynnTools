@@ -1,16 +1,12 @@
-const {
-  generateDate,
-  getRelativeTime,
-  getMaxMembers,
-  cleanUpTimestampData,
-} = require('../helperFunctions.js');
+const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, generateID } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { AttachmentBuilder } = require('discord.js');
-const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
+const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
 const generateStatsCache = new nodeCache({ stdTTL: 180 });
@@ -34,12 +30,7 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
     rectWidth - cornerRadius,
     rectHeight - cornerRadius
   );
-  ctx.fillRect(
-    rectX + cornerRadius / 2,
-    rectY + cornerRadius / 2,
-    rectWidth - cornerRadius,
-    rectHeight - cornerRadius
-  );
+  ctx.fillRect(rectX + cornerRadius / 2, rectY + cornerRadius / 2, rectWidth - cornerRadius, rectHeight - cornerRadius);
   ctx.fillStyle = 'white';
   ctx.strokeStyle = 'white';
 }
@@ -52,16 +43,9 @@ async function generateStats(uuid) {
     } else {
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(
-        await loadImage('src/assets/statsCommandBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
-      var currentProfileStats =
-        stats.data.characters[await getHighestProfile(stats.data.characters)];
+      var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
@@ -76,10 +60,7 @@ async function generateStats(uuid) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           52
         );
       } else if (stats.rank === 'Administrator') {
@@ -91,10 +72,7 @@ async function generateStats(uuid) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           52
         );
       } else if (stats.data.meta.veteran) {
@@ -106,10 +84,7 @@ async function generateStats(uuid) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText('Vet').width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
@@ -118,11 +93,7 @@ async function generateStats(uuid) {
         ctx.fillStyle = '#55FF55';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#00AA00';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -137,11 +108,7 @@ async function generateStats(uuid) {
         ctx.fillStyle = '#00AAAA';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#55FFFF';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -156,11 +123,7 @@ async function generateStats(uuid) {
         ctx.fillStyle = '#FF55FF';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#AA00AA';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -175,11 +138,7 @@ async function generateStats(uuid) {
         ctx.fillStyle = '#FFFF55';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#FFAA00';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -237,8 +196,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${stats.data.guild.rank} of ${stats.data.guild.name}`, 62, 140);
         ctx.fillText(
           `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() +
-            currentProfileStats.type.slice(1).toLowerCase()
+            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
           }`,
           481,
           140
@@ -246,11 +204,7 @@ async function generateStats(uuid) {
         if (stats.data.meta.location.online == true) {
           ctx.fillText(`Online - ${stats.data.meta.location.server}`, 581, 208);
         } else {
-          ctx.fillText(
-            `Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`,
-            581,
-            208
-          );
+          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 208);
         }
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -269,8 +223,7 @@ async function generateStats(uuid) {
         ctx.textAlign = 'left';
         ctx.fillText(
           `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() +
-            currentProfileStats.type.slice(1).toLowerCase()
+            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
           }`,
           64,
           140
@@ -279,11 +232,7 @@ async function generateStats(uuid) {
           ctx.textAlign = 'right';
           ctx.fillText(`Online - ${stats.data.meta.location.server}`, 866, 140);
         } else {
-          ctx.fillText(
-            `Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`,
-            581,
-            140
-          );
+          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 140);
         }
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -325,10 +274,7 @@ async function generateStats(uuid) {
       ctx.fillText(textLinesStrength[0], StrengthX, skillsY);
       ctx.fillText(
         textLinesStrength[1],
-        StrengthX +
-          (ctx.measureText(textLinesStrength[0]).width -
-            ctx.measureText(textLinesStrength[1]).width) /
-            2,
+        StrengthX + (ctx.measureText(textLinesStrength[0]).width - ctx.measureText(textLinesStrength[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textDexterity = `Dexterity\n${currentProfileStats.skills.dexterity}`;
@@ -336,10 +282,7 @@ async function generateStats(uuid) {
       ctx.fillText(textLinesDexterity[0], DexterityX, skillsY);
       ctx.fillText(
         textLinesDexterity[1],
-        DexterityX +
-          (ctx.measureText(textLinesDexterity[0]).width -
-            ctx.measureText(textLinesDexterity[1]).width) /
-            2,
+        DexterityX + (ctx.measureText(textLinesDexterity[0]).width - ctx.measureText(textLinesDexterity[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textIntelligence = `Intelligence\n${currentProfileStats.skills.intelligence}`;
@@ -348,9 +291,7 @@ async function generateStats(uuid) {
       ctx.fillText(
         textLinesIntelligence[1],
         IntelligenceX +
-          (ctx.measureText(textLinesIntelligence[0]).width -
-            ctx.measureText(textLinesIntelligence[1]).width) /
-            2,
+          (ctx.measureText(textLinesIntelligence[0]).width - ctx.measureText(textLinesIntelligence[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textDefense = `Defense\n${currentProfileStats.skills.defense}`;
@@ -358,10 +299,7 @@ async function generateStats(uuid) {
       ctx.fillText(textLinesDefense[0], DefenseX, skillsY);
       ctx.fillText(
         textLinesDefense[1],
-        DefenseX +
-          (ctx.measureText(textLinesDefense[0]).width -
-            ctx.measureText(textLinesDefense[1]).width) /
-            2,
+        DefenseX + (ctx.measureText(textLinesDefense[0]).width - ctx.measureText(textLinesDefense[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textAgility = `Agility\n${currentProfileStats.skills.agility}`;
@@ -369,23 +307,14 @@ async function generateStats(uuid) {
       ctx.fillText(textLinesAgility[0], AgilityX, skillsY);
       ctx.fillText(
         textLinesAgility[1],
-        AgilityX +
-          (ctx.measureText(textLinesAgility[0]).width -
-            ctx.measureText(textLinesAgility[1]).width) /
-            2,
+        AgilityX + (ctx.measureText(textLinesAgility[0]).width - ctx.measureText(textLinesAgility[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(
-        ctx,
-        140,
-        689,
-        Math.floor((currentProfileStats.professions.combat.xp / 100) * 946),
-        28
-      );
+      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
       ctx.drawImage(professionsIconBackground, 104, 661);
       ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
@@ -393,13 +322,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        769,
-        Math.floor((currentProfileStats.professions.mining.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 741);
       ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
@@ -407,13 +330,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        769,
-        Math.floor((currentProfileStats.professions.farming.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 741);
       ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
@@ -421,13 +338,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        769,
-        Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 741);
       ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
@@ -435,13 +346,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        841,
-        Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 813);
       ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
@@ -449,13 +354,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        841,
-        Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 813);
       ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
@@ -463,13 +362,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        841,
-        Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 813);
       ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
@@ -477,13 +370,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        913,
-        Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 885);
       ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
@@ -491,13 +378,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        913,
-        Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 885);
       ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
@@ -505,31 +386,15 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        913,
-        Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 885);
       ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
-      ctx.fillText(
-        `Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`,
-        854,
-        886
-      );
+      ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
       ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        985,
-        Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 957);
       ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
@@ -537,13 +402,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        985,
-        Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 957);
       ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
       ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
@@ -551,13 +410,7 @@ async function generateStats(uuid) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        985,
-        Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 957);
       ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
@@ -580,6 +433,8 @@ async function generateStats(uuid) {
       return attachment;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -592,13 +447,7 @@ async function generateProfileImage(uuid, profileId) {
     } else {
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(
-        await loadImage('src/assets/statsCommandBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[profileId];
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
@@ -615,10 +464,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           52
         );
       } else if (stats.rank === 'Administrator') {
@@ -630,10 +476,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           52
         );
       } else if (stats.data.meta.veteran) {
@@ -645,10 +488,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
         ctx.fillText(
           ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText('Vet').width +
-            ctx.measureText(']').width,
+          62 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
@@ -657,11 +497,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillStyle = '#55FF55';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#00AA00';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -676,11 +512,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillStyle = '#00AAAA';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#55FFFF';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -695,11 +527,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillStyle = '#FF55FF';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#AA00AA';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -714,11 +542,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillStyle = '#FFFF55';
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
         ctx.fillStyle = '#FFAA00';
-        ctx.fillText(
-          ']',
-          62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          52
-        );
+        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
           62 +
@@ -776,8 +600,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${stats.data.guild.rank} of ${stats.data.guild.name}`, 62, 140);
         ctx.fillText(
           `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() +
-            currentProfileStats.type.slice(1).toLowerCase()
+            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
           }`,
           481,
           140
@@ -785,11 +608,7 @@ async function generateProfileImage(uuid, profileId) {
         if (stats.data.meta.location.online == true) {
           ctx.fillText(`Online - ${stats.data.meta.location.server}`, 581, 208);
         } else {
-          ctx.fillText(
-            `Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`,
-            581,
-            208
-          );
+          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 208);
         }
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -808,8 +627,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.textAlign = 'left';
         ctx.fillText(
           `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() +
-            currentProfileStats.type.slice(1).toLowerCase()
+            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
           }`,
           64,
           140
@@ -818,11 +636,7 @@ async function generateProfileImage(uuid, profileId) {
           ctx.textAlign = 'right';
           ctx.fillText(`Online - ${stats.data.meta.location.server}`, 866, 140);
         } else {
-          ctx.fillText(
-            `Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`,
-            581,
-            140
-          );
+          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 140);
         }
         ctx.textAlign = 'left';
         ctx.fillText(
@@ -864,10 +678,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(textLinesStrength[0], StrengthX, skillsY);
       ctx.fillText(
         textLinesStrength[1],
-        StrengthX +
-          (ctx.measureText(textLinesStrength[0]).width -
-            ctx.measureText(textLinesStrength[1]).width) /
-            2,
+        StrengthX + (ctx.measureText(textLinesStrength[0]).width - ctx.measureText(textLinesStrength[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textDexterity = `Dexterity\n${currentProfileStats.skills.dexterity}`;
@@ -875,10 +686,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(textLinesDexterity[0], DexterityX, skillsY);
       ctx.fillText(
         textLinesDexterity[1],
-        DexterityX +
-          (ctx.measureText(textLinesDexterity[0]).width -
-            ctx.measureText(textLinesDexterity[1]).width) /
-            2,
+        DexterityX + (ctx.measureText(textLinesDexterity[0]).width - ctx.measureText(textLinesDexterity[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textIntelligence = `Intelligence\n${currentProfileStats.skills.intelligence}`;
@@ -887,9 +695,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(
         textLinesIntelligence[1],
         IntelligenceX +
-          (ctx.measureText(textLinesIntelligence[0]).width -
-            ctx.measureText(textLinesIntelligence[1]).width) /
-            2,
+          (ctx.measureText(textLinesIntelligence[0]).width - ctx.measureText(textLinesIntelligence[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textDefense = `Defense\n${currentProfileStats.skills.defense}`;
@@ -897,10 +703,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(textLinesDefense[0], DefenseX, skillsY);
       ctx.fillText(
         textLinesDefense[1],
-        DefenseX +
-          (ctx.measureText(textLinesDefense[0]).width -
-            ctx.measureText(textLinesDefense[1]).width) /
-            2,
+        DefenseX + (ctx.measureText(textLinesDefense[0]).width - ctx.measureText(textLinesDefense[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       const textAgility = `Agility\n${currentProfileStats.skills.agility}`;
@@ -908,23 +711,14 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(textLinesAgility[0], AgilityX, skillsY);
       ctx.fillText(
         textLinesAgility[1],
-        AgilityX +
-          (ctx.measureText(textLinesAgility[0]).width -
-            ctx.measureText(textLinesAgility[1]).width) /
-            2,
+        AgilityX + (ctx.measureText(textLinesAgility[0]).width - ctx.measureText(textLinesAgility[1]).width) / 2,
         470 + parseInt(ctx.font, 10)
       );
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(
-        ctx,
-        140,
-        689,
-        Math.floor((currentProfileStats.professions.combat.xp / 100) * 946),
-        28
-      );
+      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
       ctx.drawImage(professionsIconBackground, 104, 661);
       ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
@@ -932,13 +726,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        769,
-        Math.floor((currentProfileStats.professions.mining.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 741);
       ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
@@ -946,13 +734,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        769,
-        Math.floor((currentProfileStats.professions.farming.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 741);
       ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
@@ -960,13 +742,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        769,
-        Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 741);
       ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
@@ -974,13 +750,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        841,
-        Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 813);
       ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
@@ -988,13 +758,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        841,
-        Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 813);
       ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
@@ -1002,13 +766,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        841,
-        Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 813);
       ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
@@ -1016,13 +774,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        913,
-        Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 885);
       ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
@@ -1030,13 +782,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        913,
-        Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 885);
       ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
@@ -1044,31 +790,15 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        913,
-        Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 885);
       ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
-      ctx.fillText(
-        `Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`,
-        854,
-        886
-      );
+      ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
       ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        140,
-        985,
-        Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 957);
       ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
@@ -1076,13 +806,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        483,
-        985,
-        Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 447, 957);
       ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
       ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
@@ -1090,13 +814,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'right';
       ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
       ctx.textAlign = 'left';
-      await bar(
-        ctx,
-        824,
-        985,
-        Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262),
-        28
-      );
+      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 791, 957);
       ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
@@ -1119,6 +837,8 @@ async function generateProfileImage(uuid, profileId) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1137,13 +857,7 @@ async function generateGuild(guildData) {
     let onlineMemberX = 0;
     let territoriesX = 0;
     if (guildData.banner == undefined) {
-      ctx.drawImage(
-        await loadImage('src/assets/guildCommandBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = '64px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
@@ -1159,17 +873,10 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#AA00AA';
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#FF55FF';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           150
         );
       } else if (stats.rank === 'Administrator') {
@@ -1178,17 +885,10 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FF5555';
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#AA0000';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           150
         );
       } else if (stats.data.meta.veteran) {
@@ -1200,10 +900,7 @@ async function generateGuild(guildData) {
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText('Vet').width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
@@ -1212,11 +909,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#55FF55';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#00AA00';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1231,11 +924,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#00AAAA';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#55FFFF';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1250,11 +939,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FF55FF';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#AA00AA';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1269,11 +954,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FFFF55';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#FFAA00';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1310,9 +991,7 @@ async function generateGuild(guildData) {
       ctx.fillText(textLinesMember[0], memberX, statsY);
       ctx.fillText(
         textLinesMember[1],
-        memberX +
-          (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) /
-            2,
+        memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
@@ -1321,9 +1000,7 @@ async function generateGuild(guildData) {
       ctx.fillText(
         textLinesOnlineMembers[1],
         onlineMemberX +
-          (ctx.measureText(textLinesOnlineMembers[0]).width -
-            ctx.measureText(textLinesOnlineMembers[1]).width) /
-            2,
+          (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       const textTerritories = `Territories\n${guildData.territories}`;
@@ -1332,9 +1009,7 @@ async function generateGuild(guildData) {
       ctx.fillText(
         textLinesTerritories[1],
         territoriesX +
-          (ctx.measureText(textLinesTerritories[0]).width -
-            ctx.measureText(textLinesTerritories[1]).width) /
-            2,
+          (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       ctx.font = '32px Karla';
@@ -1349,13 +1024,7 @@ async function generateGuild(guildData) {
       );
       return canvas.toBuffer('image/png');
     } else {
-      ctx.drawImage(
-        await loadImage('src/assets/guildBannerCommandBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.drawImage(
         await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
         986,
@@ -1378,17 +1047,10 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#AA00AA';
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#FF55FF';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           150
         );
       } else if (stats.rank === 'Administrator') {
@@ -1397,17 +1059,10 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FF5555';
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#AA0000';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.rank).width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
           150
         );
       } else if (stats.data.meta.veteran) {
@@ -1419,10 +1074,7 @@ async function generateGuild(guildData) {
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
         ctx.fillText(
           ` ${stats.username}`,
-          207 +
-            ctx.measureText('[').width +
-            ctx.measureText('Vet').width +
-            ctx.measureText(']').width,
+          207 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
@@ -1431,11 +1083,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#55FF55';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#00AA00';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1450,11 +1098,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#00AAAA';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#55FFFF';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1469,11 +1113,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FF55FF';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#AA00AA';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1488,11 +1128,7 @@ async function generateGuild(guildData) {
         ctx.fillStyle = '#FFFF55';
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
         ctx.fillStyle = '#FFAA00';
-        ctx.fillText(
-          ']',
-          207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width,
-          150
-        );
+        ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
           207 +
@@ -1529,9 +1165,7 @@ async function generateGuild(guildData) {
       ctx.fillText(textLinesMember[0], memberX, statsY);
       ctx.fillText(
         textLinesMember[1],
-        memberX +
-          (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) /
-            2,
+        memberX + (ctx.measureText(textLinesMember[0]).width - ctx.measureText(textLinesMember[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       const textOnlineMembers = `Online\n${guildData.onlineMembers}/${guildData.totalMembers}`;
@@ -1540,9 +1174,7 @@ async function generateGuild(guildData) {
       ctx.fillText(
         textLinesOnlineMembers[1],
         onlineMemberX +
-          (ctx.measureText(textLinesOnlineMembers[0]).width -
-            ctx.measureText(textLinesOnlineMembers[1]).width) /
-            2,
+          (ctx.measureText(textLinesOnlineMembers[0]).width - ctx.measureText(textLinesOnlineMembers[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       const textTerritories = `Territories\n${guildData.territories}`;
@@ -1551,9 +1183,7 @@ async function generateGuild(guildData) {
       ctx.fillText(
         textLinesTerritories[1],
         territoriesX +
-          (ctx.measureText(textLinesTerritories[0]).width -
-            ctx.measureText(textLinesTerritories[1]).width) /
-            2,
+          (ctx.measureText(textLinesTerritories[0]).width - ctx.measureText(textLinesTerritories[1]).width) / 2,
         statsY + parseInt(ctx.font, 10)
       );
       ctx.font = '32px Karla';
@@ -1579,22 +1209,14 @@ async function generateMemberJoin(data) {
     console.log(member);
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(
-      await loadImage('src/assets/memberJoinBackground.png'),
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.beginPath();
     ctx.arc(256, 246, 128, 0, 2 * Math.PI);
     ctx.closePath();
     ctx.clip();
     ctx.drawImage(
-      await loadImage(
-        `https://cdn.discordapp.com/avatars/${member.id}/${member.avatar}.png?size=4096`
-      ),
+      await loadImage(`https://cdn.discordapp.com/avatars/${member.id}/${member.avatar}.png?size=4096`),
       128,
       118,
       256,
@@ -1627,6 +1249,8 @@ async function generateMemberJoin(data) {
     );
     return canvas.toBuffer('image/png');
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1642,13 +1266,7 @@ async function generateServer(server) {
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.drawImage(
-        await loadImage('src/assets/memberJoinBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
@@ -1674,6 +1292,8 @@ async function generateServer(server) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1705,13 +1325,7 @@ async function generateServers(servers) {
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.drawImage(
-        await loadImage('src/assets/memberJoinBackground.png'),
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(
@@ -1745,6 +1359,8 @@ async function generateServers(servers) {
     var buffer = canvas.toBuffer('image/png');
     return buffer;
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1818,6 +1434,8 @@ async function generateServerChart(data) {
       .setHeight(428);
     return await chart.getShortUrl();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1829,13 +1447,7 @@ async function generateServerGraph(server) {
   } else {
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(
-      await loadImage('src/assets/memberJoinBackground.png'),
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1894,6 +1506,8 @@ async function clearGenerateStatsCache() {
     cacheMessage('Generate Stats', 'Cleared');
     generateStatsCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1904,6 +1518,8 @@ async function clearGenerateProfileImageCache() {
     cacheMessage('Generate Profile Image', 'Cleared');
     generateProfileImageCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1914,6 +1530,8 @@ async function clearGenerateGuildCache() {
     cacheMessage('Generate Guild', 'Cleared');
     generateGuildCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1924,6 +1542,8 @@ async function clearGenerateServerCache() {
     cacheMessage('Generate Server', 'Cleared');
     generateServerCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
@@ -1934,6 +1554,8 @@ async function clearGenerateServerGraphCache() {
     cacheMessage('Generate Server Graph', 'Cleared');
     generateServerGraphCache.flushAll();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
