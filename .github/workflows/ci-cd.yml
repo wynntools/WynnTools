@@ -43,3 +43,34 @@ jobs:
 
       - name: prettier
         run: npm run prettier:check
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install node dependencies
+        run: npm i
+
+      - name: Load config.json
+        run: |
+          echo '{
+            "discord": {
+              "token": "${{ secrets.DISCORD_TOKEN }}"
+            },
+            "api": {
+              "pixelicAPIKey": "${{ secrets.PIXELIC_API_KEY }}"
+            },
+            "other": {
+              "timezone": null
+            }
+          }' > config.json
+
+      - name: Run Tests
+        run: npm run tests
