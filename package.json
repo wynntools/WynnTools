@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "tests": "node tests/runtTests.js",
+    "tests": "node tests/runTests.js",
     "lint:check": "npx eslint .",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier --write .",
