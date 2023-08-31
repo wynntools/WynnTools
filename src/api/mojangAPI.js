@@ -19,7 +19,7 @@ async function getUUID(username) {
       if (res.status != 200) {
         throw new Error({ status: res.status, error: 'Invalid Username' });
       } else {
-        var data = res.json();
+        var data = await res.json();
         mojangCache.set(data.id, data);
         mojangCache.set(username.toLowerCase(), data);
         return data.id;
@@ -43,7 +43,7 @@ async function getUsername(uuid) {
       if (res.status != 200) {
         throw new Error({ status: res.status, error: 'Invalid UUID' });
       } else {
-        var data = res.json();
+        var data = await res.json();
         mojangCache.set(uuid, data);
         mojangCache.set(data.name.toLowerCase(), data);
         return data.name;
