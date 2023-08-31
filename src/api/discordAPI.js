@@ -21,7 +21,7 @@ async function getUsername(id) {
       if (res.status != 200) {
         throw new Error({ status: res.status, error: 'Invalid ID' });
       } else {
-        var data = res.json();
+        var data = await res.json();
         discordCache.set(id, data);
         return data.username;
       }
@@ -46,7 +46,7 @@ async function getDisplayName(id) {
       if (res.status != 200) {
         throw new Error({ status: res.status, error: 'Invalid ID' });
       } else {
-        var data = res.json();
+        var data = await res.json();
         discordCache.set(id, data);
         return data.global_name;
       }
