@@ -2,10 +2,11 @@
     <h1>WynnTools</h1>
     <h4>The only WynnCraft Discord bot that uses images (That I have seen)</h4>
 </div>
-<div align="center">
+<div align="center">   
     <a><img src="https://img.shields.io/github/package-json/v/kathund/WynnTools" alt="Version"></a>
     <a href="https://discord.com/invite/2vAuyVvdwj"><img src="https://img.shields.io/discord/926873163411910746?color=7289DA&label=Discord" alt="Discord"></a>
     <a><img src="https://wakatime.com/badge/user/2b7c6789-3672-4def-94e6-41ba1c8749a3/project/ba177dfd-57ca-4511-af8a-ec449a281488.svg" alt="Wakatime"></a>
+    <a herf="https://github.com/Kathund/WynnTools/actions/workflows/ci-cd.yml"><img src="https://github.com/Kathund/WynnTools/actions/workflows/ci-cd.yml/badge.svg" alt="CL/CD Test Status"></a>
 </div>
 
 ## Sections
@@ -15,6 +16,8 @@
 - [Discord/Support](#discord)
 
 ### Commands
+
+
 
 `< >` = Required arguments, `[ ]` = Optional arguments
 
