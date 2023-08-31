@@ -83,8 +83,8 @@ module.exports = {
         await message.edit({ embeds: [embed], components: [row] });
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+        errorMessage(`Error Id - ${errorId}`);
+        console.log(error);
       }
     },
     {

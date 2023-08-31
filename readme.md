@@ -17,8 +17,6 @@
 
 ### Commands
 
-
-
 `< >` = Required arguments, `[ ]` = Optional arguments
 
 #### General Commands
