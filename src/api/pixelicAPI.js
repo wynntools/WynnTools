@@ -1,7 +1,7 @@
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
-const { validateUUID, getUUID } = require('./mojangAPI.js');
-const { generateID } = require('../functions/helper.js');
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { validateUUID, generateID } = require('../functions/helper.js');
+const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
@@ -9,17 +9,16 @@ const fetch = (...args) =>
     .then(({ default: fetch }) => fetch(...args))
     .catch((err) => console.log(err));
 
-const pixelicCache = new nodeCache({ stdTTL: 180 });
+const pixelicCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
 async function register(uuid) {
   try {
     uuid = uuid.replace(/-/g, '');
-    var check = await validateUUID(uuid);
+    var check = validateUUID(uuid);
     if (!check) {
       await getUUID(uuid);
-      check = await validateUUID(uuid);
+      check = validateUUID(uuid);
     }
-    console.log(uuid);
     if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/register`, {
       method: 'POST',
@@ -41,15 +40,12 @@ async function register(uuid) {
 
 async function registerGuild(guild) {
   try {
-    console.log(guild.members.OWNER);
     var members = Object.values(guild.members).flatMap((rankData) => Object.values(rankData).map((data) => data.uuid));
-    console.log(members);
     const chunkSize = 20;
     let registeredCount = 0;
     for (let i = 0; i < members.length; i += chunkSize) {
       const chunk = members.slice(i, i + chunkSize);
       for (const uuid of chunk) {
-        console.log(uuid);
         const registered = await register(uuid);
         if (registered.success) {
           registeredCount++;
@@ -202,10 +198,10 @@ async function getServerUptime(id) {
 
 async function getHistoryStats(uuid, timeframe) {
   try {
-    var check = await validateUUID(uuid);
+    var check = validateUUID(uuid);
     if (!check) {
       await getUUID(uuid);
-      check = await validateUUID(uuid);
+      check = validateUUID(uuid);
     }
     timeframe = timeframe.toLowerCase();
     var options = ['daily', 'weekly', 'monthly'];
@@ -227,14 +223,16 @@ async function getHistoryStats(uuid, timeframe) {
   }
 }
 
-async function clearPixelicCache() {
+function clearPixelicCache() {
   try {
     cacheMessage('PixelicAPI', 'Cleared');
     pixelicCache.flushAll();
+    return 'Cleared';
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 

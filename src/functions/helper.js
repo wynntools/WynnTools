@@ -1,12 +1,13 @@
 const { errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
+const getDirName = require('path').dirname;
+const validate = require('uuid-validate');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
-const getDirName = require('path').dirname;
 
 function generateID(length) {
   try {
@@ -38,22 +39,29 @@ function getCurrentTime() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
 function formatUUID(uuid) {
-  return uuid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+  try {
+    if (uuid === undefined || uuid === null) return uuid;
+    return uuid.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
+    console.log(error);
+    return error;
+  }
 }
 
 async function writeAt(filePath, jsonPath, value) {
-  mkdirp.sync(getDirName(filePath));
   try {
+    mkdirp.sync(getDirName(filePath));
     const json = await fsExtra.readJson(filePath);
     set(json, jsonPath, value);
     return await fsExtra.writeJson(filePath, json);
   } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     const json_1 = {};
     set(json_1, jsonPath, value);
@@ -77,6 +85,7 @@ function generateDate(timestamp) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -90,6 +99,7 @@ function getRelativeTime(timestamp, type) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -105,6 +115,7 @@ async function blacklistCheck(id) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -120,6 +131,7 @@ function countLinesAndCharacters(filePath) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -130,6 +142,7 @@ function isJavaScriptFile(file) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -173,16 +186,21 @@ function countStatsInDirectory(dirPath) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
 function numberWithCommas(x) {
   try {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return x
+      .toString()
+      .replace(/\s/g, '')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -219,17 +237,29 @@ function addNotation(type, value) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
 function toFixed(num, fixed) {
   try {
-    const response = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?');
-    return num.toString().match(response)[0];
+    if (fixed === undefined) fixed = 0;
+    const response = new RegExp('^-?\\d+(?:\\.\\d{0,' + (fixed || -1) + '})?');
+    const result = num.toString().match(response)[0];
+
+    const parts = result.split('.');
+    if (parts.length === 1 && fixed > 0) {
+      parts.push('0'.repeat(fixed));
+    } else if (parts.length === 2 && parts[1].length < fixed) {
+      parts[1] = parts[1] + '0'.repeat(fixed - parts[1].length);
+    }
+
+    return parts.join('.');
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -261,6 +291,7 @@ function getMaxMembers(lvl) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -274,6 +305,7 @@ function capitalizeFirstLetter(str) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
@@ -288,10 +320,16 @@ async function cleanUpTimestampData(data) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
     console.log(error);
+    return error;
   }
 }
 
+function validateUUID(uuid) {
+  return validate(uuid);
+}
+
 module.exports = {
+  generateID,
   getCurrentTime,
   formatUUID,
   writeAt,
@@ -300,10 +338,11 @@ module.exports = {
   blacklistCheck,
   countLinesAndCharacters,
   countStatsInDirectory,
+  numberWithCommas,
   addNotation,
   toFixed,
   getMaxMembers,
   capitalizeFirstLetter,
-  generateID,
   cleanUpTimestampData,
+  validateUUID,
 };
