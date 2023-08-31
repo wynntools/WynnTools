@@ -15,7 +15,6 @@
   "author": "kathund",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.11.2",
     "cli-color": "^2.0.3",
     "discord.js": "^14.12.1",
     "fs-extra": "^11.1.1",
@@ -30,10 +29,10 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.40.0",
-    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "prettier": "3.0.3"
+    "prettier": "3.0.3",
+    "eslint": "^8.40.0"
   }
 }

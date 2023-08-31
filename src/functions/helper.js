@@ -192,7 +192,10 @@ function countStatsInDirectory(dirPath) {
 
 function numberWithCommas(x) {
   try {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return x
+      .toString()
+      .replace(/\s/g, '')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
