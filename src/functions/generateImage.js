@@ -1,18 +1,19 @@
-const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData } = require('./helper.js');
+const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, generateID } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { AttachmentBuilder } = require('discord.js');
-const { cacheMessage } = require('../logger.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
+const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
-const generateStatsCache = new nodeCache({ stdTTL: 180 });
-const generateProfileImageCache = new nodeCache({ stdTTL: 180 });
-const generateGuildCache = new nodeCache({ stdTTL: 180 });
-const generateServerCache = new nodeCache({ stdTTL: 180 });
-const generateServerGraphCache = new nodeCache({ stdTTL: 300 });
+const generateStatsCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateServerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
+const generateServerGraphCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
 registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
@@ -432,6 +433,8 @@ async function generateStats(uuid) {
       return attachment;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -834,6 +837,8 @@ async function generateProfileImage(uuid, profileId) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1244,6 +1249,8 @@ async function generateMemberJoin(data) {
     );
     return canvas.toBuffer('image/png');
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1285,6 +1292,8 @@ async function generateServer(server) {
       return buffer;
     }
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1350,6 +1359,8 @@ async function generateServers(servers) {
     var buffer = canvas.toBuffer('image/png');
     return buffer;
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1423,6 +1434,8 @@ async function generateServerChart(data) {
       .setHeight(428);
     return await chart.getShortUrl();
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
   }
 }
@@ -1488,51 +1501,66 @@ async function generateServerGraph(server) {
   }
 }
 
-async function clearGenerateStatsCache() {
+function clearGenerateStatsCache() {
   try {
     cacheMessage('Generate Stats', 'Cleared');
     generateStatsCache.flushAll();
+    return 'Cleared';
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
 }
 
-async function clearGenerateProfileImageCache() {
+function clearGenerateProfileImageCache() {
   try {
     cacheMessage('Generate Profile Image', 'Cleared');
     generateProfileImageCache.flushAll();
+    return 'Cleared';
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
 }
 
-async function clearGenerateGuildCache() {
+function clearGenerateGuildCache() {
   try {
     cacheMessage('Generate Guild', 'Cleared');
     generateGuildCache.flushAll();
+    return 'Cleared';
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
 }
 
-async function clearGenerateServerCache() {
+function clearGenerateServerCache() {
   try {
     cacheMessage('Generate Server', 'Cleared');
     generateServerCache.flushAll();
+    return 'Cleared';
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }
 }
 
-async function clearGenerateServerGraphCache() {
+function clearGenerateServerGraphCache() {
   try {
     cacheMessage('Generate Server Graph', 'Cleared');
     generateServerGraphCache.flushAll();
+    return 'Cleared';
   } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
     console.log(error);
     return error;
   }

@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const { countStatsInDirectory, addNotation, generateID } = require('../../functions/helper.js');
 const packageJson = require('../../../package.json');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');
@@ -83,7 +83,7 @@ module.exports = {
       await message.edit({ embeds: [embed], components: [row] });
       await interaction.reply({ content: 'Updated Stats', ephemeral: true });
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

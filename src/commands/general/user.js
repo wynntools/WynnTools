@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { capitalizeFirstLetter, generateID } = require('../../functions/helper.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
@@ -137,17 +137,23 @@ module.exports = {
                     .setDescription('Cancelled');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
                 }
-              } catch (e) {
+              } catch (error) {
+                var errorIdDelete = generateID(config.other.errorIdLength);
+                errorMessage(`Error Id - ${errorIdDelete}`);
+                console.log(error);
                 await interaction.editReply({ embeds: [embed], components: [] });
               }
             }
-          } catch (e) {
+          } catch (error) {
+            var errorIdDeleteData = generateID(config.other.errorIdLength);
+            errorMessage(`Error Id - ${errorIdDeleteData}`);
+            console.log(error);
             await interaction.editReply({ embeds: [embed], components: [] });
           }
         }
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()

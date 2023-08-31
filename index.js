@@ -1,8 +1,8 @@
-const { discordMessage, scriptMessage, warnMessage, errorMessage } = require('./src/logger.js');
+const { discordMessage, scriptMessage, warnMessage, errorMessage } = require('./src/functions/logger.js');
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js');
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { toFixed } = require('./src/functions/helper.js');
+const { toFixed, generateID } = require('./src/functions/helper.js');
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
@@ -55,6 +55,8 @@ async function start() {
         }
         await delay(300);
       } catch (error) {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error ID: ${errorId}`);
         console.log(error);
       }
     }

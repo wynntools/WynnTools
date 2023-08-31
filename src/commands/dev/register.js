@@ -10,7 +10,7 @@ const { register, registerGuild } = require('../../api/pixelicAPI.js');
 const { getUsername, getUUID } = require('../../api/mojangAPI.js');
 const { generateID } = require('../../functions/helper.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
-const { errorMessage } = require('../../logger.js');
+const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {
@@ -91,7 +91,7 @@ module.exports = {
         return await interaction.editReply({ embeds: [embed] });
       }
     } catch (error) {
-      var errorId = generateID(10);
+      var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
       console.log(error);
       const errorEmbed = new EmbedBuilder()
