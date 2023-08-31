@@ -332,12 +332,12 @@ try {
         const result = numberWithCommas(-1000000);
         expect(result).to.equal('-1,000,000');
       });
-      
+
       it('should handle already formatted numbers', () => {
         const result = numberWithCommas('1,000,000');
         expect(result).to.equal('1,000,000');
       });
-      
+
       it('should handle already formatted numbers with spaces', () => {
         const result = numberWithCommas('1 000 000');
         expect(result).to.equal('1,000,000');

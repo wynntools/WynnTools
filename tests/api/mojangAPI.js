@@ -3,7 +3,7 @@ const { getUUID, getUsername, clearMojangCache } = require('../../src/api/mojang
 const { expect } = require('chai');
 
 describe('MojangAPI', () => {
-    describe('getUUID', () => {
+  describe('getUUID', () => {
     it('should return a valid UUID for a valid username', async () => {
       const validUsername = 'ValidUsername';
       const result = await getUUID(validUsername);
