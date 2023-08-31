@@ -26,7 +26,9 @@ module.exports = {
             return false;
           }
         } catch (error) {
-          console.error(error);
+          var errorId = generateID(config.other.errorIdLength);
+          errorMessage(`Error Id - ${errorId}`);
+          console.log(error);
           return false;
         }
       }
@@ -42,6 +44,8 @@ module.exports = {
           const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
           return randomFact;
         } catch (error) {
+          var errorId = generateID(config.other.errorIdLength);
+          errorMessage(`Error Id - ${errorId}`);
           console.log(error);
           return null;
         }
@@ -121,7 +125,9 @@ module.exports = {
         );
         await writeAt('data/funFacts/list.json', 'next', startTime + 86400);
       } catch (error) {
-        console.error(error);
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        console.log(error);
       }
     },
     {
