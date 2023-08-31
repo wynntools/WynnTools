@@ -1,6 +1,6 @@
-const { formatUUID, generateID } = require('../functions/helper.js');
+const { validateUUID, formatUUID, generateID } = require('../functions/helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
-const { validateUUID, getUUID } = require('./mojangAPI.js');
+const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
@@ -37,10 +37,10 @@ function formatData(data) {
 
 async function getStats(uuid) {
   try {
-    var check = await validateUUID(uuid);
+    var check = validateUUID(uuid);
     if (!check) {
-      await getUUID(uuid).then((res) => (uuid = res));
-      check = await validateUUID(uuid);
+      await getUUID(uuid);
+      check = validateUUID(uuid);
     }
     if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
@@ -49,23 +49,27 @@ async function getStats(uuid) {
       return wynncraftPlayerCache.get(uuid);
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
-      var data = await res.json();
-      var response = {
-        status: res.status,
-        timestamp: data.timestamp,
-        username: data.data[0].username,
-        uuid: data.data[0].uuid,
-        rank: data.data[0].rank,
-        data: {
-          meta: data.data[0].meta,
-          characters: data.data[0].characters,
-          guild: data.data[0].guild,
-          global: data.data[0].global,
-          ranking: data.data[0].ranking,
-        },
-      };
-      wynncraftPlayerCache.set(uuid, response);
-      return response;
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid UUID' });
+      } else {
+        var data = await res.json();
+        var response = {
+          status: res.status,
+          timestamp: data.timestamp,
+          username: data.data[0].username,
+          uuid: data.data[0].uuid,
+          rank: data.data[0].rank,
+          data: {
+            meta: data.data[0].meta,
+            characters: data.data[0].characters,
+            guild: data.data[0].guild,
+            global: data.data[0].global,
+            ranking: data.data[0].ranking,
+          },
+        };
+        wynncraftPlayerCache.set(uuid, response);
+        return response;
+      }
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
@@ -118,7 +122,9 @@ async function getGuild(name) {
       return wynncraftGuildCache.get(fixedNamed);
     } else {
       var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
-      if (res.status == 200) {
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid Guild Name' });
+      } else {
         var data = await res.json();
         var response = {
           status: res.status,
@@ -138,8 +144,6 @@ async function getGuild(name) {
         };
         wynncraftGuildCache.set(fixedNamed, response);
         return response;
-      } else {
-        throw new Error({ status: res.status, error: 'Invalid Guild Name' });
       }
     }
   } catch (error) {
@@ -154,11 +158,11 @@ async function getServers() {
   try {
     var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
     var data = await res.json();
-    if (res.status == 200) {
+    if (res.status != 200) {
+      throw new Error({ status: res.status, error: 'Error' });
+    } else {
       var response = { status: res.status, request: data.request, data: formatData(data) };
       return response;
-    } else {
-      throw new Error({ status: res.status, error: 'Error' });
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);

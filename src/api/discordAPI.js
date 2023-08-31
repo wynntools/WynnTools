@@ -15,11 +15,16 @@ async function getUsername(id) {
       cacheMessage('DiscordAPI', 'Cache hit');
       return discordCache.get(id).username;
     } else {
-      const data = await fetch(`https://discord.com/api/v9/users/${id}`, {
+      const res = await fetch(`https://discord.com/api/v9/users/${id}`, {
         headers: { Authorization: `Bot ${config.discord.token}` },
-      }).then((res) => res.json());
-      discordCache.set(id, data);
-      return data.username;
+      });
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid ID' });
+      } else {
+        var data = res.json();
+        discordCache.set(id, data);
+        return data.username;
+      }
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
@@ -35,11 +40,16 @@ async function getDisplayName(id) {
       cacheMessage('DiscordAPI', 'Cache hit');
       return discordCache.get(id).global_name;
     } else {
-      const data = await fetch(`https://discord.com/api/v9/users/${id}`, {
+      const res = await fetch(`https://discord.com/api/v9/users/${id}`, {
         headers: { Authorization: `Bot ${config.discord.token}` },
-      }).then((res) => res.json());
-      discordCache.set(id, data);
-      return data.global_name;
+      });
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid ID' });
+      } else {
+        var data = res.json();
+        discordCache.set(id, data);
+        return data.global_name;
+      }
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);

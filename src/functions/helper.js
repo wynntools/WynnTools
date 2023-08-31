@@ -1,12 +1,13 @@
 const { errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
+const getDirName = require('path').dirname;
+const validate = require('uuid-validate');
 const fsExtra = require('fs-extra');
 const { set } = require('lodash');
 const mkdirp = require('mkdirp');
 const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
-const getDirName = require('path').dirname;
 
 function generateID(length) {
   try {
@@ -320,6 +321,10 @@ async function cleanUpTimestampData(data) {
   }
 }
 
+function validateUUID(uuid) {
+  return validate(uuid);
+}
+
 module.exports = {
   generateID,
   getCurrentTime,
@@ -336,4 +341,5 @@ module.exports = {
   getMaxMembers,
   capitalizeFirstLetter,
   cleanUpTimestampData,
+  validateUUID,
 };

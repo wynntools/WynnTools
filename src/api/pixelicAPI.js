@@ -1,7 +1,7 @@
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { validateUUID, getUUID } = require('./mojangAPI.js');
-const { generateID } = require('../functions/helper.js');
+const { validateUUID, generateID } = require('../functions/helper.js');
+const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
@@ -14,10 +14,10 @@ const pixelicCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 async function register(uuid) {
   try {
     uuid = uuid.replace(/-/g, '');
-    var check = await validateUUID(uuid);
+    var check = validateUUID(uuid);
     if (!check) {
       await getUUID(uuid);
-      check = await validateUUID(uuid);
+      check = validateUUID(uuid);
     }
     if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/register`, {
@@ -198,10 +198,10 @@ async function getServerUptime(id) {
 
 async function getHistoryStats(uuid, timeframe) {
   try {
-    var check = await validateUUID(uuid);
+    var check = validateUUID(uuid);
     if (!check) {
       await getUUID(uuid);
-      check = await validateUUID(uuid);
+      check = validateUUID(uuid);
     }
     timeframe = timeframe.toLowerCase();
     var options = ['daily', 'weekly', 'monthly'];

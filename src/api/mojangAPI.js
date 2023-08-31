@@ -9,31 +9,21 @@ const fetch = (...args) =>
 
 const mojangCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
-async function validateUUID(uuid) {
-  try {
-    uuid = uuid.replace(/-/g, '');
-    var regex = /^[A-F\d]{8}[A-F\d]{4}4[A-F\d]{3}[89AB][A-F\d]{3}[A-F\d]{12}$/i;
-    return regex.test(uuid);
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
-    return error;
-  }
-}
-
 async function getUUID(username) {
   try {
     if (mojangCache.has(username.toLowerCase())) {
       cacheMessage('MojangAPI', 'Cache hit');
       return mojangCache.get(username.toLowerCase()).id;
     } else {
-      const data = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`).then((res) => res.json());
-      if (data.id == undefined) return 'Invalid Username';
-      else if (data.name == undefined) return 'Invalid Username';
-      mojangCache.set(data.id, data);
-      mojangCache.set(username.toLowerCase(), data);
-      return data.id;
+      const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid Username' });
+      } else {
+        var data = res.json();
+        mojangCache.set(data.id, data);
+        mojangCache.set(username.toLowerCase(), data);
+        return data.id;
+      }
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
@@ -49,14 +39,15 @@ async function getUsername(uuid) {
       cacheMessage('MojangAPI', 'Cache hit');
       return mojangCache.get(uuid).name;
     } else {
-      const data = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`).then((res) =>
-        res.json()
-      );
-      if (data.id == undefined) return 'Invalid UUID';
-      else if (data.name == undefined) return 'Invalid UUID';
-      mojangCache.set(uuid, data);
-      mojangCache.set(data.name.toLowerCase(), data);
-      return data.name;
+      const res = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`);
+      if (res.status != 200) {
+        throw new Error({ status: res.status, error: 'Invalid UUID' });
+      } else {
+        var data = res.json();
+        mojangCache.set(uuid, data);
+        mojangCache.set(data.name.toLowerCase(), data);
+        return data.name;
+      }
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
@@ -79,4 +70,4 @@ function clearMojangCache() {
   }
 }
 
-module.exports = { validateUUID, getUUID, getUsername, clearMojangCache };
+module.exports = { getUUID, getUsername, clearMojangCache };
