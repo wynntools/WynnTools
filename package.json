@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "tests": "node tests/runtTests.js",
     "lint:check": "npx eslint .",
     "lint": "npx eslint . --fix",
     "prettier": "npx prettier --write .",
