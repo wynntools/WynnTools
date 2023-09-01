@@ -34,7 +34,7 @@ module.exports = {
     '*/5 * * * *',
     async function () {
       try {
-      scriptMessage(`Changing activity status - ${activities[num].id}`);
+        scriptMessage(`Changing activity status - ${activities[num].id}`);
         let userData;
         let totalCommandsRun;
         let totalUsers;
@@ -66,11 +66,11 @@ module.exports = {
         num++;
         if (num == activities.length) num = 0;
       } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
-    }
-  },
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        console.log(error);
+      }
+    },
     {
       scheduled: false,
       timezone: config.other.timezone ? config.other.timezone : null,
