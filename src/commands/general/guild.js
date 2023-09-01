@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { generateGuild } = require('../../functions/generateImage.js');
-const { registerGuild } = require('../../api/pixelicAPI.js');
-const { generateID } = require('../../functions/helper.js');
-const { getGuild } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../functions/logger.js');
+const { registerGuild } = require('../../api/pixelicAPI.js');
+const { getGuild } = require('../../api/wynnCraftAPI.js');
 const config = require('../../../config.json');
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
         )
         .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()

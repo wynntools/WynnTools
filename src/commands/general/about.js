@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { countStatsInDirectory, addNotation, generateID } = require('../../functions/helper.js');
-const packageJson = require('../../../package.json');
+const { countStatsInDirectory, addNotation, generateID, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
+const packageJson = require('../../../package.json');
 const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');
@@ -87,7 +87,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
         )
         .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()

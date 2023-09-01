@@ -1,4 +1,4 @@
-const { validateUUID, formatUUID, generateID } = require('../functions/helper.js');
+const { validateUUID, formatUUID, generateID, cleanMessage } = require('../functions/helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
@@ -31,7 +31,7 @@ function formatData(data) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -75,7 +75,7 @@ async function getStats(uuid) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -95,7 +95,7 @@ async function getHighestProfile(characters) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -110,7 +110,7 @@ async function getProfiles(uuid) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -150,7 +150,7 @@ async function getGuild(name) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -168,7 +168,7 @@ async function getServers() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -206,7 +206,7 @@ async function getServer(id) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -219,7 +219,7 @@ function clearWynnCraftCache() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -232,7 +232,7 @@ function clearWynnCraftGuildCache() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 

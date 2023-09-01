@@ -1,6 +1,6 @@
 const { generateMemberJoin } = require('../functions/generateImage.js');
-const { generateID } = require('../functions/helper.js');
 const { errorMessage } = require('../functions/logger.js');
+const { generateID } = require('../functions/helper.js');
 const config = require('../../config.json');
 
 module.exports = {

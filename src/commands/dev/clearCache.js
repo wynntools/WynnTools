@@ -1,23 +1,10 @@
-const {
-  clearGenerateStatsCache,
-  clearGenerateProfileImageCache,
-  clearGenerateGuildCache,
-  clearGenerateServerCache,
-  clearGenerateServerGraphCache,
-} = require('../../functions/generateImage.js');
-const {
-  SlashCommandBuilder,
-  PermissionFlagsBits,
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-  ButtonStyle,
-} = require('discord.js');
+const {  clearGenerateStatsCache,  clearGenerateProfileImageCache,  clearGenerateGuildCache,  clearGenerateServerCache,  clearGenerateServerGraphCache } = require('../../functions/generateImage.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
+const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
 const { clearPixelicCache } = require('../../api/pixelicAPI.js');
 const { clearMojangCache } = require('../../api/mojangAPI.js');
-const { generateID } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
@@ -109,7 +96,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
         )
         .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()

@@ -1,5 +1,6 @@
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
+const { generateID } = require('../functions/helper.js');
 const packageJson = require('../../package.json');
-const { scriptMessage } = require('../functions/logger.js');
 const { ActivityType } = require('discord.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
@@ -30,37 +31,43 @@ var activities = [
 cron.schedule(
   '*/5 * * * *',
   async function () {
-    scriptMessage(`Changing activity status - ${activities[num].id}`);
-    let userData;
-    let totalCommandsRun;
-    let totalUsers;
-    if (activities[num].id === 'totalCommands') {
-      userData = JSON.parse(fs.readFileSync('data/userData.json'));
-      totalCommandsRun = 0;
-      for (const entry in userData) {
-        totalCommandsRun += userData[entry].commandsRun;
+    try {
+      scriptMessage(`Changing activity status - ${activities[num].id}`);
+      let userData;
+      let totalCommandsRun;
+      let totalUsers;
+      if (activities[num].id === 'totalCommands') {
+        userData = JSON.parse(fs.readFileSync('data/userData.json'));
+        totalCommandsRun = 0;
+        for (const entry in userData) {
+          totalCommandsRun += userData[entry].commandsRun;
+        }
+        client.user.setPresence({
+          activities: [
+            {
+              name: `to ${totalCommandsRun} Total Commands Run`,
+              type: ActivityType[activities[num].type],
+            },
+          ],
+        });
+      } else if (activities[num].id === 'users') {
+        userData = Object.keys(JSON.parse(fs.readFileSync('data/userData.json')));
+        totalUsers = userData.length;
+        client.user.setPresence({
+          activities: [{ name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] }],
+        });
+      } else {
+        client.user.setPresence({
+          activities: [{ name: activities[num].title, type: ActivityType[activities[num].type] }],
+        });
       }
-      client.user.setPresence({
-        activities: [
-          {
-            name: `to ${totalCommandsRun} Total Commands Run`,
-            type: ActivityType[activities[num].type],
-          },
-        ],
-      });
-    } else if (activities[num].id === 'users') {
-      userData = Object.keys(JSON.parse(fs.readFileSync('data/userData.json')));
-      totalUsers = userData.length;
-      client.user.setPresence({
-        activities: [{ name: `${totalUsers} Total Users! `, type: ActivityType[activities[num].type] }],
-      });
-    } else {
-      client.user.setPresence({
-        activities: [{ name: activities[num].title, type: ActivityType[activities[num].type] }],
-      });
+      num++;
+      if (num == activities.length) num = 0;
+    } catch (error) {
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error Id - ${errorId}`);
+      console.log(error);
     }
-    num++;
-    if (num == activities.length) num = 0;
   },
   timezoneStuff
 );
