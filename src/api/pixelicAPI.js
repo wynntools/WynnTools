@@ -1,6 +1,6 @@
+const { validateUUID, generateID, cleanMessage } = require('../functions/helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const { validateUUID, generateID } = require('../functions/helper.js');
 const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
@@ -34,7 +34,7 @@ async function register(uuid) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -60,6 +60,7 @@ async function registerGuild(guild) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
+    return cleanMessage(error);
   }
 }
 
@@ -86,7 +87,7 @@ async function getServerList() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -132,7 +133,7 @@ async function getServerHistory(id, timeframe) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -158,7 +159,7 @@ async function getServerUptimes() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -192,7 +193,7 @@ async function getServerUptime(id) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -219,7 +220,7 @@ async function getHistoryStats(uuid, timeframe) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -232,7 +233,7 @@ function clearPixelicCache() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 

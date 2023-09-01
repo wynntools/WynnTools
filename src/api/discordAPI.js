@@ -1,5 +1,5 @@
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
-const { generateID } = require('../functions/helper.js');
+const { generateID, cleanMessage } = require('../functions/helper.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
@@ -30,7 +30,7 @@ async function getUsername(id) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -55,7 +55,7 @@ async function getDisplayName(id) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 
@@ -68,7 +68,7 @@ function clearDiscordCache() {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
     console.log(error);
-    return error;
+    return cleanMessage(error);
   }
 }
 

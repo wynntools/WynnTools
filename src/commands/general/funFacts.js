@@ -7,7 +7,7 @@ const {
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
-const { generateID, writeAt, toFixed } = require('../../functions/helper.js');
+const { generateID, writeAt, toFixed, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -715,7 +715,7 @@ module.exports = {
         .setDescription(
           `Use </report-bug:${
             config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
+          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
         )
         .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
       const supportDisc = new ButtonBuilder()

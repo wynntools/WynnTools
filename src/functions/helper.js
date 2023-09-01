@@ -328,6 +328,10 @@ function validateUUID(uuid) {
   return validate(uuid);
 }
 
+function cleanMessage(message) {
+  return message.toString().replaceAll('Error: ', '').replaceAll('`', '').replaceAll('ez', 'easy');
+}
+
 module.exports = {
   generateID,
   getCurrentTime,
@@ -345,4 +349,5 @@ module.exports = {
   capitalizeFirstLetter,
   cleanUpTimestampData,
   validateUUID,
+  cleanMessage,
 };
