@@ -1,5 +1,18 @@
-const {  clearGenerateStatsCache,  clearGenerateProfileImageCache,  clearGenerateGuildCache,  clearGenerateServerCache,  clearGenerateServerGraphCache } = require('../../functions/generateImage.js');
-const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const {
+  clearGenerateStatsCache,
+  clearGenerateProfileImageCache,
+  clearGenerateGuildCache,
+  clearGenerateServerCache,
+  clearGenerateServerGraphCache,
+} = require('../../functions/generateImage.js');
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle,
+} = require('discord.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
 const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { clearDiscordCache } = require('../../api/discordAPI.js');
