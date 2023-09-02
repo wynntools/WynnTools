@@ -12,69 +12,103 @@ module.exports = {
         const command = client.commands.get(interaction.commandName);
         if (!command) return;
         try {
-          if (interaction.user.discriminator == '0') {
-            commandMessage(
-              `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`
-            );
-          } else {
-            commandMessage(
-              `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
-            );
-          }
-        } catch (error) {
-          var errorIdLogger = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorIdLogger}`);
-          console.log(error);
-        }
-        try {
-          if (!config.discord.channels.noCommandTracking.includes(interaction.channel.id)) {
-            var userData = JSON.parse(fs.readFileSync('data/userData.json'));
-            let data;
-            if (userData[interaction.user.id]) {
-              data = {
-                commandsRun: userData[interaction.user.id].commandsRun + 1,
-                firstCommand: userData[interaction.user.id].firstCommand,
-                lastUpdated: toFixed(new Date().getTime() / 1000, 0),
-                commands: userData[interaction.user.id].commands,
-              };
-              const commands = data.commands;
-              if (commands[interaction.commandName]) {
-                commands[interaction.commandName]++;
-              } else {
-                commands[interaction.commandName] = 1;
-              }
-              await writeAt('data/userData.json', interaction.user.id, data);
+          try {
+            if (interaction.user.discriminator == '0') {
+              commandMessage(
+                `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`
+              );
             } else {
-              data = {
-                commandsRun: 1,
-                firstCommand: toFixed(new Date().getTime() / 1000, 0),
-                lastUpdated: toFixed(new Date().getTime() / 1000, 0),
-                commands: { [interaction.commandName]: 1 },
-              };
-              await writeAt('data/userData.json', interaction.user.id, data);
+              commandMessage(
+                `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
+              );
             }
+          } catch (error) {
+            var errorIdLogger = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdLogger}`);
+            console.log(error);
           }
-        } catch (error) {
-          var errorIdLogUserData = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorIdLogUserData}`);
-          console.log(error);
-        }
-        try {
-          var blacklistTest = await blacklistCheck(interaction.user.id);
-          if (blacklistTest) {
-            const blacklisted = new EmbedBuilder()
+          if (
+            config.other.devMode &&
+            !(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)
+          ) {
+            throw new Error('No Perms');
+          }
+          try {
+            if (!config.discord.channels.noCommandTracking.includes(interaction.channel.id)) {
+              var userData = JSON.parse(fs.readFileSync('data/userData.json'));
+              let data;
+              if (userData[interaction.user.id]) {
+                data = {
+                  commandsRun: userData[interaction.user.id].commandsRun + 1,
+                  firstCommand: userData[interaction.user.id].firstCommand,
+                  lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+                  commands: userData[interaction.user.id].commands,
+                };
+                const commands = data.commands;
+                if (commands[interaction.commandName]) {
+                  commands[interaction.commandName]++;
+                } else {
+                  commands[interaction.commandName] = 1;
+                }
+                await writeAt('data/userData.json', interaction.user.id, data);
+              } else {
+                data = {
+                  commandsRun: 1,
+                  firstCommand: toFixed(new Date().getTime() / 1000, 0),
+                  lastUpdated: toFixed(new Date().getTime() / 1000, 0),
+                  commands: { [interaction.commandName]: 1 },
+                };
+                await writeAt('data/userData.json', interaction.user.id, data);
+              }
+            }
+          } catch (error) {
+            var errorIdLogUserData = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdLogUserData}`);
+            console.log(error);
+          }
+          try {
+            var blacklistTest = await blacklistCheck(interaction.user.id);
+            if (blacklistTest) {
+              const blacklisted = new EmbedBuilder()
+                .setColor(config.discord.embeds.red)
+                .setDescription('You are blacklisted')
+                .setFooter({
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: config.other.logo,
+                });
+              return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
+            }
+            await command.execute(interaction);
+          } catch (error) {
+            var errorIdBlacklistCheck = generateID(config.other.errorIdLength);
+            errorMessage(`Error ID: ${errorIdBlacklistCheck}`);
+            console.log(error);
+            const errorEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
-              .setDescription('You are blacklisted')
+              .setTitle('An error occurred')
+              .setDescription(
+                `Use </report-bug:${
+                  config.discord.commands['report-bug']
+                }> to report it\nError id - ${errorIdBlacklistCheck}\nError Info - \`${cleanMessage(error)}\``
+              )
               .setFooter({
                 text: `by @kathund | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
-            return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
+            const supportDisc = new ButtonBuilder()
+              .setLabel('Support Discord')
+              .setURL(config.discord.supportInvite)
+              .setStyle(ButtonStyle.Link);
+            const row = new ActionRowBuilder().addComponents(supportDisc);
+            if (interaction.replied || interaction.deferred) {
+              await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+            } else {
+              await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+            }
           }
-          await command.execute(interaction);
         } catch (error) {
-          var errorIdBlacklistCheck = generateID(config.other.errorIdLength);
-          errorMessage(`Error ID: ${errorIdBlacklistCheck}`);
+          var errorIdCheck = generateID(config.other.errorIdLength);
+          errorMessage(`Error ID: ${errorIdCheck}`);
           console.log(error);
           const errorEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
@@ -82,7 +116,7 @@ module.exports = {
             .setDescription(
               `Use </report-bug:${
                 config.discord.commands['report-bug']
-              }> to report it\nError id - ${errorIdBlacklistCheck}\nError Info - \`${cleanMessage(error)}\``
+              }> to report it\nError id - ${errorIdCheck}\nError Info - \`${cleanMessage(error)}\``
             )
             .setFooter({
               text: `by @kathund | ${config.discord.supportInvite} for support`,

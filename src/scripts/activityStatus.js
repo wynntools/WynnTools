@@ -32,6 +32,7 @@ cron.schedule(
   '*/5 * * * *',
   async function () {
     try {
+      if (config.other.devMode) return scriptMessage('Dev mode enabled - not changing activity status');
       scriptMessage(`Changing activity status - ${activities[num].id}`);
       let userData;
       let totalCommandsRun;

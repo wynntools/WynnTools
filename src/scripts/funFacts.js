@@ -17,6 +17,7 @@ if (config.other.timezone == null) {
 cron.schedule(
   '00 00 * * *',
   async function () {
+    if (config.other.devMode) return scriptMessage('Dev mode enabled - not sending fun facts');
     var startTime = Math.floor(Date.now() / 1000);
     function checkFunFact(fact) {
       try {
