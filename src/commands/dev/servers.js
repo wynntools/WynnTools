@@ -15,7 +15,7 @@ const config = require('../../../config.json');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('servers')
-    .setDescription('Fun Facts but the dev commands (Dev Only)')
+    .setDescription('Handles Everything to do with servers')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand((subcommand) =>
       subcommand
