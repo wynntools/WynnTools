@@ -2,7 +2,7 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('
 const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { writeAt, generateID } = require('../functions/helper.js');
-const { getUsername } = require('../api/discordAPI.js');
+const { getDiscordUsername } = require('../api/discordAPI.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
@@ -17,7 +17,8 @@ module.exports = {
   task: cron.schedule(
     '00 00 * * *',
     async function () {
-      var startTime = Math.floor(Date.now() / 1000);
+      if (config.other.devMode) return scriptMessage('Dev mode enabled - not sending fun facts');
+    var startTime = Math.floor(Date.now() / 1000);
       function checkFunFact(fact) {
         try {
           if (fact.lastSent + 1209600 < startTime) {
@@ -76,7 +77,7 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(setup);
         var requestedByString = '';
         if (funFact.requestedBy && funFact.hidden != false) {
-          requestedByString = `Requested by ${await getUsername(funFact.requestedBy)} | `;
+          requestedByString = `Requested by ${await getDiscordUsername(funFact.requestedBy)} | `;
         }
         const funFactEmbed = new EmbedBuilder()
           .setColor(config.discord.embeds.green)

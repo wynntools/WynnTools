@@ -9,7 +9,7 @@ const fetch = (...args) =>
 
 const discordCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
-async function getUsername(id) {
+async function getDiscordUsername(id) {
   try {
     if (discordCache.has(id)) {
       cacheMessage('DiscordAPI', 'Cache hit');
@@ -72,4 +72,4 @@ function clearDiscordCache() {
   }
 }
 
-module.exports = { getUsername, getDisplayName, clearDiscordCache };
+module.exports = { getDiscordUsername, getDisplayName, clearDiscordCache };
