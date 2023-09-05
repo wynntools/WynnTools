@@ -257,7 +257,20 @@ module.exports = {
             )
         )
     )
-    .addSubcommand((subcommand) => subcommand.setName('update-stats').setDescription('Update the stats embed')),
+    .addSubcommand((subcommand) => subcommand.setName('update-stats').setDescription('Update the stats embed'))
+    .addSubcommandGroup((group) =>
+      group
+        .setName('script-management')
+        .setDescription('Manage the scripts (Dev Only)')
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('status')
+            .setDescription('Get the status of the scripts')
+            .addStringOption((option) =>
+              option.setName('name').setDescription('The name of the script you want to get').setRequired(false)
+            )
+        )
+    ),
 
   async execute(interaction) {
     try {
@@ -1432,6 +1445,8 @@ module.exports = {
             });
           return await interaction.editReply({ embeds: [embed] });
         }
+      } else if (subCommandGroup === 'script-management') {
+        await interaction.reply({ content: 'This command is currently disabled', ephemeral: true });
       } else if (subCommandGroup === null) {
         if (subCommand === 'clear-cache') {
           const cacheCategory = interaction.options.getString('cache');
@@ -1543,7 +1558,6 @@ module.exports = {
           await interaction.reply({ content: 'Updated Stats', ephemeral: true });
         }
       } else {
-        // transfer funny code
         await interaction.reply({ content: 'This command is currently disabled' });
       }
     } catch (error) {
