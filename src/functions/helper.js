@@ -24,22 +24,15 @@ function generateID(length) {
 }
 
 function getCurrentTime() {
-  try {
-    if (config.other.timezone === null) {
-      return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    } else {
-      return new Date().toLocaleString('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-        timeZone: config.other.timezone,
-      });
-    }
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
-    return error;
+  if (config.other.timezone === null) {
+    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  } else {
+    return new Date().toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: config.other.timezone,
+    });
   }
 }
 
@@ -332,6 +325,21 @@ function cleanMessage(message) {
   return message.toString().replaceAll('Error: ', '').replaceAll('`', '').replaceAll('ez', 'easy');
 }
 
+function shortenMessage(message, length) {
+  try {
+    if (message.length > length) {
+      return message.substring(0, length) + '...';
+    } else {
+      return message;
+    }
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
+    console.log(error);
+    return error;
+  }
+}
+
 module.exports = {
   generateID,
   getCurrentTime,
@@ -350,4 +358,5 @@ module.exports = {
   cleanUpTimestampData,
   validateUUID,
   cleanMessage,
+  shortenMessage,
 };

@@ -35,7 +35,6 @@ function getScriptConfig(fileName) {
     if (!fileName.endsWith('.js')) fileName += '.js';
     const { config } = require(`${scriptsPath}/${fileName}`);
     if (!config) return 'No file found';
-    console.log(config);
     return config;
   } catch (error) {
     var errorId = generateID(10);

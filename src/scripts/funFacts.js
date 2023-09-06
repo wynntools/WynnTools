@@ -13,12 +13,13 @@ module.exports = {
     enabled: false,
     type: 'cron',
     name: 'funFacts',
+    description: "place holder description of this script's purpose",
   },
   task: cron.schedule(
     '00 00 * * *',
     async function () {
       if (config.other.devMode) return scriptMessage('Dev mode enabled - not sending fun facts');
-    var startTime = Math.floor(Date.now() / 1000);
+      var startTime = Math.floor(Date.now() / 1000);
       function checkFunFact(fact) {
         try {
           if (fact.lastSent + 1209600 < startTime) {

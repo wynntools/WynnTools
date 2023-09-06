@@ -10,6 +10,7 @@ module.exports = {
     enabled: false,
     type: 'cron',
     name: 'codeUpdateChecker',
+    description: "place holder description of this script's purpose",
   },
   task: cron.schedule(
     '0 */6 * * *',

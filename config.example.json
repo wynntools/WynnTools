@@ -20,7 +20,6 @@
     "roles": { "dev": "DEV_ROLE_ID" },
     "supportInvite": "SUPPORT_SERVER_INVITE",
     "botInvite": "BOT_INVITE_URL",
-    "emojis": { "yes": "✅", "no": "❌" },
     "buttonTimeout": 30
   },
   "api": { "pixelicAPIKey": "PIXELIC_API_KEY" },
@@ -29,6 +28,7 @@
     "timezone": null,
     "errorIdLength": 15,
     "cacheTimeout": 180,
-    "devMode": false
+    "devMode": false,
+    "emojis": { "yes": "✅", "no": "❌" }
   }
 }

@@ -1,6 +1,19 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
-var { getCurrentTime } = require('./helper.js');
+const config = require('../../config.json');
 var cli = require('cli-color');
+
+function getCurrentTime() {
+  if (config.other.timezone === null) {
+    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  } else {
+    return new Date().toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: config.other.timezone,
+    });
+  }
+}
 
 function discordMessage(message) {
   return console.log(cli.bgMagenta.black(`[${getCurrentTime()}] Discord >`) + ' ' + cli.magenta(message));

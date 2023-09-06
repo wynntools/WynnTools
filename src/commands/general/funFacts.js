@@ -652,7 +652,7 @@ module.exports = {
               .setColor(config.discord.embeds.red)
               .setTimestamp()
               .setDescription(
-                `Default config has been saved - The next fun fact will be posted <t:${funFactsList.next}:R>\n\n**Channel:** <#${interaction.channel.id}>\n**Role:** Null\n**nGhost Ping:** ${config.discord.emojis.no}\n**Delete Msgs:** ${config.discord.emojis.no}`
+                `Default config has been saved - The next fun fact will be posted <t:${funFactsList.next}:R>\n\n**Channel:** <#${interaction.channel.id}>\n**Role:** Null\n**nGhost Ping:** ${config.other.emojis.no}\n**Delete Msgs:** ${config.other.emojis.no}`
               );
             await writeAt('data/funFacts/config.json', interaction.guild.id, {
               serverId: interaction.guild.id,

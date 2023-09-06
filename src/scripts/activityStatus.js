@@ -29,12 +29,13 @@ module.exports = {
     enabled: false,
     type: 'cron',
     name: 'activityStatus',
+    description: "place holder description of this script's purpose",
   },
   task: cron.schedule(
     '*/5 * * * *',
     async function () {
       try {
-      if (config.other.devMode) return scriptMessage('Dev mode enabled - not changing activity status');
+        if (config.other.devMode) return scriptMessage('Dev mode enabled - not changing activity status');
         scriptMessage(`Changing activity status - ${activities[num].id}`);
         let userData;
         let totalCommandsRun;
