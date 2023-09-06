@@ -1637,7 +1637,160 @@ module.exports = {
               });
             });
           } else {
-            /* uh code */
+            var inputtedScriptConfig = await getScriptConfig(statusName);
+            if (!inputtedScriptConfig) throw new Error('Invalid Script Name');
+
+            var inputtedScriptStatusEmbed = new EmbedBuilder()
+              .setColor(config.discord.embeds.green)
+              .setTitle(`Script Status - ${inputtedScriptConfig.name}`)
+              .setDescription(
+                `Description - ${inputtedScriptConfig.description}\nRunning - ${
+                  inputtedScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no
+                }\nEnabled - ${
+                  inputtedScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no
+                }\nType - ${inputtedScriptConfig.type}`
+              )
+              .setFooter({
+                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              });
+
+            const inputtedChangeDescriptionButton = new ButtonBuilder()
+              .setCustomId('changeDescriptionButton')
+              .setLabel('Change Description')
+              .setStyle(ButtonStyle.Primary);
+
+            const inputtedStopOrStartButton = new ButtonBuilder()
+              .setCustomId('stopOrStartButton')
+              .setLabel(scriptConfig.running ? 'Stop' : 'Start')
+              .setStyle(scriptConfig.running ? ButtonStyle.Danger : ButtonStyle.Success);
+
+            const inputtedEnableOrDisableButton = new ButtonBuilder()
+              .setCustomId('enableOrDisableButton')
+              .setLabel(scriptConfig.enabled ? 'Disable' : 'Enable')
+              .setStyle(scriptConfig.enabled ? ButtonStyle.Danger : ButtonStyle.Success);
+
+            const inputtedButtonsRow = new ActionRowBuilder().addComponents(
+              inputtedChangeDescriptionButton,
+              inputtedStopOrStartButton,
+              inputtedEnableOrDisableButton
+            );
+
+            var inputtedScriptStatusMessage = await interaction.reply({
+              embeds: [inputtedScriptStatusEmbed],
+              components: [inputtedButtonsRow],
+            });
+            const inputtedFilter = (i) => i.user.id === interaction.user.id;
+            const inputtedCollector = inputtedScriptStatusMessage.createMessageComponentCollector({
+              time: config.discord.buttonTimeout * 1000,
+              inputtedFilter,
+            });
+
+            inputtedCollector.on('collect', async function (i) {
+              if (inputtedCollector.customId === 'changeDescriptionButton') {
+                const inputtedModal = new ModalBuilder()
+                  .setCustomId('inputtedChangeDescriptionInput')
+                  .setTitle(`Change Description for ${scriptConfig.name}`);
+
+                const inputtedDescriptionInput = new TextInputBuilder()
+                  .setCustomId('descriptionInput')
+                  .setLabel('New Description?')
+                  .setStyle(TextInputStyle.Paragraph)
+                  .setMinLength(25)
+                  .setMaxLength(512);
+
+                const descriptionInputRow = new ActionRowBuilder().addComponents(inputtedDescriptionInput);
+                inputtedModal.addComponents(descriptionInputRow);
+
+                await interaction.showModal(inputtedModal);
+
+                client.on(Events.InteractionCreate, async (interaction) => {
+                  if (!interaction.isModalSubmit()) return;
+                  const inputtedScriptInputtedDescription =
+                    interaction.fields.getTextInputValue('inputtedDescriptionInput');
+
+                  const inputtedUpdatedDescriptionEmbed = new EmbedBuilder()
+                    .setColor(config.discord.embeds.green)
+                    .setAuthor({ name: 'Description has been updated' })
+                    .setTitle(`Script Status - ${inputtedScriptConfig.name}`)
+                    .setDescription(
+                      `Description - ${inputtedScriptConfig.description}\nRunning - ${
+                        inputtedScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no
+                      }\nEnabled - ${
+                        inputtedScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no
+                      }\nType - ${inputtedScriptConfig.type}`
+                    )
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+                  scriptConfig.description = inputtedScriptInputtedDescription;
+                  await i.update({ embeds: [inputtedUpdatedDescriptionEmbed] });
+                });
+              } else if (inputtedCollector.customId === 'stopOrStartButton') {
+                if (inputtedScriptConfig.running) {
+                  await stopScript(inputtedScriptConfig.name);
+                  inputtedScriptConfig.running = false;
+                } else {
+                  await startScript(inputtedScriptConfig.name);
+                  inputtedScriptConfig.running = true;
+                }
+
+                const inputtedUpdatedScriptStatus = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setAuthor({
+                    name: inputtedScriptConfig.running ? 'Script has been started' : 'Script has been stopped',
+                  })
+                  .setTitle(`Script Status - ${inputtedScriptConfig.name}`)
+                  .setDescription(
+                    `Description - ${inputtedScriptConfig.description}\nRunning - ${
+                      inputtedScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no
+                    }\nEnabled - ${
+                      inputtedScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no
+                    }\nType - ${inputtedScriptConfig.type}`
+                  )
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  });
+                await i.update({ embeds: [inputtedUpdatedScriptStatus] });
+              } else if (inputtedCollector.customId === 'enableOrDisableButton') {
+                if (inputtedScriptConfig.enabled) {
+                  inputtedScriptConfig.enabled = false;
+                  if (inputtedScriptConfig.running) {
+                    await stopScript(inputtedScriptConfig.name);
+                    inputtedScriptConfig.running = false;
+                  }
+                } else {
+                  inputtedScriptConfig.enabled = true;
+                  if (!inputtedScriptConfig.running) {
+                    await startScript(inputtedScriptConfig.name);
+                    inputtedScriptConfig.running = true;
+                  }
+                }
+
+                const updatedScriptStatus = new EmbedBuilder()
+                  .setColor(config.discord.embeds.green)
+                  .setAuthor({
+                    name: inputtedScriptConfig.enabled
+                      ? 'Script has been enabled and the script has been started'
+                      : 'Script has been disabled and the script has been stopped',
+                  })
+                  .setTitle(`Script Status - ${inputtedScriptConfig.name}`)
+                  .setDescription(
+                    `Description - ${inputtedScriptConfig.description}\nRunning - ${
+                      inputtedScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no
+                    }\nEnabled - ${
+                      inputtedScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no
+                    }\nType - ${inputtedScriptConfig.type}`
+                  )
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                  });
+                await i.update({ embeds: [updatedScriptStatus] });
+              }
+            });
           }
         }
       } else if (subCommandGroup === null) {
