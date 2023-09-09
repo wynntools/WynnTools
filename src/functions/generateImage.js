@@ -435,7 +435,7 @@ async function generateStats(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -839,7 +839,7 @@ async function generateProfileImage(uuid, profileId) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1206,7 +1206,6 @@ async function generateGuild(guildData) {
 async function generateMemberJoin(data) {
   try {
     var member = data.user;
-    console.log(member);
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
@@ -1251,7 +1250,7 @@ async function generateMemberJoin(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1294,7 +1293,7 @@ async function generateServer(server) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1361,7 +1360,7 @@ async function generateServers(servers) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1436,7 +1435,7 @@ async function generateServerChart(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1509,7 +1508,7 @@ function clearGenerateStatsCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1522,7 +1521,7 @@ function clearGenerateProfileImageCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1535,7 +1534,7 @@ function clearGenerateGuildCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1548,7 +1547,7 @@ function clearGenerateServerCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1561,7 +1560,7 @@ function clearGenerateServerGraphCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }

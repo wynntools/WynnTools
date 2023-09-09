@@ -7,7 +7,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const pixelicCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
@@ -33,7 +33,7 @@ async function register(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -59,7 +59,7 @@ async function registerGuild(guild) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -75,7 +75,6 @@ async function getServerList() {
       });
       var data = await res.json();
       if (res.status === 200) {
-        console.log(data);
         var response = { status: res.status, success: true };
         pixelicCache.set('serverList', response);
         return response;
@@ -86,7 +85,7 @@ async function getServerList() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -132,7 +131,7 @@ async function getServerHistory(id, timeframe) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -158,7 +157,7 @@ async function getServerUptimes() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -192,7 +191,7 @@ async function getServerUptime(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -219,7 +218,7 @@ async function getHistoryStats(uuid, timeframe) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -232,7 +231,7 @@ function clearPixelicCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }

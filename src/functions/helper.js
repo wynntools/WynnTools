@@ -19,7 +19,7 @@ function generateID(length) {
     }
     return result;
   } catch (error) {
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -38,7 +38,7 @@ function getCurrentTime() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -50,7 +50,7 @@ function formatUUID(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -62,7 +62,7 @@ async function writeAt(filePath, jsonPath, value) {
     set(json, jsonPath, value);
     return await fsExtra.writeJson(filePath, json);
   } catch (error) {
-    console.log(error);
+    errorMessage(error);
     const json_1 = {};
     set(json_1, jsonPath, value);
     return await fsExtra.writeJson(filePath, json_1);
@@ -84,7 +84,7 @@ function generateDate(timestamp) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -98,7 +98,7 @@ function getRelativeTime(timestamp, type) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -114,7 +114,7 @@ async function blacklistCheck(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -130,7 +130,7 @@ function countLinesAndCharacters(filePath) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -141,7 +141,7 @@ function isJavaScriptFile(file) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -185,7 +185,7 @@ function countStatsInDirectory(dirPath) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -199,7 +199,7 @@ function numberWithCommas(x) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -236,7 +236,7 @@ function addNotation(type, value) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -258,7 +258,7 @@ function toFixed(num, fixed) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -290,7 +290,7 @@ function getMaxMembers(lvl) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -304,7 +304,7 @@ function capitalizeFirstLetter(str) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -319,7 +319,7 @@ async function cleanUpTimestampData(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }

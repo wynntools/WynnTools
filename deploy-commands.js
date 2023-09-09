@@ -45,7 +45,7 @@ function deployCommands() {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error ID: ${errorId}`);
-      console.error(error);
+      errorMessage(error);
     }
   })();
 }
@@ -90,7 +90,7 @@ function deployDevCommands() {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error ID: ${errorId}`);
-      console.error(error);
+      errorMessage(error);
     }
   })();
 }

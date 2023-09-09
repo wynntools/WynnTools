@@ -5,7 +5,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const discordCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
@@ -29,7 +29,7 @@ async function getDiscordUsername(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -54,7 +54,7 @@ async function getDisplayName(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -67,7 +67,7 @@ function clearDiscordCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }

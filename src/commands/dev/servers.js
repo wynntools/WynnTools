@@ -7,9 +7,9 @@ const {
   PermissionFlagsBits,
 } = require('discord.js');
 const { generateServer, generateServerGraph } = require('../../functions/generateImage.js');
+const { errorMessage, otherMessage } = require('../../functions/logger.js');
 const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { getServer, getServers } = require('../../api/wynnCraftAPI.js');
-const { errorMessage } = require('../../functions/logger.js');
 const config = require('../../../config.json');
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
         var id = interaction.options.getString('server-id');
         if (id === null) {
           var servers = await getServers();
-          console.log(servers);
+          otherMessage(servers);
         } else {
           var server = await getServer(id);
           if (server.error) throw new Error(server.error);
@@ -62,14 +62,14 @@ module.exports = {
           } catch (error) {
             var errorIdGraph = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdGraph}`);
-            console.log(error);
+            errorMessage(error);
           }
         }
       }
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')

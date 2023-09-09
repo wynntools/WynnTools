@@ -181,7 +181,7 @@ module.exports = {
               } catch (error) {
                 var errorIdSetup = generateID(config.other.errorIdLength);
                 errorMessage(`Error Id - ${errorIdSetup}`);
-                console.log(error);
+                errorMessage(error);
                 const overrideCancel = new EmbedBuilder()
                   .setColor(config.discord.embeds.red)
                   .setDescription('Data override cancelled')
@@ -206,7 +206,7 @@ module.exports = {
           } catch (error) {
             var errorIdSetupOverride = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdSetupOverride}`);
-            console.log(error);
+            errorMessage(error);
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Data override cancelled')
@@ -306,7 +306,7 @@ module.exports = {
           } catch (error) {
             var errorIdSetupFirstTime = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdSetupFirstTime}`);
-            console.log(error);
+            errorMessage(error);
           }
         }
       } else if (subcommand === 'disable') {
@@ -379,7 +379,7 @@ module.exports = {
             } catch (error) {
               var errorIdDisable = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdDisable}`);
-              console.log(error);
+              errorMessage(error);
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('Fun facts have been disabled')
@@ -565,7 +565,7 @@ module.exports = {
             } catch (error) {
               var errorIdSuggest = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdSuggest}`);
-              console.log(error);
+              errorMessage(error);
               const embed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('Fun fact suggestion cancelled')
@@ -574,7 +574,7 @@ module.exports = {
                   text: `by @kathund | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
-              console.log(error);
+              errorMessage(error);
               await interaction.editReply({ embeds: [embed], components: [] });
             }
             await confirmation.update({ embeds: [embed], components: [] });
@@ -592,7 +592,7 @@ module.exports = {
         } catch (error) {
           var errorIdSuggestNotify = generateID(config.other.errorIdLength);
           errorMessage(`Error ID: ${errorIdSuggestNotify}`);
-          console.log(error);
+          errorMessage(error);
           const embed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
             .setDescription('Fun fact suggestion cancelled')
@@ -667,7 +667,7 @@ module.exports = {
         } catch (error) {
           var errorIdQuickSetup = generateID(config.other.errorIdLength);
           errorMessage(`Error Id - ${errorIdQuickSetup}`);
-          console.log(error);
+          errorMessage(error);
           await interaction.editReply({ embeds: [guideEmbed], components: [] });
         }
       } else if (subcommand === 'button-setup-guide') {
@@ -708,7 +708,7 @@ module.exports = {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')

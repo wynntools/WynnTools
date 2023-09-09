@@ -5,7 +5,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const mojangCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
@@ -28,7 +28,7 @@ async function getUUID(username) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -52,7 +52,7 @@ async function getUsername(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -65,7 +65,7 @@ function clearMojangCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }

@@ -46,7 +46,7 @@ module.exports = {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')

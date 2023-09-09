@@ -25,7 +25,7 @@ module.exports = {
           } catch (error) {
             var errorIdLogger = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdLogger}`);
-            console.log(error);
+            errorMessage(error);
           }
           if (
             config.other.devMode &&
@@ -64,7 +64,7 @@ module.exports = {
           } catch (error) {
             var errorIdLogUserData = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdLogUserData}`);
-            console.log(error);
+            errorMessage(error);
           }
           try {
             var blacklistTest = await blacklistCheck(interaction.user.id);
@@ -82,7 +82,7 @@ module.exports = {
           } catch (error) {
             var errorIdBlacklistCheck = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdBlacklistCheck}`);
-            console.log(error);
+            errorMessage(error);
             const errorEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setTitle('An error occurred')
@@ -109,7 +109,7 @@ module.exports = {
         } catch (error) {
           var errorIdCheck = generateID(config.other.errorIdLength);
           errorMessage(`Error ID: ${errorIdCheck}`);
-          console.log(error);
+          errorMessage(error);
           const errorEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
             .setTitle('An error occurred')
@@ -148,7 +148,7 @@ module.exports = {
         } catch (error) {
           var errorIdButtons = generateID(config.other.errorIdLength);
           errorMessage(`Error Id - ${errorIdButtons}`);
-          console.log(error);
+          errorMessage(error);
           const errorEmbed = new EmbedBuilder()
             .setColor(config.discord.embeds.red)
             .setTitle('An error occurred')
@@ -176,7 +176,7 @@ module.exports = {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
     }
   },
 };

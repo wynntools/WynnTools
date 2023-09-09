@@ -6,7 +6,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const wynncraftPlayerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const wynncraftGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -30,7 +30,7 @@ function formatData(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -74,7 +74,7 @@ async function getStats(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -94,7 +94,7 @@ async function getHighestProfile(characters) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -109,7 +109,7 @@ async function getProfiles(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -149,7 +149,7 @@ async function getGuild(name) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -167,7 +167,7 @@ async function getServers() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -205,7 +205,7 @@ async function getServer(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -218,7 +218,7 @@ function clearWynnCraftCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -231,7 +231,7 @@ function clearWynnCraftGuildCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }

@@ -51,7 +51,7 @@ async function start() {
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error ID: ${errorId}`);
-        console.log(error);
+        errorMessage(error);
       }
     }
     scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);

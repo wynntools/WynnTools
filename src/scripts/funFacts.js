@@ -29,7 +29,7 @@ cron.schedule(
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
         return false;
       }
     }
@@ -39,7 +39,6 @@ cron.schedule(
       try {
         const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
         if (validFacts.length === 0) {
-          console.log('No more valid fun facts available.');
           return null;
         }
         const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
@@ -47,7 +46,7 @@ cron.schedule(
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
         return null;
       }
     }
@@ -66,7 +65,7 @@ cron.schedule(
         numCheckedFacts++;
       } while (funFact && !checkFunFact(funFact) && numCheckedFacts < totalFacts);
       if (!funFact || (funFact && !checkFunFact(funFact))) {
-        console.log('No valid fun facts found.');
+        return 'No valid fun facts found.';
       }
       const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
       const funFactConfigsObject = Object.keys(funFactConfigs);
@@ -128,7 +127,7 @@ cron.schedule(
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
     }
   },
   timezoneStuff

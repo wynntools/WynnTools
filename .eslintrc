@@ -26,6 +26,7 @@
     "no-self-compare": "error",
     "no-unreachable": "error",
     "sort-imports": "error",
+    "no-console": "error",
     "sort-vars": "error",
     "no-empty": "error",
     "no-undef": "error"

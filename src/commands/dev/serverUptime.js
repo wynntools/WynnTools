@@ -164,7 +164,7 @@ module.exports = {
               } catch (error) {
                 var errorIdOverrideData = generateID(config.other.errorIdLength);
                 errorMessage(`Error Id - ${errorIdOverrideData}`);
-                console.log(error);
+                errorMessage(error);
                 const overrideCancel = new EmbedBuilder()
                   .setColor(config.discord.embeds.red)
                   .setDescription('Data override cancelled')
@@ -189,7 +189,7 @@ module.exports = {
           } catch (error) {
             var errorIdServerUptimeOverride = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdServerUptimeOverride}`);
-            console.log(error);
+            errorMessage(error);
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Data override cancelled')
@@ -301,7 +301,7 @@ module.exports = {
             } catch (error) {
               var errorIdDisable = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdDisable}`);
-              console.log(error);
+              errorMessage(error);
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('server uptime logging has been disabled')
@@ -364,7 +364,7 @@ module.exports = {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')

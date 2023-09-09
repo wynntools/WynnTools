@@ -44,7 +44,7 @@ function checkFunFact(fact, startTime) {
   } catch (error) {
     var errorIdCheckFact = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorIdCheckFact}`);
-    console.log(error);
+    errorMessage(error);
     return false;
   }
 }
@@ -53,7 +53,6 @@ function getRandomFact(funFactList, blacklist) {
   try {
     const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
     if (validFacts.length === 0) {
-      console.log('No more valid fun facts available.');
       return null;
     }
     const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
@@ -61,7 +60,7 @@ function getRandomFact(funFactList, blacklist) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return null;
   }
 }
@@ -342,7 +341,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => console.log(err));
+                .catch((err) => errorMessage(err));
             const response = await fetch(url);
             const data = await response.text();
             const channel = interaction.options.getChannel('channel') ?? interaction.channel;
@@ -367,7 +366,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => console.log(err));
+                .catch((err) => errorMessage(err));
             const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
             const response = await fetch(url);
             const data = await response.text();
@@ -468,7 +467,7 @@ module.exports = {
                   numCheckedFacts++;
                 } while (funFact && !checkFunFact(funFact, startTime) && numCheckedFacts < totalFacts);
                 if (!funFact || (funFact && !checkFunFact(funFact, startTime))) {
-                  console.log('No valid fun facts found.');
+                  return 'No valid fun facts found.';
                 }
                 const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
                 const funFactConfigsObject = Object.keys(funFactConfigs);
@@ -532,7 +531,7 @@ module.exports = {
               } catch (error) {
                 var errorIdSendFacts = generateID(config.other.errorIdLength);
                 errorMessage(`Error ID: ${errorIdSendFacts}`);
-                console.log(error);
+                errorMessage(error);
               }
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
@@ -557,7 +556,7 @@ module.exports = {
           } catch (error) {
             var errorIdSendingFacts = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdSendingFacts}`);
-            console.log(error);
+            errorMessage(error);
             const cancelEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Cancelled sending Fun Facts')
@@ -1023,7 +1022,7 @@ module.exports = {
                   } catch (error) {
                     var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
                     errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                    console.log(error);
+                    errorMessage(error);
                   }
                 } else if (confirmation.customId === 'rightButtonConfigs') {
                   num = num + 1;
@@ -1092,7 +1091,7 @@ module.exports = {
             } catch (error) {
               var errorIdChangingConfigs = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdChangingConfigs}`);
-              console.log(error);
+              errorMessage(error);
             }
           } else {
             currentConfig = configs[serverId];
@@ -1346,13 +1345,13 @@ module.exports = {
                 } catch (error) {
                   var errorIdEditingConfigData = generateID(config.other.errorIdLength);
                   errorMessage(`Error ID: ${errorIdEditingConfigData}`);
-                  console.log(error);
+                  errorMessage(error);
                 }
               }
             } catch (error) {
               var errorIdEditConfig = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdEditConfig}`);
-              console.log(error);
+              errorMessage(error);
               const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
               const channel = guild.channels.cache.get(currentConfig.channelId);
               let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
@@ -1398,7 +1397,6 @@ module.exports = {
             uuid = await getUUID(user);
           }
           registerData = await register(uuid);
-          console.log(registerData.status);
           if (registerData.status != 201) throw new Error(registerData.error);
           embed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
@@ -1549,7 +1547,7 @@ module.exports = {
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
       const errorEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.red)
         .setTitle('An error occurred')
