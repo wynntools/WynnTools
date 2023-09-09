@@ -1,5 +1,5 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
-const customLevels = { cache: 0, command: 1, discord: 2, error: 3, script: 4, warn: 5, max: 6 };
+const customLevels = { cache: 0, command: 1, discord: 2, error: 3, script: 4, warn: 5, other: 6, max: 7 };
 const winston = require('winston');
 const path = require('path');
 
