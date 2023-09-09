@@ -158,7 +158,7 @@ async function updateMessage() {
   const message2 = 'Bot has updated, please restart the bot to apply changes!';
   const padding = ' '.repeat(Math.floor((columns - warning.length) / 2));
   const padding2 = ' '.repeat(Math.floor((columns - message2.length) / 2));
-    // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console
   console.log(padding + warning + padding + '\n' + padding2 + message2 + padding2);
 }
 
