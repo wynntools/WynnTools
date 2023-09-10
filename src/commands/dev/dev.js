@@ -260,6 +260,9 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+        throw new Error('No Perms');
+      }
       var subCommandGroup = await interaction.options.getSubcommandGroup();
       var subCommand = await interaction.options.getSubcommand();
       if (subCommandGroup === 'blacklist') {
@@ -772,7 +775,7 @@ module.exports = {
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('rightButtonConfigs');
             const reloadButtonConfigs = new ButtonBuilder()
-              .setEmoji('🔄️')
+              .setEmoji('🔄')
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('reloadButtonConfigs');
             const row = new ActionRowBuilder().addComponents(leftButton, editButton, rightButton, reloadButtonConfigs);
@@ -871,7 +874,7 @@ module.exports = {
                     .setColor(config.discord.embeds.green)
                     .setTitle(`Edit Mode Enabled`)
                     .setDescription(string);
-                  var editMessage = await interaction.reply({
+                  var editMessage = await interaction.followUp({
                     components: [editRow],
                     embeds: [editEmbed],
                     ephemeral: true,
@@ -1022,14 +1025,32 @@ module.exports = {
                   } catch (error) {
                     var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
                     errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                    errorMessage(error);
+                    console.log(error);
+                    const errorEmbed = new EmbedBuilder()
+                      .setColor(config.discord.embeds.red)
+                      .setTitle('An error occurred')
+                      .setDescription(
+                        `Use </report-bug:${
+                          config.discord.commands['report-bug']
+                        }> to report it\nError id - ${errorIdUpdatingConfigs}\nError Info - \`${cleanMessage(error)}\``
+                      )
+                      .setFooter({
+                        text: `by @kathund | ${config.discord.supportInvite} for support`,
+                        iconURL: config.other.logo,
+                      });
+                    const supportDisc = new ButtonBuilder()
+                      .setLabel('Support Discord')
+                      .setURL(config.discord.supportInvite)
+                      .setStyle(ButtonStyle.Link);
+                    const row = new ActionRowBuilder().addComponents(supportDisc);
+                    await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
                   }
                 } else if (confirmation.customId === 'rightButtonConfigs') {
                   num = num + 1;
                   if (num >= configsObject.length) num = 0;
                   currentConfig = configs[configsObject[num]];
-                  const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
-                  const channel = guild.channels.cache.get(currentConfig.channelId);
+                  const guild = await interaction.client.guilds.cache.get(currentConfig.serverId);
+                  const channel = await guild.channels.cache.get(currentConfig.channelId);
                   let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
                   if (currentConfig.roleId) {
                     const role = guild.roles.cache.get(currentConfig.roleId);
