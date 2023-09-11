@@ -1,9 +1,34 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
 const customLevels = { cache: 0, command: 1, discord: 2, error: 3, script: 4, warn: 5, other: 6, max: 7 };
+const config = require('../../config.json');
 const winston = require('winston');
 const path = require('path');
 
 const logDirectory = path.join(__dirname, '../../logs');
+const timezone = () => {
+  if (config.other.timezone === null) {
+    return new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+    });
+  } else {
+    return new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+      timeZone: config.other.timezone,
+    });
+  }
+};
 
 // TODO Add logs flushing for logs older then 14d
 // TODO Add cli-color support
@@ -12,7 +37,7 @@ const cacheLogger = winston.createLogger({
   level: 'cache',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -28,7 +53,7 @@ const commandLogger = winston.createLogger({
   level: 'command',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -48,7 +73,7 @@ const discordLogger = winston.createLogger({
   level: 'discord',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -68,7 +93,7 @@ const errorLogger = winston.createLogger({
   level: 'error',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -84,7 +109,7 @@ const scriptLogger = winston.createLogger({
   level: 'script',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -100,7 +125,7 @@ const warnLogger = winston.createLogger({
   level: 'warn',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
@@ -116,7 +141,7 @@ const otherLogger = winston.createLogger({
   level: 'other',
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YY-MM-DD HH:mm:ss A' }),
+    winston.format.timestamp({ format: timezone }),
     winston.format.printf(({ timestamp, level, message }) => {
       return `[${timestamp}] ${level.toUpperCase()} > ${message}`;
     })
