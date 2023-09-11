@@ -28,6 +28,7 @@ module.exports = {
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
       var profiles = await getProfiles(uuid);
+      if (profiles.error) throw new Error(profiles);
       const sortedData = profiles.sort((a, b) => b.level - a.level);
       const options = sortedData.map((entry) => ({ label: `${entry.type} - ${entry.level}`, value: entry.key }));
       const select = new StringSelectMenuBuilder()

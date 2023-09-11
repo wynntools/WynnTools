@@ -314,13 +314,21 @@ async function generateStats(uuid) {
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
+      if (currentProfileStats.professions.combat.level == 106) {
+        await bar(ctx, 140, 689, 946, 28);
+      } else {
+        await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
+      }
       ctx.drawImage(professionsIconBackground, 104, 661);
       ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
       ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
       ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      if (currentProfileStats.professions.combat.level == 106) {
+        await bar(ctx, 140, 689, 946, 28);
+      } else {
+        ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      }
       ctx.textAlign = 'left';
       await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 741);
@@ -718,13 +726,21 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
       const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
+      if (currentProfileStats.professions.combat.level == 106) {
+        await bar(ctx, 140, 689, 946, 28);
+      } else {
+        await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
+      }
       ctx.drawImage(professionsIconBackground, 104, 661);
       ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
       ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
       ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      if (currentProfileStats.professions.combat.level == 106) {
+        ctx.fillText(`Max Level`, 18 + 1056, 662 + 27);
+      } else {
+        ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      }
       ctx.textAlign = 'left';
       await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
       ctx.drawImage(professionsIconBackground, 104, 741);

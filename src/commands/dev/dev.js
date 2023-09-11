@@ -1025,7 +1025,7 @@ module.exports = {
                   } catch (error) {
                     var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
                     errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                    console.log(error);
+                    errorMessage(error);
                     const errorEmbed = new EmbedBuilder()
                       .setColor(config.discord.embeds.red)
                       .setTitle('An error occurred')
