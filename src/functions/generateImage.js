@@ -19,7 +19,7 @@ registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   if (rectWidth == 0) return;
-  if (color == null) color = 'rgb(125, 140, 196)';
+  if (color == null) color = 'rgb(237, 135, 150)';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   var cornerRadius = 28;
@@ -36,15 +36,14 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   ctx.strokeStyle = 'white';
 }
 
-const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
-
 async function generateStats(uuid) {
   try {
     if (generateStatsCache.has(uuid)) {
       cacheMessage('Generate Stats', 'hit');
       return generateStatsCache.get(uuid);
     } else {
+      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
@@ -317,17 +316,12 @@ async function generateStats(uuid) {
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
-      if (currentProfileStats.professions.combat.level == 106) {
-        await bar(ctx, 140, 689, 946, 28);
-      } else {
-        await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
-      }
 
       // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
       if (currentProfileStats.professions.combat.level == 106) {
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
-        await bar(ctx, 140, 689, 946, 28, 'rgb(212, 245, 245)');
+        await bar(ctx, 140, 689, 946, 28, 'rgb(125, 140, 196)');
         ctx.textAlign = 'right';
         ctx.fillStyle = 'black';
         ctx.fillText('Max Level', 18 + 1056, 662 + 27);
@@ -342,8 +336,8 @@ async function generateStats(uuid) {
       ctx.textAlign = 'left';
 
       // ? Mining
-      if (currentProfileStats.professions.mining.level == 105) {
-        await bar(ctx, 140, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.mining.level == 132) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -361,8 +355,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
 
       // ? Farming
-      if (currentProfileStats.professions.farming.level == 105) {
-        await bar(ctx, 483, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.farming.level == 132) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -381,8 +375,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
 
       // ? Woodcutting
-      if (currentProfileStats.professions.woodcutting.level == 105) {
-        await bar(ctx, 824, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.woodcutting.level == 132) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -401,8 +395,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
 
       // ? Fishing
-      if (currentProfileStats.professions.fishing.level == 105) {
-        await bar(ctx, 140, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.fishing.level == 132) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -421,8 +415,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
 
       // ? Scribing
-      if (currentProfileStats.professions.scribing.level == 105) {
-        await bar(ctx, 483, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.scribing.level == 132) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -441,8 +435,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
 
       // ? Jeweling
-      if (currentProfileStats.professions.jeweling.level == 105) {
-        await bar(ctx, 824, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.jeweling.level == 132) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -461,8 +455,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
 
       // ? Alchemism
-      if (currentProfileStats.professions.alchemism.level == 105) {
-        await bar(ctx, 140, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.alchemism.level == 132) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -481,8 +475,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
 
       // ? Cooking
-      if (currentProfileStats.professions.cooking.level == 105) {
-        await bar(ctx, 483, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.cooking.level == 132) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -501,8 +495,8 @@ async function generateStats(uuid) {
       ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
 
       // ? Weaponsmithing
-      if (currentProfileStats.professions.weaponsmithing.level == 105) {
-        await bar(ctx, 824, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.weaponsmithing.level == 132) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -521,8 +515,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
 
       // ? Tailoring
-      if (currentProfileStats.professions.tailoring.level == 105) {
-        await bar(ctx, 140, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.tailoring.level == 132) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -541,8 +535,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
 
       // ? Woodworking
-      if (currentProfileStats.professions.woodworking.level == 105) {
-        await bar(ctx, 483, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.woodworking.level == 132) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -561,8 +555,8 @@ async function generateStats(uuid) {
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
 
       // ? Armouring
-      if (currentProfileStats.professions.armouring.level == 105) {
-        await bar(ctx, 824, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.armouring.level == 132) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -607,6 +601,8 @@ async function generateProfileImage(uuid, profileId) {
       cacheMessage('Generate Profile Image', 'hit');
       return generateProfileImageCache.get(profileId);
     } else {
+      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
@@ -884,7 +880,7 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
       if (currentProfileStats.professions.combat.level == 106) {
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
-        await bar(ctx, 140, 689, 946, 28, 'rgb(212, 245, 245)');
+        await bar(ctx, 140, 689, 946, 28, 'rgb(125, 140, 196)');
         ctx.textAlign = 'right';
         ctx.fillStyle = 'black';
         ctx.fillText('Max Level', 18 + 1056, 662 + 27);
@@ -899,8 +895,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.textAlign = 'left';
 
       // ? Mining
-      if (currentProfileStats.professions.mining.level == 105) {
-        await bar(ctx, 140, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.mining.level == 132) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -918,8 +914,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
 
       // ? Farming
-      if (currentProfileStats.professions.farming.level == 105) {
-        await bar(ctx, 483, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.farming.level == 132) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -938,8 +934,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
 
       // ? Woodcutting
-      if (currentProfileStats.professions.woodcutting.level == 105) {
-        await bar(ctx, 824, 769, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.woodcutting.level == 132) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -958,8 +954,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
 
       // ? Fishing
-      if (currentProfileStats.professions.fishing.level == 105) {
-        await bar(ctx, 140, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.fishing.level == 132) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -978,8 +974,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
 
       // ? Scribing
-      if (currentProfileStats.professions.scribing.level == 105) {
-        await bar(ctx, 483, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.scribing.level == 132) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -998,8 +994,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
 
       // ? Jeweling
-      if (currentProfileStats.professions.jeweling.level == 105) {
-        await bar(ctx, 824, 841, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.jeweling.level == 132) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1018,8 +1014,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
 
       // ? Alchemism
-      if (currentProfileStats.professions.alchemism.level == 105) {
-        await bar(ctx, 140, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.alchemism.level == 132) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1038,8 +1034,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
 
       // ? Cooking
-      if (currentProfileStats.professions.cooking.level == 105) {
-        await bar(ctx, 483, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.cooking.level == 132) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1058,8 +1054,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
 
       // ? Weaponsmithing
-      if (currentProfileStats.professions.weaponsmithing.level == 105) {
-        await bar(ctx, 824, 913, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.weaponsmithing.level == 132) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1078,8 +1074,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
 
       // ? Tailoring
-      if (currentProfileStats.professions.tailoring.level == 105) {
-        await bar(ctx, 140, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.tailoring.level == 132) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1098,8 +1094,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
 
       // ? Woodworking
-      if (currentProfileStats.professions.woodworking.level == 105) {
-        await bar(ctx, 483, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.woodworking.level == 132) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -1118,8 +1114,8 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
 
       // ? Armouring
-      if (currentProfileStats.professions.armouring.level == 105) {
-        await bar(ctx, 824, 985, 262, 28, 'rgb(212, 245, 245)');
+      if (currentProfileStats.professions.armouring.level == 132) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(125, 140, 196)');
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
