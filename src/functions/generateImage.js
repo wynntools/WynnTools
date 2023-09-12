@@ -42,11 +42,13 @@ async function generateStats(uuid) {
       cacheMessage('Generate Stats', 'hit');
       return generateStatsCache.get(uuid);
     } else {
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
+      const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage(
+        'src/assets/statsCommand/professionsIconBackgroundMaxLevel.svg'
+      );
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
@@ -155,40 +157,40 @@ async function generateStats(uuid) {
         ctx.fillText(stats.username, 62, 52);
       }
       if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
             if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
             }
           }
         } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
       }
       ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
@@ -332,7 +334,7 @@ async function generateStats(uuid) {
         ctx.textAlign = 'right';
         ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       }
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
 
       // ? Mining
@@ -351,7 +353,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
 
       // ? Farming
@@ -371,7 +373,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
 
       // ? Woodcutting
@@ -391,7 +393,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
 
       // ? Fishing
@@ -411,7 +413,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
 
       // ? Scribing
@@ -431,7 +433,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
 
       // ? Jeweling
@@ -451,7 +453,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
 
       // ? Alchemism
@@ -471,7 +473,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
 
       // ? Cooking
@@ -492,7 +494,7 @@ async function generateStats(uuid) {
         ctx.textAlign = 'left';
       }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/cookingIcon.png'), 447, 889);
 
       // ? Weaponsmithing
       if (currentProfileStats.professions.weaponsmithing.level == 132) {
@@ -511,7 +513,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
 
       // ? Tailoring
@@ -531,7 +533,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
 
       // ? Woodworking
@@ -551,7 +553,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodworkingIcon.png'), 447, 961);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
 
       // ? Armouring
@@ -571,7 +573,7 @@ async function generateStats(uuid) {
         ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
 
       ctx.font = '32px Karla';
@@ -601,11 +603,13 @@ async function generateProfileImage(uuid, profileId) {
       cacheMessage('Generate Profile Image', 'hit');
       return generateProfileImageCache.get(profileId);
     } else {
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
+      const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage(
+        'src/assets/statsCommand/professionsIconBackgroundMaxLevel.svg'
+      );
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[profileId];
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
@@ -714,40 +718,40 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(stats.username, 62, 52);
       }
       if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
             if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
             }
           }
         } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
       }
       ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
@@ -891,7 +895,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.textAlign = 'right';
         ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       }
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
 
       // ? Mining
@@ -910,7 +914,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
 
       // ? Farming
@@ -930,7 +934,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
 
       // ? Woodcutting
@@ -950,7 +954,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
 
       // ? Fishing
@@ -970,7 +974,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
 
       // ? Scribing
@@ -990,7 +994,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
 
       // ? Jeweling
@@ -1010,7 +1014,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
 
       // ? Alchemism
@@ -1030,7 +1034,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
 
       // ? Cooking
@@ -1051,7 +1055,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.textAlign = 'left';
       }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/cookingIcon.png'), 447, 889);
 
       // ? Weaponsmithing
       if (currentProfileStats.professions.weaponsmithing.level == 132) {
@@ -1070,7 +1074,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
 
       // ? Tailoring
@@ -1090,7 +1094,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
 
       // ? Woodworking
@@ -1110,7 +1114,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodworkingIcon.png'), 447, 961);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
 
       // ? Armouring
@@ -1130,7 +1134,7 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
         ctx.textAlign = 'left';
       }
-      ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
 
       ctx.font = '32px Karla';
@@ -1168,7 +1172,13 @@ async function generateGuild(guildData) {
     let onlineMemberX = 0;
     let territoriesX = 0;
     if (guildData.banner == undefined) {
-      ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        await loadImage('src/assets/guildCommand/guildCommandBackground.png'),
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       ctx.font = '64px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
@@ -1335,7 +1345,13 @@ async function generateGuild(guildData) {
       );
       return canvas.toBuffer('image/png');
     } else {
-      ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        await loadImage('src/assets/guildCommand/guildBannerCommandBackground.png'),
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       ctx.drawImage(
         await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
         986,
@@ -1576,12 +1592,12 @@ async function generateServer(server) {
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = '128px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 96, 118, 256, 256);
       } else if (server.status === 'offline') {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 96, 118, 256, 256);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 96, 118, 256, 256);
       }
       ctx.fillText(server.server, 514, 169);
       ctx.fillText(server.count, 946, 169);
@@ -1639,7 +1655,7 @@ async function generateServers(servers) {
       ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(
-          await loadImage('src/assets/serverOnlineIcon.png'),
+          await loadImage('src/assets/serverCommand/onlineIcon.png'),
           serversXY[i].circle.x,
           serversXY[i].circle.y,
           77.22,
@@ -1647,7 +1663,7 @@ async function generateServers(servers) {
         );
       } else {
         ctx.drawImage(
-          await loadImage('src/assets/serverOfflineIcon.png'),
+          await loadImage('src/assets/serverCommand/offlineIcon.png'),
           serversXY[i].circle.x,
           serversXY[i].circle.y,
           77.22,
@@ -1765,9 +1781,9 @@ async function generateServerGraph(server) {
     if (badData.success) {
       ctx.font = '16px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 1078, 48, 32, 32);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 1078, 48, 32, 32);
       } else {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 1078, 48, 32, 32);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 1078, 48, 32, 32);
       }
       ctx.fillText(server.server, 1118, 55);
       var data = await cleanUpTimestampData(badData);
@@ -1776,9 +1792,9 @@ async function generateServerGraph(server) {
     } else {
       ctx.font = '32px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 525, 88, 64, 64);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 525, 88, 64, 64);
       } else {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 525, 88, 64, 64);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 525, 88, 64, 64);
       }
       ctx.fillText(server.server, 605, 102);
       if (badData.error === 'No data was found about the specified server') {

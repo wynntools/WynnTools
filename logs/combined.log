@@ -1,0 +1,59 @@
+[9/12/2023, 19:32:04] DISCORD > Started refreshing 6 application (/) commands and skipped over 0 commands.
+[9/12/2023, 19:32:04] DISCORD > Started refreshing 3 application (/) commands to the dev server and skipped over 0 commands.
+[9/12/2023, 19:32:05] DISCORD > Successfully reloaded 6 application (/) commands and skipped over 0 commands.
+[9/12/2023, 19:32:05] DISCORD > Successfully reloaded 3 application (/) commands to the dev server and skipped over 0 commands.
+[9/12/2023, 19:32:07] SCRIPT > Found 2 event(s) and running them all
+[9/12/2023, 19:32:08] SCRIPT > Started GuildMemberAdd.js event
+[9/12/2023, 19:32:08] SCRIPT > Started InteractionCreate.js event
+[9/12/2023, 19:32:08] SCRIPT > Started 2 event(s) and skipped 0 event(s)
+[9/12/2023, 19:32:10] DISCORD > Client Logged in as WynnTools Beta#0291
+[9/12/2023, 19:32:10] SCRIPT > Found 4 scripts and running them all
+[9/12/2023, 19:32:10] SCRIPT > Started activityStatus.js script
+[9/12/2023, 19:32:10] SCRIPT > Started codeUpdater.js script
+[9/12/2023, 19:32:10] SCRIPT > Started funFacts.js script
+[9/12/2023, 19:32:11] SCRIPT > Started statsChannel.js script
+[9/12/2023, 19:32:11] SCRIPT > Started 4 script(s) and skipped 0 script(s)
+[9/12/2023, 19:35:00] SCRIPT > Dev mode enabled - not updating stats embed/message
+[9/12/2023, 19:35:00] SCRIPT > Dev mode enabled - not changing activity status
+[9/12/2023, 19:37:09] COMMAND > kathund (608584543506530314) ran command stats
+[9/12/2023, 19:37:10] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:37:10] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:37:10] CACHE > WynnCraft API Player > hit
+[9/12/2023, 19:37:10] ERROR > Error Id - OGN3Es4RNhNKaQR
+[9/12/2023, 19:37:10] ERROR > ENOENT, No such file or directory 'src/assets/statsCommand/statsCommand/scribingIcon.png'
+[9/12/2023, 19:37:10] ERROR > Error Id - cWHl26k8f1S5Yjs
+[9/12/2023, 19:37:10] ERROR > Cannot read properties of undefined (reading 'description')
+[9/12/2023, 19:37:13] COMMAND > kathund (608584543506530314) ran command stats
+[9/12/2023, 19:37:13] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:37:13] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:37:13] CACHE > WynnCraft API Player > hit
+[9/12/2023, 19:37:13] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:37:13] CACHE > WynnCraft API Player > hit
+[9/12/2023, 19:37:13] ERROR > Error Id - F6s4VVCVAXYimIC
+[9/12/2023, 19:37:13] ERROR > ENOENT, No such file or directory 'src/assets/statsCommand/statsCommand/scribingIcon.png'
+[9/12/2023, 19:37:13] ERROR > Error Id - hDx44XQY5jCIhLl
+[9/12/2023, 19:37:13] ERROR > Cannot read properties of undefined (reading 'description')
+[9/12/2023, 19:40:00] SCRIPT > Dev mode enabled - not updating stats embed/message
+[9/12/2023, 19:40:00] SCRIPT > Dev mode enabled - not changing activity status
+[9/12/2023, 19:42:07] DISCORD > Started refreshing 6 application (/) commands and skipped over 0 commands.
+[9/12/2023, 19:42:07] DISCORD > Started refreshing 3 application (/) commands to the dev server and skipped over 0 commands.
+[9/12/2023, 19:42:08] DISCORD > Successfully reloaded 6 application (/) commands and skipped over 0 commands.
+[9/12/2023, 19:42:08] DISCORD > Successfully reloaded 3 application (/) commands to the dev server and skipped over 0 commands.
+[9/12/2023, 19:42:10] SCRIPT > Found 2 event(s) and running them all
+[9/12/2023, 19:42:10] SCRIPT > Started GuildMemberAdd.js event
+[9/12/2023, 19:42:11] SCRIPT > Started InteractionCreate.js event
+[9/12/2023, 19:42:11] SCRIPT > Started 2 event(s) and skipped 0 event(s)
+[9/12/2023, 19:42:12] DISCORD > Client Logged in as WynnTools Beta#0291
+[9/12/2023, 19:42:12] SCRIPT > Found 4 scripts and running them all
+[9/12/2023, 19:42:12] SCRIPT > Started activityStatus.js script
+[9/12/2023, 19:42:12] SCRIPT > Started codeUpdater.js script
+[9/12/2023, 19:42:13] SCRIPT > Started funFacts.js script
+[9/12/2023, 19:42:13] SCRIPT > Started statsChannel.js script
+[9/12/2023, 19:42:13] SCRIPT > Started 4 script(s) and skipped 0 script(s)
+[9/12/2023, 19:42:20] COMMAND > kathund (608584543506530314) ran command stats
+[9/12/2023, 19:42:21] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:42:21] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:42:21] CACHE > WynnCraft API Player > hit
+[9/12/2023, 19:42:23] CACHE > MojangAPI > Cache hit
+[9/12/2023, 19:42:23] ERROR > Error ID: WVUKotT0ZPNKHev
+[9/12/2023, 19:42:23] ERROR > [object Object]

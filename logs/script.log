@@ -1,0 +1,24 @@
+[9/12/2023, 19:32:07] SCRIPT > Found 2 event(s) and running them all
+[9/12/2023, 19:32:08] SCRIPT > Started GuildMemberAdd.js event
+[9/12/2023, 19:32:08] SCRIPT > Started InteractionCreate.js event
+[9/12/2023, 19:32:08] SCRIPT > Started 2 event(s) and skipped 0 event(s)
+[9/12/2023, 19:32:10] SCRIPT > Found 4 scripts and running them all
+[9/12/2023, 19:32:10] SCRIPT > Started activityStatus.js script
+[9/12/2023, 19:32:10] SCRIPT > Started codeUpdater.js script
+[9/12/2023, 19:32:10] SCRIPT > Started funFacts.js script
+[9/12/2023, 19:32:11] SCRIPT > Started statsChannel.js script
+[9/12/2023, 19:32:11] SCRIPT > Started 4 script(s) and skipped 0 script(s)
+[9/12/2023, 19:35:00] SCRIPT > Dev mode enabled - not updating stats embed/message
+[9/12/2023, 19:35:00] SCRIPT > Dev mode enabled - not changing activity status
+[9/12/2023, 19:40:00] SCRIPT > Dev mode enabled - not updating stats embed/message
+[9/12/2023, 19:40:00] SCRIPT > Dev mode enabled - not changing activity status
+[9/12/2023, 19:42:10] SCRIPT > Found 2 event(s) and running them all
+[9/12/2023, 19:42:10] SCRIPT > Started GuildMemberAdd.js event
+[9/12/2023, 19:42:11] SCRIPT > Started InteractionCreate.js event
+[9/12/2023, 19:42:11] SCRIPT > Started 2 event(s) and skipped 0 event(s)
+[9/12/2023, 19:42:12] SCRIPT > Found 4 scripts and running them all
+[9/12/2023, 19:42:12] SCRIPT > Started activityStatus.js script
+[9/12/2023, 19:42:12] SCRIPT > Started codeUpdater.js script
+[9/12/2023, 19:42:13] SCRIPT > Started funFacts.js script
+[9/12/2023, 19:42:13] SCRIPT > Started statsChannel.js script
+[9/12/2023, 19:42:13] SCRIPT > Started 4 script(s) and skipped 0 script(s)
