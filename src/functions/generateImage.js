@@ -17,10 +17,11 @@ const generateServerGraphCache = new nodeCache({ stdTTL: config.other.cacheTimeo
 
 registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
-async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
+async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   if (rectWidth == 0) return;
-  ctx.fillStyle = 'rgb(237, 135, 150)';
-  ctx.strokeStyle = 'rgb(237, 135, 150)';
+  if (color == null) color = 'rgb(125, 140, 196)';
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   var cornerRadius = 28;
   ctx.lineJoin = 'round';
   ctx.lineWidth = cornerRadius;
@@ -34,6 +35,9 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
   ctx.fillStyle = 'white';
   ctx.strokeStyle = 'white';
 }
+
+const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
+const professionsIconBackgroundMaxLevel = await loadImage('src/assets/professionsIconBackgroundMaxLevel.svg');
 
 async function generateStats(uuid) {
   try {
@@ -313,119 +317,269 @@ async function generateStats(uuid) {
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
       if (currentProfileStats.professions.combat.level == 106) {
         await bar(ctx, 140, 689, 946, 28);
       } else {
         await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
       }
-      ctx.drawImage(professionsIconBackground, 104, 661);
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+
+      // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
-      ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
-      ctx.textAlign = 'right';
       if (currentProfileStats.professions.combat.level == 106) {
-        await bar(ctx, 140, 689, 946, 28);
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
+        await bar(ctx, 140, 689, 946, 28, 'rgb(212, 245, 245)');
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'black';
+        ctx.fillText('Max Level', 18 + 1056, 662 + 27);
+        ctx.fillStyle = 'white';
       } else {
+        ctx.drawImage(professionsIconBackground, 104, 661);
+        ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
+        ctx.textAlign = 'right';
         ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       }
+      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
-      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 741);
+
+      // ? Mining
+      if (currentProfileStats.professions.mining.level == 105) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 741);
+        ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
-      ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 741);
+
+      // ? Farming
+      if (currentProfileStats.professions.farming.level == 105) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 741);
+        ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
-      ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 741);
+
+      // ? Woodcutting
+      if (currentProfileStats.professions.woodcutting.level == 105) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 741);
+        ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
-      ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 813);
+
+      // ? Fishing
+      if (currentProfileStats.professions.fishing.level == 105) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 813);
+        ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
-      ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 813);
+
+      // ? Scribing
+      if (currentProfileStats.professions.scribing.level == 105) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 813);
+        ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
-      ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 813);
+
+      // ? Jeweling
+      if (currentProfileStats.professions.jeweling.level == 105) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 813);
+        ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
-      ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 885);
+
+      // ? Alchemism
+      if (currentProfileStats.professions.alchemism.level == 105) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 885);
+        ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
-      ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 885);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Cooking
+      if (currentProfileStats.professions.cooking.level == 105) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 885);
+        ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 885);
+      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Weaponsmithing
+      if (currentProfileStats.professions.weaponsmithing.level == 105) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 885);
+        ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
-      ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 957);
+
+      // ? Tailoring
+      if (currentProfileStats.professions.tailoring.level == 105) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 957);
+        ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
-      ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 957);
+
+      // ? Woodworking
+      if (currentProfileStats.professions.woodworking.level == 105) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 957);
+        ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
-      ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 957);
+
+      // ? Armouring
+      if (currentProfileStats.professions.armouring.level == 105) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 957);
+        ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
-      ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
-      ctx.textAlign = 'left';
+
       ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
@@ -725,119 +879,264 @@ async function generateProfileImage(uuid, profileId) {
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      if (currentProfileStats.professions.combat.level == 106) {
-        await bar(ctx, 140, 689, 946, 28);
-      } else {
-        await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
-      }
-      ctx.drawImage(professionsIconBackground, 104, 661);
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+
+      // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
-      ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
-      ctx.textAlign = 'right';
       if (currentProfileStats.professions.combat.level == 106) {
-        ctx.fillText(`Max Level`, 18 + 1056, 662 + 27);
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
+        await bar(ctx, 140, 689, 946, 28, 'rgb(212, 245, 245)');
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'black';
+        ctx.fillText('Max Level', 18 + 1056, 662 + 27);
+        ctx.fillStyle = 'white';
       } else {
+        ctx.drawImage(professionsIconBackground, 104, 661);
+        ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
+        ctx.textAlign = 'right';
         ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
       }
+      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
-      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 741);
+
+      // ? Mining
+      if (currentProfileStats.professions.mining.level == 105) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 741);
+        ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
-      ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 741);
+
+      // ? Farming
+      if (currentProfileStats.professions.farming.level == 105) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 741);
+        ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
-      ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 741);
+
+      // ? Woodcutting
+      if (currentProfileStats.professions.woodcutting.level == 105) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 741);
+        ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
-      ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 813);
+
+      // ? Fishing
+      if (currentProfileStats.professions.fishing.level == 105) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 813);
+        ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
-      ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 813);
+
+      // ? Scribing
+      if (currentProfileStats.professions.scribing.level == 105) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 813);
+        ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
-      ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 813);
+
+      // ? Jeweling
+      if (currentProfileStats.professions.jeweling.level == 105) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 813);
+        ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
-      ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 885);
+
+      // ? Alchemism
+      if (currentProfileStats.professions.alchemism.level == 105) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 885);
+        ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
-      ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 885);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Cooking
+      if (currentProfileStats.professions.cooking.level == 105) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 885);
+        ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 885);
+      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Weaponsmithing
+      if (currentProfileStats.professions.weaponsmithing.level == 105) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 885);
+        ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
-      ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 957);
+
+      // ? Tailoring
+      if (currentProfileStats.professions.tailoring.level == 105) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 957);
+        ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
-      ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 957);
+
+      // ? Woodworking
+      if (currentProfileStats.professions.woodworking.level == 105) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 957);
+        ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
-      ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 957);
+
+      // ? Armouring
+      if (currentProfileStats.professions.armouring.level == 105) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(212, 245, 245)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 957);
+        ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
-      ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
-      ctx.textAlign = 'left';
+
       ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
