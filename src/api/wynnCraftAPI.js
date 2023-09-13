@@ -46,7 +46,7 @@ async function getStats(uuid) {
       uuid = formatUUID(uuid);
       check = validateUUID(uuid);
     }
-    if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
+    if (!check) throw new Error('Invalid UUID');
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
     if (wynncraftPlayerCache.has(uuid)) {
       cacheMessage('WynnCraft API Player', 'hit');
@@ -54,7 +54,7 @@ async function getStats(uuid) {
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
       if (res.status != 200) {
-        throw new Error({ status: res.status, error: 'Invalid UUID' });
+        throw new Error('Player has no stats');
       } else {
         var data = await res.json();
         var response = {
@@ -106,7 +106,7 @@ async function getHighestProfile(characters) {
 async function getProfiles(uuid) {
   try {
     var stats = await getStats(uuid);
-    if (stats.error) return stats;
+    if (stats === 'Player has no stats') throw new Error('Player has no stats');
     return Object.keys(stats.data.characters).map((key) => {
       const { type, level } = stats.data.characters[key];
       return { key, type, level };
