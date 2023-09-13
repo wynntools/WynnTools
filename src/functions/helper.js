@@ -329,7 +329,13 @@ function validateUUID(uuid) {
 }
 
 function cleanMessage(message) {
-  return message.toString().replaceAll('Error: ', '').replaceAll('`', '').replaceAll('ez', 'easy');
+  return message
+    .toString()
+    .replaceAll('Error: ', '')
+    .replaceAll('`', '')
+    .replaceAll('ez', 'easy')
+    .replaceAll('NO_ERROR_ID_', '')
+    .replaceAll('_', ' ');
 }
 
 function fixProfessionsData(professions) {

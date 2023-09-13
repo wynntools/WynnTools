@@ -28,7 +28,7 @@ module.exports = {
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
       var profiles = await getProfiles(uuid);
-      if (profiles === 'Player has no stats') throw new Error(profiles);
+      if (profiles === 'Player has no stats') throw new Error('NO_ERROR_ID_Player has no stats');
       const sortedData = profiles.sort((a, b) => b.level - a.level);
       const options = sortedData.map((entry) => ({ label: `${entry.type} - ${entry.level}`, value: entry.key }));
       const select = new StringSelectMenuBuilder()
@@ -45,24 +45,39 @@ module.exports = {
       });
       await register(uuid);
     } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      errorMessage(error);
-      const errorEmbed = new EmbedBuilder()
-        .setColor(config.discord.embeds.red)
-        .setTitle('An error occurred')
-        .setDescription(
-          `Use </report-bug:${
-            config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
-        )
-        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
-      const supportDisc = new ButtonBuilder()
-        .setLabel('Support Discord')
-        .setURL(config.discord.supportInvite)
-        .setStyle(ButtonStyle.Link);
-      const row = new ActionRowBuilder().addComponents(supportDisc);
-      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      if (String(error).includes('NO_ERROR_ID_')) {
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      } else {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(
+            `Use </report-bug:${
+              config.discord.commands['report-bug']
+            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+          )
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      }
     }
   },
 };
