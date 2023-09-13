@@ -1,8 +1,15 @@
-const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, generateID } = require('./helper.js');
+const {
+  cleanUpTimestampData,
+  fixProfessionsData,
+  getRelativeTime,
+  generateDate,
+  getMaxMembers,
+  generateID,
+} = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
-const { registerFont, createCanvas, loadImage } = require('canvas');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
+const { registerFont, createCanvas, loadImage } = require('canvas');
 const { AttachmentBuilder } = require('discord.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
@@ -51,6 +58,7 @@ async function generateStats(uuid) {
       ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
+      currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
@@ -611,7 +619,9 @@ async function generateProfileImage(uuid, profileId) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
+      stats.data.professions = fixProfessionsData(stats.data.professions);
       var currentProfileStats = stats.data.characters[profileId];
+      currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
