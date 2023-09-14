@@ -4,6 +4,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
+const { getGuild } = require('./wynnCraftAPI.js');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
@@ -19,7 +20,7 @@ async function register(uuid) {
       await getUUID(uuid);
       check = validateUUID(uuid);
     }
-    if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
+    if (!check) throw new Error('Invalid UUID');
     var res = await fetch(`https://api.pixelic.de/wynncraft/v1/player/${uuid}/register`, {
       method: 'POST',
       headers: { 'X-API-Key': config.api.pixelicAPIKey },
@@ -40,22 +41,14 @@ async function register(uuid) {
 
 async function registerGuild(guild) {
   try {
-    var members = Object.values(guild.members).flatMap((rankData) => Object.values(rankData).map((data) => data.uuid));
-    const chunkSize = 20;
-    let registeredCount = 0;
-    for (let i = 0; i < members.length; i += chunkSize) {
-      const chunk = members.slice(i, i + chunkSize);
-      for (const uuid of chunk) {
-        const registered = await register(uuid);
-        if (registered.success) {
-          registeredCount++;
-        }
-      }
-      if (i + chunkSize < members.length) {
-        await delay(1500);
-      }
-    }
-    return registeredCount;
+    if (!guild.members) guild = await getGuild(guild);
+    if (guild === 'Invalid Guild Name') throw new Error('Invalid Guild Name');
+    Object.keys(guild.members).forEach(async (rank) => {
+      Object.keys(guild.members[rank]).forEach(async (member) => {
+        await register(member.uuid);
+        await delay(1000);
+      });
+    });
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);

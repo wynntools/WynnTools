@@ -128,9 +128,9 @@ module.exports = {
           .setColor(config.discord.embeds.red)
           .setTitle('An error occurred')
           .setDescription(
-            `Use </report-bug:${
-              config.discord.commands['report-bug']
-            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+            `Please join the support discord and make a ticket in <#${
+              config.discord.channels.support
+            }> to report this bug\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
           .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
         const supportDisc = new ButtonBuilder()

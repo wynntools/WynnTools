@@ -18,8 +18,8 @@ module.exports = {
       await interaction.deferReply();
       var name = interaction.options.getString('name');
       var guild = await getGuild(name);
-      if (guild.status != 200) {
-        await interaction.editReply({ content: guild.error });
+      if (guild === 'Invalid Guild Name') {
+        throw new Error('Invalid Guild Name');
       } else {
         await registerGuild(guild);
         await interaction.editReply({ files: [await generateGuild(guild)] });

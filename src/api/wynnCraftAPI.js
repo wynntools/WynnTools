@@ -128,7 +128,7 @@ async function getGuild(name) {
     } else {
       var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
       if (res.status != 200) {
-        throw new Error({ status: res.status, error: 'Invalid Guild Name' });
+        throw new Error('Invalid Guild Name');
       } else {
         var data = await res.json();
         var response = {
@@ -164,7 +164,7 @@ async function getServers() {
     var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
     var data = await res.json();
     if (res.status != 200) {
-      throw new Error({ status: res.status, error: 'Error' });
+      throw new Error('Error');
     } else {
       var response = { status: res.status, request: data.request, data: formatData(data) };
       return response;
@@ -193,7 +193,7 @@ async function getServer(id) {
         id = Number(id.replace('wc', ''));
       }
       if (id >= !0 && id <= !75) {
-        throw new Error({ status: 400, error: 'Invalid Server' });
+        throw new Error('Invalid Server');
       }
     }
     var servers = await getServers();
