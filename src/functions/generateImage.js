@@ -1777,13 +1777,15 @@ async function generateServerChart(data) {
 }
 
 async function generateServerGraph(server) {
+  // unix timestamp in seconds as a var
   if (generateServerGraphCache.has(server.server)) {
     cacheMessage('Generate Server Graph', 'hit');
     return generateServerGraphCache.get(server.server);
   } else {
+    console.log(Math.floor(Date.now() / 1000));
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1833,6 +1835,7 @@ async function generateServerGraph(server) {
     );
     var buffer = canvas.toBuffer('image/png');
     generateServerGraphCache.set(server.server, buffer);
+    console.log(Math.floor(Date.now() / 1000));
     return buffer;
   }
 }
