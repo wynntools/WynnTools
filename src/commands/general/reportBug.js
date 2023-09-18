@@ -101,7 +101,11 @@ module.exports = {
           content: `<@${config.discord.devId}>`,
           embeds: [bugReportEmbed],
         });
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({ embeds: [embed], ephemeral: true });
+        } else {
+          await interaction.reply({ embeds: [embed], ephemeral: true });
+        }
       });
     } catch (error) {
       if (String(error).includes('NO_ERROR_ID_')) {
