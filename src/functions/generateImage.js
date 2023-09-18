@@ -1782,7 +1782,6 @@ async function generateServerGraph(server) {
     cacheMessage('Generate Server Graph', 'hit');
     return generateServerGraphCache.get(server.server);
   } else {
-    console.log(Math.floor(Date.now() / 1000));
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
@@ -1835,7 +1834,6 @@ async function generateServerGraph(server) {
     );
     var buffer = canvas.toBuffer('image/png');
     generateServerGraphCache.set(server.server, buffer);
-    console.log(Math.floor(Date.now() / 1000));
     return buffer;
   }
 }

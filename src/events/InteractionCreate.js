@@ -13,13 +13,26 @@ module.exports = {
         if (!command) return;
         try {
           try {
+            var string = await interaction.commandName;
+            if (interaction.options) {
+              if (interaction.options._group) {
+                string += ` ${await interaction.options.getSubcommandGroup()}`;
+              }
+              if (interaction.options._subcommand) {
+                string += ` ${await interaction.options.getSubcommand()}`;
+              }
+              for (const option of interaction.options._hoistedOptions) {
+                if (option.value && option.name) {
+                  string += ` ${option.name}: ${option.value}`;
+                }
+              }
+            }
+
             if (interaction.user.discriminator == '0') {
-              commandMessage(
-                `${interaction.user.username} (${interaction.user.id}) ran command ${interaction.commandName}`
-              );
+              commandMessage(`${interaction.user.username} (${interaction.user.id}) ran command ${string}`);
             } else {
               commandMessage(
-                `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${interaction.commandName}`
+                `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${string}`
               );
             }
           } catch (error) {
