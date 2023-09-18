@@ -86,7 +86,7 @@ module.exports = {
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
       }
     },
     {

@@ -51,7 +51,7 @@ function checkFunFact(fact, startTime) {
   } catch (error) {
     var errorIdCheckFact = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorIdCheckFact}`);
-    console.log(error);
+    errorMessage(error);
     return false;
   }
 }
@@ -60,7 +60,6 @@ function getRandomFact(funFactList, blacklist) {
   try {
     const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
     if (validFacts.length === 0) {
-      console.log('No more valid fun facts available.');
       return null;
     }
     const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
@@ -68,7 +67,7 @@ function getRandomFact(funFactList, blacklist) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return null;
   }
 }
@@ -281,6 +280,9 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
+        throw new Error('No Perms');
+      }
       var subCommandGroup = await interaction.options.getSubcommandGroup();
       var subCommand = await interaction.options.getSubcommand();
       if (subCommandGroup === 'blacklist') {
@@ -362,7 +364,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => console.log(err));
+                .catch((err) => errorMessage(err));
             const response = await fetch(url);
             const data = await response.text();
             const channel = interaction.options.getChannel('channel') ?? interaction.channel;
@@ -387,7 +389,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => console.log(err));
+                .catch((err) => errorMessage(err));
             const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
             const response = await fetch(url);
             const data = await response.text();
@@ -492,7 +494,7 @@ module.exports = {
                   numCheckedFacts++;
                 } while (funFact && !checkFunFact(funFact, startTime) && numCheckedFacts < totalFacts);
                 if (!funFact || (funFact && !checkFunFact(funFact, startTime))) {
-                  console.log('No valid fun facts found.');
+                  return 'No valid fun facts found.';
                 }
                 const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
                 const funFactConfigsObject = Object.keys(funFactConfigs);
@@ -556,7 +558,7 @@ module.exports = {
               } catch (error) {
                 var errorIdSendFacts = generateID(config.other.errorIdLength);
                 errorMessage(`Error ID: ${errorIdSendFacts}`);
-                console.log(error);
+                errorMessage(error);
               }
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
@@ -581,7 +583,7 @@ module.exports = {
           } catch (error) {
             var errorIdSendingFacts = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdSendingFacts}`);
-            console.log(error);
+            errorMessage(error);
             const cancelEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Cancelled sending Fun Facts')
@@ -795,7 +797,7 @@ module.exports = {
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('rightButtonConfigs');
             const reloadButtonConfigs = new ButtonBuilder()
-              .setEmoji('🔄️')
+              .setEmoji('🔄')
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('reloadButtonConfigs');
             const row = new ActionRowBuilder().addComponents(leftButton, editButton, rightButton, reloadButtonConfigs);
@@ -896,7 +898,7 @@ module.exports = {
                     .setColor(config.discord.embeds.green)
                     .setTitle(`Edit Mode Enabled`)
                     .setDescription(string);
-                  var editMessage = await interaction.reply({
+                  var editMessage = await interaction.followUp({
                     components: [editRow],
                     embeds: [editEmbed],
                     ephemeral: true,
@@ -1045,16 +1047,54 @@ module.exports = {
                       }
                     }
                   } catch (error) {
-                    var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
-                    errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                    console.log(error);
+                    if (String(error).includes('NO_ERROR_ID_')) {
+                      errorMessage(error);
+                      const errorEmbed = new EmbedBuilder()
+                        .setColor(config.discord.embeds.red)
+                        .setTitle('An error occurred')
+                        .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: config.other.logo,
+                        });
+                      const supportDisc = new ButtonBuilder()
+                        .setLabel('Support Discord')
+                        .setURL(config.discord.supportInvite)
+                        .setStyle(ButtonStyle.Link);
+                      const row = new ActionRowBuilder().addComponents(supportDisc);
+                      return await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+                    } else {
+                      var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
+                      errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
+                      errorMessage(error);
+                      const errorEmbed = new EmbedBuilder()
+                        .setColor(config.discord.embeds.red)
+                        .setTitle('An error occurred')
+                        .setDescription(
+                          `Use </report-bug:${
+                            config.discord.commands['report-bug']
+                          }> to report it\nError id - ${errorIdUpdatingConfigs}\nError Info - \`${cleanMessage(
+                            error
+                          )}\``
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: config.other.logo,
+                        });
+                      const supportDisc = new ButtonBuilder()
+                        .setLabel('Support Discord')
+                        .setURL(config.discord.supportInvite)
+                        .setStyle(ButtonStyle.Link);
+                      const row = new ActionRowBuilder().addComponents(supportDisc);
+                      await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
+                    }
                   }
                 } else if (confirmation.customId === 'rightButtonConfigs') {
                   num = num + 1;
                   if (num >= configsObject.length) num = 0;
                   currentConfig = configs[configsObject[num]];
-                  const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
-                  const channel = guild.channels.cache.get(currentConfig.channelId);
+                  const guild = await interaction.client.guilds.cache.get(currentConfig.serverId);
+                  const channel = await guild.channels.cache.get(currentConfig.channelId);
                   let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
                   if (currentConfig.roleId) {
                     const role = guild.roles.cache.get(currentConfig.roleId);
@@ -1116,7 +1156,7 @@ module.exports = {
             } catch (error) {
               var errorIdChangingConfigs = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdChangingConfigs}`);
-              console.log(error);
+              errorMessage(error);
             }
           } else {
             currentConfig = configs[serverId];
@@ -1366,13 +1406,13 @@ module.exports = {
                 } catch (error) {
                   var errorIdEditingConfigData = generateID(config.other.errorIdLength);
                   errorMessage(`Error ID: ${errorIdEditingConfigData}`);
-                  console.log(error);
+                  errorMessage(error);
                 }
               }
             } catch (error) {
               var errorIdEditConfig = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdEditConfig}`);
-              console.log(error);
+              errorMessage(error);
               const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
               const channel = guild.channels.cache.get(currentConfig.channelId);
               let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
@@ -1416,7 +1456,6 @@ module.exports = {
             uuid = await getUUID(user);
           }
           registerData = await register(uuid);
-          console.log(registerData.status);
           if (registerData.status != 201) throw new Error(registerData.error);
           embed = new EmbedBuilder()
             .setColor(config.discord.embeds.green)
@@ -1908,24 +1947,45 @@ module.exports = {
         await interaction.reply({ content: 'This command is currently disabled' });
       }
     } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
-      const errorEmbed = new EmbedBuilder()
-        .setColor(config.discord.embeds.red)
-        .setTitle('An error occurred')
-        .setDescription(
-          `Use </report-bug:${
-            config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
-        )
-        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
-      const supportDisc = new ButtonBuilder()
-        .setLabel('Support Discord')
-        .setURL(config.discord.supportInvite)
-        .setStyle(ButtonStyle.Link);
-      const row = new ActionRowBuilder().addComponents(supportDisc);
-      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      if (String(error).includes('NO_ERROR_ID_')) {
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      } else {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(
+            `Use </report-bug:${
+              config.discord.commands['report-bug']
+            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+          )
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      }
     }
   },
 };

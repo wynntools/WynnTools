@@ -55,9 +55,10 @@ async function start() {
         }
         await delay(300);
       } catch (error) {
+        skipped++;
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error ID: ${errorId}`);
-        console.log(error);
+        errorMessage(error);
       }
     }
     scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
@@ -66,11 +67,28 @@ async function start() {
 
   const eventsPath = path.join(__dirname, 'src/events');
   const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
+  scriptMessage(`Found ${eventFiles.length} event(s) and running them all`);
+  var skippedEvents = 0;
   for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-    client.on(Events[event.name], (...args) => event.execute(...args));
+    try {
+      const filePath = path.join(eventsPath, file);
+      const event = require(filePath);
+      if (file.toLowerCase().includes('disabled')) {
+        skippedEvents++;
+        scriptMessage(`Skipped ${file} event`);
+        continue;
+      }
+      client.on(Events[event.name], (...args) => event.execute(...args));
+      await delay(300);
+      scriptMessage(`Started ${file} event`);
+    } catch (error) {
+      skippedEvents++;
+      var errorId = generateID(config.other.errorIdLength);
+      errorMessage(`Error ID: ${errorId}`);
+      errorMessage(error);
+    }
   }
+  scriptMessage(`Started ${eventFiles.length - skippedEvents} event(s) and skipped ${skippedEvents} event(s)`);
 
   client.login(config.discord.token);
 }

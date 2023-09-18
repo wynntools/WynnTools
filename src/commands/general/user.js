@@ -140,37 +140,55 @@ module.exports = {
               } catch (error) {
                 var errorIdDelete = generateID(config.other.errorIdLength);
                 errorMessage(`Error Id - ${errorIdDelete}`);
-                console.log(error);
+                errorMessage(error);
                 await interaction.editReply({ embeds: [embed], components: [] });
               }
             }
           } catch (error) {
             var errorIdDeleteData = generateID(config.other.errorIdLength);
             errorMessage(`Error Id - ${errorIdDeleteData}`);
-            console.log(error);
+            errorMessage(error);
             await interaction.editReply({ embeds: [embed], components: [] });
           }
         }
       }
     } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
-      const errorEmbed = new EmbedBuilder()
-        .setColor(config.discord.embeds.red)
-        .setTitle('An error occurred')
-        .setDescription(
-          `Use </report-bug:${
-            config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
-        )
-        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
-      const supportDisc = new ButtonBuilder()
-        .setLabel('Support Discord')
-        .setURL(config.discord.supportInvite)
-        .setStyle(ButtonStyle.Link);
-      const row = new ActionRowBuilder().addComponents(supportDisc);
-      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      if (String(error).includes('NO_ERROR_ID_')) {
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      } else {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(
+            `Use </report-bug:${
+              config.discord.commands['report-bug']
+            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+          )
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      }
     }
   },
 };

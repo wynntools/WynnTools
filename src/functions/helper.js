@@ -19,20 +19,27 @@ function generateID(length) {
     }
     return result;
   } catch (error) {
-    console.log(error);
+    errorMessage(error);
   }
 }
 
 function getCurrentTime() {
-  if (config.other.timezone === null) {
-    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  } else {
-    return new Date().toLocaleString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-      timeZone: config.other.timezone,
-    });
+  try {
+    if (config.other.timezone === null) {
+      return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    } else {
+      return new Date().toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZone: config.other.timezone,
+      });
+    }
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
+    errorMessage(error);
+    return error;
   }
 }
 
@@ -43,7 +50,7 @@ function formatUUID(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -55,7 +62,7 @@ async function writeAt(filePath, jsonPath, value) {
     set(json, jsonPath, value);
     return await fsExtra.writeJson(filePath, json);
   } catch (error) {
-    console.log(error);
+    errorMessage(error);
     const json_1 = {};
     set(json_1, jsonPath, value);
     return await fsExtra.writeJson(filePath, json_1);
@@ -77,7 +84,7 @@ function generateDate(timestamp) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -91,7 +98,7 @@ function getRelativeTime(timestamp, type) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -107,7 +114,7 @@ async function blacklistCheck(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -123,7 +130,7 @@ function countLinesAndCharacters(filePath) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -134,7 +141,7 @@ function isJavaScriptFile(file) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -178,7 +185,7 @@ function countStatsInDirectory(dirPath) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -192,7 +199,7 @@ function numberWithCommas(x) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -229,7 +236,7 @@ function addNotation(type, value) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -251,7 +258,7 @@ function toFixed(num, fixed) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -283,7 +290,7 @@ function getMaxMembers(lvl) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -297,7 +304,7 @@ function capitalizeFirstLetter(str) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -312,7 +319,7 @@ async function cleanUpTimestampData(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -322,7 +329,58 @@ function validateUUID(uuid) {
 }
 
 function cleanMessage(message) {
-  return message.toString().replaceAll('Error: ', '').replaceAll('`', '').replaceAll('ez', 'easy');
+  return message
+    .toString()
+    .replaceAll('Error: ', '')
+    .replaceAll('`', '')
+    .replaceAll('ez', 'easy')
+    .replaceAll('NO_ERROR_ID_', '')
+    .replaceAll('_', ' ');
+}
+
+function fixProfessionsData(professions) {
+  var updatedProfessions = professions;
+  // ? Combat
+  if (professions.combat.level > 106) updatedProfessions.combat.level = 106;
+  if (professions.combat.xp > 100) updatedProfessions.combat.xp = 100;
+  // ? Mining
+  if (professions.mining.level > 132) updatedProfessions.mining.level = 132;
+  if (professions.mining.xp > 100) updatedProfessions.mining.xp = 100;
+  // ? Farming
+  if (professions.farming.level > 132) updatedProfessions.farming.level = 132;
+  if (professions.farming.xp > 100) updatedProfessions.farming.xp = 100;
+  // ? woodcutting
+  if (professions.woodcutting.level > 132) updatedProfessions.woodcutting.level = 132;
+  if (professions.woodcutting.xp > 100) updatedProfessions.woodcutting.xp = 100;
+  // ? Fishing
+  if (professions.fishing.level > 132) updatedProfessions.fishing.level = 132;
+  if (professions.fishing.xp > 100) updatedProfessions.fishing.xp = 100;
+  // ? Scribing
+  if (professions.scribing.level > 132) updatedProfessions.scribing.level = 132;
+  if (professions.scribing.xp > 100) updatedProfessions.scribing.xp = 100;
+  // ? Jeweling
+  if (professions.jeweling.level > 132) updatedProfessions.jeweling.level = 132;
+  if (professions.jeweling.xp > 100) updatedProfessions.jeweling.xp = 100;
+  // ? Alchemism
+  if (professions.alchemism.level > 132) updatedProfessions.alchemism.level = 132;
+  if (professions.alchemism.xp > 100) updatedProfessions.alchemism.xp = 100;
+  // ? Cooking
+  if (professions.cooking.level > 132) updatedProfessions.cooking.level = 132;
+  if (professions.cooking.xp > 100) updatedProfessions.cooking.xp = 100;
+  // ? Weaponsmithing
+  if (professions.weaponsmithing.level > 132) updatedProfessions.weaponsmithing.level = 132;
+  if (professions.weaponsmithing.xp > 100) updatedProfessions.weaponsmithing.xp = 100;
+  // ? Tailoring
+  if (professions.tailoring.level > 132) updatedProfessions.tailoring.level = 132;
+  if (professions.tailoring.xp > 100) updatedProfessions.tailoring.xp = 100;
+  // ? Woodworking
+  if (professions.woodworking.level > 132) updatedProfessions.woodworking.level = 132;
+  if (professions.woodworking.xp > 100) updatedProfessions.woodworking.xp = 100;
+  // ? Armouring
+  if (professions.armouring.level > 132) updatedProfessions.armouring.level = 132;
+  if (professions.armouring.xp > 100) updatedProfessions.armouring.xp = 100;
+
+  return updatedProfessions;
 }
 
 function shortenMessage(message, length) {
@@ -358,5 +416,6 @@ module.exports = {
   cleanUpTimestampData,
   validateUUID,
   cleanMessage,
+  fixProfessionsData,
   shortenMessage,
 };

@@ -164,7 +164,7 @@ module.exports = {
               } catch (error) {
                 var errorIdOverrideData = generateID(config.other.errorIdLength);
                 errorMessage(`Error Id - ${errorIdOverrideData}`);
-                console.log(error);
+                errorMessage(error);
                 const overrideCancel = new EmbedBuilder()
                   .setColor(config.discord.embeds.red)
                   .setDescription('Data override cancelled')
@@ -189,7 +189,7 @@ module.exports = {
           } catch (error) {
             var errorIdServerUptimeOverride = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdServerUptimeOverride}`);
-            console.log(error);
+            errorMessage(error);
             const updatedEmbed = new EmbedBuilder()
               .setColor(config.discord.embeds.red)
               .setDescription('Data override cancelled')
@@ -301,7 +301,7 @@ module.exports = {
             } catch (error) {
               var errorIdDisable = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdDisable}`);
-              console.log(error);
+              errorMessage(error);
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.discord.embeds.green)
                 .setDescription('server uptime logging has been disabled')
@@ -362,24 +362,42 @@ module.exports = {
         return await interaction.reply({ embeds: [embed] });
       }
     } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
-      const errorEmbed = new EmbedBuilder()
-        .setColor(config.discord.embeds.red)
-        .setTitle('An error occurred')
-        .setDescription(
-          `Use </report-bug:${
-            config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
-        )
-        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
-      const supportDisc = new ButtonBuilder()
-        .setLabel('Support Discord')
-        .setURL(config.discord.supportInvite)
-        .setStyle(ButtonStyle.Link);
-      const row = new ActionRowBuilder().addComponents(supportDisc);
-      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      if (String(error).includes('NO_ERROR_ID_')) {
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      } else {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(
+            `Use </report-bug:${
+              config.discord.commands['report-bug']
+            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+          )
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      }
     }
   },
 };

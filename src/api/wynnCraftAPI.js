@@ -6,7 +6,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const wynncraftPlayerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const wynncraftGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -30,7 +30,7 @@ function formatData(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -42,7 +42,11 @@ async function getStats(uuid) {
       await getUUID(uuid);
       check = validateUUID(uuid);
     }
-    if (!check) throw new Error({ status: 400, error: 'Invalid UUID' });
+    if (!check) {
+      uuid = formatUUID(uuid);
+      check = validateUUID(uuid);
+    }
+    if (!check) throw new Error('Invalid UUID');
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
     if (wynncraftPlayerCache.has(uuid)) {
       cacheMessage('WynnCraft API Player', 'hit');
@@ -50,7 +54,7 @@ async function getStats(uuid) {
     } else {
       var res = await fetch(`https://api.wynncraft.com/v2/player/${uuid}/stats`);
       if (res.status != 200) {
-        throw new Error({ status: res.status, error: 'Invalid UUID' });
+        throw new Error('Player has no stats');
       } else {
         var data = await res.json();
         var response = {
@@ -74,7 +78,7 @@ async function getStats(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -94,7 +98,7 @@ async function getHighestProfile(characters) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -102,6 +106,7 @@ async function getHighestProfile(characters) {
 async function getProfiles(uuid) {
   try {
     var stats = await getStats(uuid);
+    if (stats === 'Player has no stats') throw new Error('Player has no stats');
     return Object.keys(stats.data.characters).map((key) => {
       const { type, level } = stats.data.characters[key];
       return { key, type, level };
@@ -109,7 +114,7 @@ async function getProfiles(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -123,7 +128,7 @@ async function getGuild(name) {
     } else {
       var res = await fetch(`https://web-api.wynncraft.com/api/v3/guild/${fixedNamed}`);
       if (res.status != 200) {
-        throw new Error({ status: res.status, error: 'Invalid Guild Name' });
+        throw new Error('Invalid Guild Name');
       } else {
         var data = await res.json();
         var response = {
@@ -149,7 +154,7 @@ async function getGuild(name) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -159,7 +164,7 @@ async function getServers() {
     var res = await fetch(`https://api.wynncraft.com/public_api.php?action=onlinePlayers`);
     var data = await res.json();
     if (res.status != 200) {
-      throw new Error({ status: res.status, error: 'Error' });
+      throw new Error('Error');
     } else {
       var response = { status: res.status, request: data.request, data: formatData(data) };
       return response;
@@ -167,7 +172,7 @@ async function getServers() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -188,7 +193,7 @@ async function getServer(id) {
         id = Number(id.replace('wc', ''));
       }
       if (id >= !0 && id <= !75) {
-        throw new Error({ status: 400, error: 'Invalid Server' });
+        throw new Error('Invalid Server');
       }
     }
     var servers = await getServers();
@@ -205,7 +210,7 @@ async function getServer(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -218,7 +223,7 @@ function clearWynnCraftCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }
@@ -231,7 +236,7 @@ function clearWynnCraftGuildCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return cleanMessage(error);
   }
 }

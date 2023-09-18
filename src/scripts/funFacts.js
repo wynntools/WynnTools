@@ -30,7 +30,7 @@ module.exports = {
         } catch (error) {
           var errorId = generateID(config.other.errorIdLength);
           errorMessage(`Error Id - ${errorId}`);
-          console.log(error);
+          errorMessage(error);
           return false;
         }
       }
@@ -40,15 +40,14 @@ module.exports = {
         try {
           const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
           if (validFacts.length === 0) {
-            console.log('No more valid fun facts available.');
-            return null;
+              return null;
           }
           const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
           return randomFact;
         } catch (error) {
           var errorId = generateID(config.other.errorIdLength);
           errorMessage(`Error Id - ${errorId}`);
-          console.log(error);
+          errorMessage(error);
           return null;
         }
       }
@@ -67,7 +66,7 @@ module.exports = {
           numCheckedFacts++;
         } while (funFact && !checkFunFact(funFact) && numCheckedFacts < totalFacts);
         if (!funFact || (funFact && !checkFunFact(funFact))) {
-          console.log('No valid fun facts found.');
+          return 'No valid fun facts found.';
         }
         const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
         const funFactConfigsObject = Object.keys(funFactConfigs);
@@ -129,7 +128,7 @@ module.exports = {
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
       }
     },
     {
