@@ -1,5 +1,5 @@
 // Credits https://github.com/DuckySoLucky/hypixel-discord-chat-bridge/blob/f8a8a8e1e1c469127b8fcd03e6553b43f22b8250/src/Logger.js (Edited)
-const customLevels = { cache: 0, command: 1, discord: 2, error: 3, script: 4, warn: 5, other: 6, max: 7 };
+const customLevels = { cache: 0, event: 1, discord: 2, error: 3, script: 4, warn: 5, other: 6, max: 7 };
 const config = require('../../config.json');
 const winston = require('winston');
 const path = require('path');
@@ -49,8 +49,8 @@ const cacheLogger = winston.createLogger({
   ],
 });
 
-const commandLogger = winston.createLogger({
-  level: 'command',
+const eventLogger = winston.createLogger({
+  level: 'event',
   levels: customLevels,
   format: winston.format.combine(
     winston.format.timestamp({ format: timezone }),
@@ -60,9 +60,9 @@ const commandLogger = winston.createLogger({
   ),
   transports: [
     new winston.transports.File({
-      name: 'command',
-      filename: path.join(logDirectory, 'command.log'),
-      level: 'command',
+      name: 'event',
+      filename: path.join(logDirectory, 'event.log'),
+      level: 'event',
     }),
     new winston.transports.File({ name: 'combined', filename: path.join(logDirectory, 'combined.log'), level: 'max' }),
     new winston.transports.Console({ levels: 'max' }),
@@ -157,8 +157,8 @@ const logger = {
   cache: (...args) => {
     return cacheLogger.cache(args.join(' > '));
   },
-  command: (params) => {
-    return commandLogger.command(params);
+  event: (params) => {
+    return eventLogger.event(params);
   },
   discord: (params) => {
     return discordLogger.discord(params);
@@ -189,7 +189,7 @@ async function updateMessage() {
 
 module.exports = {
   discordMessage: logger.discord,
-  commandMessage: logger.command,
+  eventMessage: logger.event,
   warnMessage: logger.warn,
   errorMessage: logger.error,
   scriptMessage: logger.script,

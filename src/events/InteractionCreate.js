@@ -1,6 +1,6 @@
 const { writeAt, toFixed, generateID, blacklistCheck, cleanMessage } = require('../functions/helper.js');
 const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { commandMessage, errorMessage } = require('../functions/logger.js');
+const { eventMessage, errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const fs = require('fs');
 
@@ -13,28 +13,28 @@ module.exports = {
         if (!command) return;
         try {
           try {
-            var string = await interaction.commandName;
+            var commandString = await interaction.commandName;
             if (interaction.options) {
               if (interaction.options._group) {
-                string += ` ${await interaction.options.getSubcommandGroup()}`;
+                commandString += ` ${await interaction.options.getSubcommandGroup()}`;
               }
               if (interaction.options._subcommand) {
-                string += ` ${await interaction.options.getSubcommand()}`;
+                commandString += ` ${await interaction.options.getSubcommand()}`;
               }
               for (const option of interaction.options._hoistedOptions) {
                 if (option.value && option.name) {
-                  string += ` ${option.name}: ${option.value}`;
+                  commandString += ` ${option.name}: ${option.value}`;
                 }
               }
             }
 
-            if (interaction.user.discriminator == '0') {
-              commandMessage(`${interaction.user.username} (${interaction.user.id}) ran command ${string}`);
-            } else {
-              commandMessage(
-                `${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) ran command ${string}`
-              );
-            }
+            eventMessage(
+              `Interaction Event trigged by ${
+                interaction.user.discriminator == '0' ? '' : `#${interaction.user.discriminator}`
+              } (${interaction.user.id}) ran command ${commandString} in ${interaction.guild.id} in ${
+                interaction.channel.id
+              }`
+            );
           } catch (error) {
             var errorIdLogger = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdLogger}`);
@@ -81,15 +81,17 @@ module.exports = {
           }
           try {
             var blacklistTest = await blacklistCheck(interaction.user.id);
-            if (blacklistTest) {
-              const blacklisted = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
-                .setDescription('You are blacklisted')
-                .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
-                  iconURL: config.other.logo,
-                });
-              return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
+            if (!interaction.commandName === 'report-bug') {
+              if (blacklistTest) {
+                const blacklisted = new EmbedBuilder()
+                  .setColor(config.discord.embeds.red)
+                  .setDescription('You are blacklisted')
+                  .setFooter({
+                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    iconURL: config.other.logo,
+                  });
+                return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
+              }
             }
             await command.execute(interaction);
           } catch (error) {
@@ -192,6 +194,13 @@ module.exports = {
         }
       }
       if (interaction.isButton()) {
+        eventMessage(
+          `${interaction.user.discriminator == '0' ? '' : `#${interaction.user.discriminator}`} (${
+            interaction.user.id
+          }) clicked button ${interaction.customId} in ${interaction.guild.id} in ${interaction.channel.id} at ${
+            interaction.message.id
+          }`
+        );
         try {
           if (interaction.customId.includes('setupGuideFunFacts')) {
             const setupGuideCommand = interaction.client.commands.get('fun-facts');
