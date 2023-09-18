@@ -337,6 +337,7 @@ async function generateStats(uuid) {
         ctx.fillText('Max Level', 18 + 1056, 662 + 27);
         ctx.fillStyle = 'white';
       } else {
+        await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
         ctx.drawImage(professionsIconBackground, 104, 661);
         ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
         ctx.textAlign = 'right';
@@ -355,6 +356,7 @@ async function generateStats(uuid) {
         ctx.textAlign = 'left';
         ctx.fillStyle = 'white';
       } else {
+        await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 104);
         ctx.drawImage(professionsIconBackground, 104, 741);
         ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
         ctx.textAlign = 'right';
