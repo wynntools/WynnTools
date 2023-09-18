@@ -1,8 +1,15 @@
-const { generateDate, getRelativeTime, getMaxMembers, cleanUpTimestampData, generateID } = require('./helper.js');
+const {
+  cleanUpTimestampData,
+  fixProfessionsData,
+  getRelativeTime,
+  generateDate,
+  getMaxMembers,
+  generateID,
+} = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
 const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
-const { registerFont, createCanvas, loadImage } = require('canvas');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
+const { registerFont, createCanvas, loadImage } = require('canvas');
 const { AttachmentBuilder } = require('discord.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
@@ -17,10 +24,11 @@ const generateServerGraphCache = new nodeCache({ stdTTL: config.other.cacheTimeo
 
 registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
-async function bar(ctx, rectX, rectY, rectWidth, rectHeight) {
+async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   if (rectWidth == 0) return;
-  ctx.fillStyle = 'rgb(237, 135, 150)';
-  ctx.strokeStyle = 'rgb(237, 135, 150)';
+  if (color == null) color = 'rgb(237, 135, 150)';
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   var cornerRadius = 28;
   ctx.lineJoin = 'round';
   ctx.lineWidth = cornerRadius;
@@ -41,11 +49,16 @@ async function generateStats(uuid) {
       cacheMessage('Generate Stats', 'hit');
       return generateStatsCache.get(uuid);
     } else {
+      const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage(
+        'src/assets/statsCommand/professionsIconBackgroundMaxLevel.svg'
+      );
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
+      currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
@@ -152,40 +165,40 @@ async function generateStats(uuid) {
         ctx.fillText(stats.username, 62, 52);
       }
       if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
             if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
             }
           }
         } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
       }
       ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
@@ -313,111 +326,264 @@ async function generateStats(uuid) {
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
-      ctx.drawImage(professionsIconBackground, 104, 661);
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+
+      // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
-      ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      if (currentProfileStats.professions.combat.level == 106) {
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
+        await bar(ctx, 140, 689, 946, 28, 'rgb(125, 140, 196)');
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'black';
+        ctx.fillText('Max Level', 18 + 1056, 662 + 27);
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 661);
+        ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
-      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 741);
-      ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
+
+      // ? Mining
+      if (currentProfileStats.professions.mining.level == 132) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 741);
+        ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
-      ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 741);
-      ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
+
+      // ? Farming
+      if (currentProfileStats.professions.farming.level == 132) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 741);
+        ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
-      ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 741);
-      ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
+
+      // ? Woodcutting
+      if (currentProfileStats.professions.woodcutting.level == 132) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 741);
+        ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
-      ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 813);
-      ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
+
+      // ? Fishing
+      if (currentProfileStats.professions.fishing.level == 132) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 813);
+        ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
-      ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 813);
-      ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
+
+      // ? Scribing
+      if (currentProfileStats.professions.scribing.level == 132) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 813);
+        ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
-      ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 813);
-      ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
+
+      // ? Jeweling
+      if (currentProfileStats.professions.jeweling.level == 132) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 813);
+        ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
-      ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 885);
-      ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
+
+      // ? Alchemism
+      if (currentProfileStats.professions.alchemism.level == 132) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 885);
+        ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
-      ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 885);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Cooking
+      if (currentProfileStats.professions.cooking.level == 132) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 885);
+        ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 885);
-      ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/cookingIcon.png'), 447, 889);
+
+      // ? Weaponsmithing
+      if (currentProfileStats.professions.weaponsmithing.level == 132) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 885);
+        ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
-      ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 957);
-      ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
+
+      // ? Tailoring
+      if (currentProfileStats.professions.tailoring.level == 132) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 957);
+        ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
-      ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 957);
-      ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
-      ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+
+      // ? Woodworking
+      if (currentProfileStats.professions.woodworking.level == 132) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 957);
+        ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodworkingIcon.png'), 447, 961);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 957);
-      ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
+
+      // ? Armouring
+      if (currentProfileStats.professions.armouring.level == 132) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 957);
+        ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
-      ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
-      ctx.textAlign = 'left';
+
       ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
@@ -435,7 +601,7 @@ async function generateStats(uuid) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -445,11 +611,17 @@ async function generateProfileImage(uuid, profileId) {
       cacheMessage('Generate Profile Image', 'hit');
       return generateProfileImageCache.get(profileId);
     } else {
+      const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
+      const professionsIconBackgroundMaxLevel = await loadImage(
+        'src/assets/statsCommand/professionsIconBackgroundMaxLevel.svg'
+      );
       const canvas = createCanvas(1200, 1200);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(await loadImage('src/assets/statsCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
+      stats.data.professions = fixProfessionsData(stats.data.professions);
       var currentProfileStats = stats.data.characters[profileId];
+      currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
       ctx.textBaseline = 'top';
@@ -556,40 +728,40 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(stats.username, 62, 52);
       }
       if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/craftsmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
             if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 664, 52);
+              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
             }
           }
         } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/hardcoreGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/ironmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/huntedGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
       }
       ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
@@ -717,111 +889,264 @@ async function generateProfileImage(uuid, profileId) {
       ctx.font = '22px Karla';
       ctx.textAlign = 'left';
       ctx.fillStyle = 'white';
-      const professionsIconBackground = await loadImage('src/assets/professionsIconBackground.svg');
-      await bar(ctx, 140, 689, Math.floor((currentProfileStats.professions.combat.xp / 100) * 946), 28);
-      ctx.drawImage(professionsIconBackground, 104, 661);
-      ctx.drawImage(await loadImage('src/assets/combatIcon.png'), 108, 665);
+
+      // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
-      ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      if (currentProfileStats.professions.combat.level == 106) {
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
+        await bar(ctx, 140, 689, 946, 28, 'rgb(125, 140, 196)');
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'black';
+        ctx.fillText('Max Level', 18 + 1056, 662 + 27);
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 661);
+        ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/combatIcon.png'), 108, 665);
       ctx.textAlign = 'left';
-      await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 741);
-      ctx.drawImage(await loadImage('src/assets/miningIcon.png'), 104, 745);
+
+      // ? Mining
+      if (currentProfileStats.professions.mining.level == 132) {
+        await bar(ctx, 140, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        ctx.drawImage(professionsIconBackground, 104, 741);
+        ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/miningIcon.png'), 104, 745);
       ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
-      ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 741);
-      ctx.drawImage(await loadImage('src/assets/farmingIcon.png'), 447, 745);
+
+      // ? Farming
+      if (currentProfileStats.professions.farming.level == 132) {
+        await bar(ctx, 483, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 741);
+        ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/farmingIcon.png'), 447, 745);
       ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
-      ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 741);
-      ctx.drawImage(await loadImage('src/assets/woodcuttingIcon.png'), 791, 745);
+
+      // ? Woodcutting
+      if (currentProfileStats.professions.woodcutting.level == 132) {
+        await bar(ctx, 824, 769, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 741);
+        ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodcuttingIcon.png'), 791, 745);
       ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
-      ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 813);
-      ctx.drawImage(await loadImage('src/assets/fishingIcon.png'), 104, 817);
+
+      // ? Fishing
+      if (currentProfileStats.professions.fishing.level == 132) {
+        await bar(ctx, 140, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 813);
+        ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/fishingIcon.png'), 104, 817);
       ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
-      ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 813);
-      ctx.drawImage(await loadImage('src/assets/scribingIcon.png'), 447, 817);
+
+      // ? Scribing
+      if (currentProfileStats.professions.scribing.level == 132) {
+        await bar(ctx, 483, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 813);
+        ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/scribingIcon.png'), 447, 817);
       ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
-      ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 813);
-      ctx.drawImage(await loadImage('src/assets/jewelingIcon.png'), 791, 817);
+
+      // ? Jeweling
+      if (currentProfileStats.professions.jeweling.level == 132) {
+        await bar(ctx, 824, 841, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 813);
+        ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/jewelingIcon.png'), 791, 817);
       ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
-      ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 885);
-      ctx.drawImage(await loadImage('src/assets/alchemismIcon.png'), 104, 889);
+
+      // ? Alchemism
+      if (currentProfileStats.professions.alchemism.level == 132) {
+        await bar(ctx, 140, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 885);
+        ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/alchemismIcon.png'), 104, 889);
       ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
-      ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 885);
-      ctx.drawImage(await loadImage('src/assets/cookingIcon.png'), 447, 889);
+
+      // ? Cooking
+      if (currentProfileStats.professions.cooking.level == 132) {
+        await bar(ctx, 483, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 885);
+        ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
+        ctx.textAlign = 'left';
+      }
       ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 885);
-      ctx.drawImage(await loadImage('src/assets/weaponsmithingIcon.png'), 791, 889);
+      ctx.drawImage(await loadImage('src/assets/statsCommand/cookingIcon.png'), 447, 889);
+
+      // ? Weaponsmithing
+      if (currentProfileStats.professions.weaponsmithing.level == 132) {
+        await bar(ctx, 824, 913, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 885);
+        ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/weaponsmithingIcon.png'), 791, 889);
       ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
-      ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 104, 957);
-      ctx.drawImage(await loadImage('src/assets/tailoringIcon.png'), 104, 961);
+
+      // ? Tailoring
+      if (currentProfileStats.professions.tailoring.level == 132) {
+        await bar(ctx, 140, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 104, 957);
+        ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/tailoringIcon.png'), 104, 961);
       ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
-      ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 447, 957);
-      ctx.drawImage(await loadImage('src/assets/woodworkingIcon.png'), 447, 961);
-      ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+
+      // ? Woodworking
+      if (currentProfileStats.professions.woodworking.level == 132) {
+        await bar(ctx, 483, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 447, 957);
+        ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/woodworkingIcon.png'), 447, 961);
       ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
-      ctx.textAlign = 'left';
-      await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
-      ctx.drawImage(professionsIconBackground, 791, 957);
-      ctx.drawImage(await loadImage('src/assets/armouringIcon.png'), 791, 961);
+
+      // ? Armouring
+      if (currentProfileStats.professions.armouring.level == 132) {
+        await bar(ctx, 824, 985, 262, 28, 'rgb(125, 140, 196)');
+        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.fillText('Max Level', 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'white';
+      } else {
+        await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
+        ctx.drawImage(professionsIconBackground, 791, 957);
+        ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
+        ctx.textAlign = 'left';
+      }
+      ctx.drawImage(await loadImage('src/assets/statsCommand/armouringIcon.png'), 791, 961);
       ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
-      ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
-      ctx.textAlign = 'left';
+
       ctx.font = '32px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
@@ -839,7 +1164,7 @@ async function generateProfileImage(uuid, profileId) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -857,7 +1182,13 @@ async function generateGuild(guildData) {
     let onlineMemberX = 0;
     let territoriesX = 0;
     if (guildData.banner == undefined) {
-      ctx.drawImage(await loadImage('src/assets/guildCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        await loadImage('src/assets/guildCommand/guildCommandBackground.png'),
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       ctx.font = '64px Karla';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
@@ -1024,7 +1355,13 @@ async function generateGuild(guildData) {
       );
       return canvas.toBuffer('image/png');
     } else {
-      ctx.drawImage(await loadImage('src/assets/guildBannerCommandBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        await loadImage('src/assets/guildCommand/guildBannerCommandBackground.png'),
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
       ctx.drawImage(
         await loadImage(`https://wynn-guild-banner.toki317.dev/banners/${guildData.fixedNamed}`),
         986,
@@ -1206,7 +1543,6 @@ async function generateGuild(guildData) {
 async function generateMemberJoin(data) {
   try {
     var member = data.user;
-    console.log(member);
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
@@ -1251,7 +1587,7 @@ async function generateMemberJoin(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1266,12 +1602,12 @@ async function generateServer(server) {
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
       ctx.font = '128px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 96, 118, 256, 256);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 96, 118, 256, 256);
       } else if (server.status === 'offline') {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 96, 118, 256, 256);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 96, 118, 256, 256);
       }
       ctx.fillText(server.server, 514, 169);
       ctx.fillText(server.count, 946, 169);
@@ -1294,7 +1630,7 @@ async function generateServer(server) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1329,7 +1665,7 @@ async function generateServers(servers) {
       ctx.font = '128px Karla';
       if (server.status === 'online') {
         ctx.drawImage(
-          await loadImage('src/assets/serverOnlineIcon.png'),
+          await loadImage('src/assets/serverCommand/onlineIcon.png'),
           serversXY[i].circle.x,
           serversXY[i].circle.y,
           77.22,
@@ -1337,7 +1673,7 @@ async function generateServers(servers) {
         );
       } else {
         ctx.drawImage(
-          await loadImage('src/assets/serverOfflineIcon.png'),
+          await loadImage('src/assets/serverCommand/offlineIcon.png'),
           serversXY[i].circle.x,
           serversXY[i].circle.y,
           77.22,
@@ -1361,7 +1697,7 @@ async function generateServers(servers) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1436,7 +1772,7 @@ async function generateServerChart(data) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
   }
 }
 
@@ -1447,7 +1783,7 @@ async function generateServerGraph(server, timeframe) {
   } else {
     const canvas = createCanvas(1200, 600);
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(await loadImage('src/assets/memberJoinBackground.png'), 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -1466,9 +1802,9 @@ async function generateServerGraph(server, timeframe) {
     if (badData.success) {
       ctx.font = '16px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 1078, 48, 32, 32);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 1078, 48, 32, 32);
       } else {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 1078, 48, 32, 32);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 1078, 48, 32, 32);
       }
       ctx.fillText(server.server, 1118, 55);
 
@@ -1478,9 +1814,9 @@ async function generateServerGraph(server, timeframe) {
     } else {
       ctx.font = '32px Karla';
       if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverOnlineIcon.png'), 525, 88, 64, 64);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 525, 88, 64, 64);
       } else {
-        ctx.drawImage(await loadImage('src/assets/serverOfflineIcon.png'), 525, 88, 64, 64);
+        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 525, 88, 64, 64);
       }
       ctx.fillText(server.server, 605, 102);
       if (badData.error === 'No data was found about the specified server') {
@@ -1521,7 +1857,7 @@ function clearGenerateStatsCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1534,7 +1870,7 @@ function clearGenerateProfileImageCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1547,7 +1883,7 @@ function clearGenerateGuildCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1560,7 +1896,7 @@ function clearGenerateServerCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -1573,7 +1909,7 @@ function clearGenerateServerGraphCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }

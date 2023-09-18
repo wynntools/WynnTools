@@ -18,6 +18,7 @@ cron.schedule(
   '*/5 * * * *',
   async function () {
     try {
+      if (config.other.devMode) return scriptMessage('Dev mode enabled - not updating stats embed/message');
       scriptMessage('Updating stats embed/message');
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
       const channel = await client.channels.fetch(config.discord.channels.stats);
@@ -81,7 +82,7 @@ cron.schedule(
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
     }
   },
   timezoneStuff

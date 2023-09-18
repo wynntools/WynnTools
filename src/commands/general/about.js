@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { countStatsInDirectory, addNotation, generateID } = require('../../functions/helper.js');
-const packageJson = require('../../../package.json');
+const { countStatsInDirectory, addNotation, generateID, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
+const packageJson = require('../../../package.json');
 const config = require('../../../config.json');
 const path = require('path');
 const fs = require('fs');
@@ -78,24 +78,42 @@ module.exports = {
         .setFooter({ text: `by @kathund | Stats maybe inaccurate/outdated/cached`, iconURL: config.other.logo });
       await interaction.reply({ embeds: [embed], components: [row] });
     } catch (error) {
-      var errorId = generateID(config.other.errorIdLength);
-      errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
-      const errorEmbed = new EmbedBuilder()
-        .setColor(config.discord.embeds.red)
-        .setTitle('An error occurred')
-        .setDescription(
-          `Use </report-bug:${
-            config.discord.commands['report-bug']
-          }> to report it\nError id - ${errorId}\nError Info - \`${error.toString().replaceAll('Error: ', '')}\``
-        )
-        .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
-      const supportDisc = new ButtonBuilder()
-        .setLabel('Support Discord')
-        .setURL(config.discord.supportInvite)
-        .setStyle(ButtonStyle.Link);
-      const row = new ActionRowBuilder().addComponents(supportDisc);
-      await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      if (String(error).includes('NO_ERROR_ID_')) {
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+          .setFooter({
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      } else {
+        var errorId = generateID(config.other.errorIdLength);
+        errorMessage(`Error Id - ${errorId}`);
+        errorMessage(error);
+        const errorEmbed = new EmbedBuilder()
+          .setColor(config.discord.embeds.red)
+          .setTitle('An error occurred')
+          .setDescription(
+            `Use </report-bug:${
+              config.discord.commands['report-bug']
+            }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
+          )
+          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+        const supportDisc = new ButtonBuilder()
+          .setLabel('Support Discord')
+          .setURL(config.discord.supportInvite)
+          .setStyle(ButtonStyle.Link);
+        const row = new ActionRowBuilder().addComponents(supportDisc);
+        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+      }
     }
   },
 };
