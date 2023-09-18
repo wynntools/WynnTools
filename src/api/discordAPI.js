@@ -1,15 +1,15 @@
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
-const { generateID } = require('../functions/helper.js');
+const { generateID, cleanMessage } = require('../functions/helper.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => console.log(err));
+    .catch((err) => errorMessage(err));
 
 const discordCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
-async function getUsername(id) {
+async function getDiscordUsername(id) {
   try {
     if (discordCache.has(id)) {
       cacheMessage('DiscordAPI', 'Cache hit');
@@ -29,8 +29,8 @@ async function getUsername(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
-    return error;
+    errorMessage(error);
+    return cleanMessage(error);
   }
 }
 
@@ -54,8 +54,8 @@ async function getDisplayName(id) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
-    return error;
+    errorMessage(error);
+    return cleanMessage(error);
   }
 }
 
@@ -67,9 +67,9 @@ function clearDiscordCache() {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
-    return error;
+    errorMessage(error);
+    return cleanMessage(error);
   }
 }
 
-module.exports = { getUsername, getDisplayName, clearDiscordCache };
+module.exports = { getDiscordUsername, getDisplayName, clearDiscordCache };

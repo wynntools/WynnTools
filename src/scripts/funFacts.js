@@ -1,8 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const { scriptMessage, errorMessage } = require('../functions/logger.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { writeAt, generateID } = require('../functions/helper.js');
-const { scriptMessage, errorMessage } = require('../functions/logger.js');
-const { getUsername } = require('../api/discordAPI.js');
+const { getDiscordUsername } = require('../api/discordAPI.js');
 const config = require('../../config.json');
 const cron = require('node-cron');
 const fs = require('fs');
@@ -17,6 +17,7 @@ if (config.other.timezone == null) {
 cron.schedule(
   '00 00 * * *',
   async function () {
+    if (config.other.devMode) return scriptMessage('Dev mode enabled - not sending fun facts');
     var startTime = Math.floor(Date.now() / 1000);
     function checkFunFact(fact) {
       try {
@@ -28,7 +29,7 @@ cron.schedule(
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
         return false;
       }
     }
@@ -38,7 +39,6 @@ cron.schedule(
       try {
         const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
         if (validFacts.length === 0) {
-          console.log('No more valid fun facts available.');
           return null;
         }
         const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
@@ -46,7 +46,7 @@ cron.schedule(
       } catch (error) {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
         return null;
       }
     }
@@ -65,7 +65,7 @@ cron.schedule(
         numCheckedFacts++;
       } while (funFact && !checkFunFact(funFact) && numCheckedFacts < totalFacts);
       if (!funFact || (funFact && !checkFunFact(funFact))) {
-        console.log('No valid fun facts found.');
+        return 'No valid fun facts found.';
       }
       const funFactConfigs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
       const funFactConfigsObject = Object.keys(funFactConfigs);
@@ -76,7 +76,7 @@ cron.schedule(
       const row = new ActionRowBuilder().addComponents(setup);
       var requestedByString = '';
       if (funFact.requestedBy && funFact.hidden != false) {
-        requestedByString = `Requested by ${await getUsername(funFact.requestedBy)} | `;
+        requestedByString = `Requested by ${await getDiscordUsername(funFact.requestedBy)} | `;
       }
       const funFactEmbed = new EmbedBuilder()
         .setColor(config.discord.embeds.green)
@@ -127,7 +127,7 @@ cron.schedule(
     } catch (error) {
       var errorId = generateID(config.other.errorIdLength);
       errorMessage(`Error Id - ${errorId}`);
-      console.log(error);
+      errorMessage(error);
     }
   },
   timezoneStuff

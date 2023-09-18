@@ -1,16 +1,17 @@
 {
   "608584543506530314": {
-    "commandsRun": 74,
+    "commandsRun": 77,
     "firstCommand": "1689996034",
-    "lastUpdated": "1693310713",
+    "lastUpdated": "1693522121",
     "commands": {
-      "fun-facts": 23,
+      "fun-facts": 24,
       "user": 8,
       "update-stats": 4,
       "report-bug": 2,
       "about": 22,
       "stats": 11,
-      "guild": 4
+      "guild": 4,
+      "servers": 2
     }
   },
   "894034804503351366": {
