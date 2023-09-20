@@ -1766,7 +1766,9 @@ async function generateServerChart(data) {
           },
           legend: { labels: { fontColor: config.other.colors.white.hex } },
         },
-        plugins: { tooltip: { backgroundColor: config.other.colors.white.hex, borderColor: config.other.colors.white.hex } },
+        plugins: {
+          tooltip: { backgroundColor: config.other.colors.white.hex, borderColor: config.other.colors.white.hex },
+        },
       })
       .setWidth(1136)
       .setHeight(428);
