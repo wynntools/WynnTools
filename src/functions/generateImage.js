@@ -65,11 +65,11 @@ async function generateStats(uuid) {
       ctx.font = '36px Karla';
       ctx.textAlign = 'left';
       if (stats.rank === 'Media') {
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -77,11 +77,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.rank === 'Administrator') {
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FF5555';
+        ctx.fillStyle = config.other.colors.minecraft.red.hex;
         ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -89,11 +89,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.data.meta.veteran) {
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#F38BA8';
+        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
         ctx.fillText('Vet', 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -101,11 +101,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#55FF55';
+        ctx.fillStyle = config.other.colors.minecraft.green.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -116,11 +116,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP+') {
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#00AAAA';
+        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -131,11 +131,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.data.meta.tag.value === 'HERO') {
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -146,11 +146,11 @@ async function generateStats(uuid) {
           52
         );
       } else if (stats.data.meta.tag.value === 'CHAMPION') {
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FFFF55';
+        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -630,11 +630,11 @@ async function generateProfileImage(uuid, profileId) {
       ctx.font = '36px Karla';
       ctx.textAlign = 'left';
       if (stats.rank === 'Media') {
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -642,11 +642,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.rank === 'Administrator') {
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FF5555';
+        ctx.fillStyle = config.other.colors.minecraft.red.hex;
         ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -654,11 +654,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.data.meta.veteran) {
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#F38BA8';
+        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
         ctx.fillText('Vet', 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -666,11 +666,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#55FF55';
+        ctx.fillStyle = config.other.colors.minecraft.green.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -681,11 +681,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.data.meta.tag.value === 'VIP+') {
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#00AAAA';
+        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -696,11 +696,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.data.meta.tag.value === 'HERO') {
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -711,11 +711,11 @@ async function generateProfileImage(uuid, profileId) {
           52
         );
       } else if (stats.data.meta.tag.value === 'CHAMPION') {
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText('[', 62, 52);
-        ctx.fillStyle = '#FFFF55';
+        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
         ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1201,11 +1201,11 @@ async function generateGuild(guildData) {
       ctx.textAlign = 'left';
       ctx.fillText(`Owner - `, 64, 150);
       if (stats.rank === 'Media') {
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1213,11 +1213,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.rank === 'Administrator') {
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FF5555';
+        ctx.fillStyle = config.other.colors.minecraft.red.hex;
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1225,11 +1225,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.veteran) {
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#F38BA8';
+        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
         ctx.fillText('Vet', 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1237,11 +1237,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#55FF55';
+        ctx.fillStyle = config.other.colors.minecraft.green.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1252,11 +1252,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP+') {
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#00AAAA';
+        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1267,11 +1267,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'HERO') {
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1282,11 +1282,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'CHAMPION') {
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FFFF55';
+        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1381,11 +1381,11 @@ async function generateGuild(guildData) {
       ctx.textAlign = 'left';
       ctx.fillText(`Owner - `, 64, 150);
       if (stats.rank === 'Media') {
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1393,11 +1393,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.rank === 'Administrator') {
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FF5555';
+        ctx.fillStyle = config.other.colors.minecraft.red.hex;
         ctx.fillText(stats.rank, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#AA0000';
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1405,11 +1405,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.veteran) {
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#F38BA8';
+        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
         ctx.fillText('Vet', 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FAB387';
+        ctx.fillStyle = config.other.colors.peach.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText('Vet').width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1417,11 +1417,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP') {
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#55FF55';
+        ctx.fillStyle = config.other.colors.minecraft.green.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#00AA00';
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1432,11 +1432,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'VIP+') {
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#00AAAA';
+        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#55FFFF';
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1447,11 +1447,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'HERO') {
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FF55FF';
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#AA00AA';
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1462,11 +1462,11 @@ async function generateGuild(guildData) {
           150
         );
       } else if (stats.data.meta.tag.value === 'CHAMPION') {
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText('[', 207, 150);
-        ctx.fillStyle = '#FFFF55';
+        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
         ctx.fillText(stats.data.meta.tag.value, 207 + ctx.measureText('[').width, 150);
-        ctx.fillStyle = '#FFAA00';
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
         ctx.fillText(']', 207 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 150);
         ctx.fillText(
           ` ${stats.username}`,
@@ -1734,12 +1734,12 @@ async function generateServerChart(data) {
               {
                 display: true,
                 gridLines: { display: false },
-                ticks: { fontColor: '#ffffff', fontSize: 16 },
+                ticks: { fontColor: config.other.colors.white.hex, fontSize: 16 },
                 scaleLabel: {
                   display: true,
                   labelString: '# Time ago (H = hours, M = minutes)',
                   fontSize: 16,
-                  fontColor: '#ffffff',
+                  fontColor: config.other.colors.white.hex,
                   fontStyle: 'bold',
                 },
               },
@@ -1749,7 +1749,7 @@ async function generateServerChart(data) {
                 display: true,
                 gridLines: { display: false },
                 ticks: {
-                  fontColor: '#ffffff',
+                  fontColor: config.other.colors.white.hex,
                   min: Math.min(...playerCounts) - 3,
                   max: Math.max(...playerCounts) + 3,
                   fontSize: 16,
@@ -1758,15 +1758,15 @@ async function generateServerChart(data) {
                   display: true,
                   labelString: '# of Players',
                   fontSize: 16,
-                  fontColor: '#ffffff',
+                  fontColor: config.other.colors.white.hex,
                   fontStyle: 'bold',
                 },
               },
             ],
           },
-          legend: { labels: { fontColor: '#FFFFFF' } },
+          legend: { labels: { fontColor: config.other.colors.white.hex } },
         },
-        plugins: { tooltip: { backgroundColor: '#303446', borderColor: '#303446' } },
+        plugins: { tooltip: { backgroundColor: config.other.colors.white.hex, borderColor: config.other.colors.white.hex } },
       })
       .setWidth(1136)
       .setHeight(428);
