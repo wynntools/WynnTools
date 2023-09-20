@@ -406,7 +406,7 @@ module.exports = {
               }
             }
             const listEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle('Fun Facts List')
               .setDescription(list)
               .setFooter({
@@ -421,7 +421,7 @@ module.exports = {
               list += `**${i + 1}** -  ID: ${objects[i]}\n`;
             }
             const listEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle('Fun Facts List')
               .setDescription(list)
               .setFooter({
@@ -432,7 +432,7 @@ module.exports = {
           }
         } else if (subCommand === 'send') {
           const confirmEmbed = new EmbedBuilder()
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTitle('Are you sure?')
             .setDescription('This will send fun-facts to every setup server')
             .setFooter({
@@ -484,7 +484,7 @@ module.exports = {
                   requestedByString = `Requested by ${await getDiscordUsername(funFact.requestedBy)} | `;
                 }
                 const funFactEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
+                  .setColor(config.other.colors.green.hex)
                   .setDescription(
                     `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${
                       startTime + 86400
@@ -537,7 +537,7 @@ module.exports = {
                 errorMessage(error);
               }
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.green)
+                .setColor(config.other.colors.green.hex)
                 .setDescription('Sent all Fun Facts')
                 .setTimestamp()
                 .setFooter({
@@ -547,7 +547,7 @@ module.exports = {
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
             } else if (confirmation.customId == 'funFactsDevSendCancel') {
               const cancelEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setDescription('Cancelled sending Fun Facts')
                 .setTimestamp()
                 .setFooter({
@@ -561,7 +561,7 @@ module.exports = {
             errorMessage(`Error ID: ${errorIdSendingFacts}`);
             errorMessage(error);
             const cancelEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setDescription('Cancelled sending Fun Facts')
               .setTimestamp()
               .setFooter({
@@ -587,7 +587,7 @@ module.exports = {
               requestedByString = `${requestedByString} | Never been sent`;
             }
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle(`Fun Fact #${fact.id}`)
               .setDescription(`${fact.fact}\n\n${requestedByString}`)
               .setTimestamp()
@@ -600,7 +600,7 @@ module.exports = {
             fact = suggestedData[facId];
             if (!fact) throw new Error('Invalid ID');
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle(`Fun Fact #${fact.id}`)
               .setDescription(
                 `${fact.fact}\n\nRequested by ${await getDiscordUsername(fact.by)} | Requested at <t:${fact.at}:R>`
@@ -618,7 +618,7 @@ module.exports = {
           if (!fact) throw new Error('Invalid ID');
           if (suggestedData[id].notify) {
             const notifyEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle('Fun Fact Approved')
               .setDescription(
                 `Your Fun Fact has been approved and added to the list of Fun Facts\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -630,7 +630,7 @@ module.exports = {
               });
             await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle('Fun Fact Approved')
               .setDescription(
                 `The Fun Fact has been approved and added to the list of Fun Facts. The user has been successfully notified\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -643,7 +643,7 @@ module.exports = {
             await interaction.reply({ embeds: [factEmbed] });
           } else {
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle('Fun Fact Approved')
               .setDescription(
                 `The Fun Fact has been approved and added to the list of Fun Facts.\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -664,7 +664,7 @@ module.exports = {
           if (!fact) throw new Error('Invalid ID');
           if (suggestedData[id].notify) {
             const notifyEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('Fun Fact Denied')
               .setDescription(
                 `Your Fun Fact has been denied and not added to the list of Fun Facts\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -676,7 +676,7 @@ module.exports = {
               });
             await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('Fun Fact Denied')
               .setDescription(
                 `The Fun Fact has been denied and not added to the list of Fun Facts. The user has been successfully notified\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -689,7 +689,7 @@ module.exports = {
             await interaction.reply({ embeds: [factEmbed] });
           } else {
             const factEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('Fun Fact Denied')
               .setDescription(
                 `The Fun Fact has been denied and not added to the list of Fun Facts.\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -708,7 +708,7 @@ module.exports = {
           var fact = listData[id];
           if (!fact) throw new Error('Invalid ID');
           const factEmbed = new EmbedBuilder()
-            .setColor(config.discord.embeds.red)
+            .setColor(config.other.colors.red.hex)
             .setTitle('Are you sure?')
             .setDescription(
               `Are you sure you want to delete the Fun Fact?\n\n**Fun Fact Id:** ${id}\n**Fun Fact:** ${fact.fact}`
@@ -759,7 +759,7 @@ module.exports = {
               currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
             }`;
             const configEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
               .setDescription(string);
             const leftButton = new ButtonBuilder()
@@ -815,7 +815,7 @@ module.exports = {
                     currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                   }`;
                   const configEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
+                    .setColor(config.other.colors.green.hex)
                     .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
                     .setDescription(string);
                   await confirmation.update({ embeds: [configEmbed], components: [row] });
@@ -871,7 +871,7 @@ module.exports = {
                     saveConfigButton
                   );
                   const editEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
+                    .setColor(config.other.colors.green.hex)
                     .setTitle(`Edit Mode Enabled`)
                     .setDescription(string);
                   var editMessage = await interaction.followUp({
@@ -890,7 +890,7 @@ module.exports = {
                         delete configs[configsObject[num]];
                         fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
                         var configDeletedEmbed = new EmbedBuilder()
-                          .setColor(config.discord.embeds.red)
+                          .setColor(config.other.colors.red.hex)
                           .setTitle('Config Deleted')
                           .setDescription(`The config for ${guild.name} (${guild.id}) has been deleted`)
                           .setTimestamp()
@@ -921,7 +921,7 @@ module.exports = {
                           currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                         }`;
                         var ghostPingUpdateEmbed = new EmbedBuilder()
-                          .setColor(config.discord.embeds.green)
+                          .setColor(config.other.colors.green.hex)
                           .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                           .setDescription(string)
                           .setTimestamp()
@@ -952,7 +952,7 @@ module.exports = {
                           currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                         }`;
                         var updatedDeleteMessageEmbed = new EmbedBuilder()
-                          .setColor(config.discord.embeds.green)
+                          .setColor(config.other.colors.green.hex)
                           .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                           .setDescription(string)
                           .setTimestamp()
@@ -986,7 +986,7 @@ module.exports = {
                           currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                         }`;
                         var disableEnableUpdateEmbed = new EmbedBuilder()
-                          .setColor(config.discord.embeds.green)
+                          .setColor(config.other.colors.green.hex)
                           .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                           .setDescription(string)
                           .setTimestamp()
@@ -1009,7 +1009,7 @@ module.exports = {
                           setup: { by: currentConfig.setup.by, at: currentConfig.setup.at },
                         });
                         const savedConfigEmbed = new EmbedBuilder()
-                          .setColor(config.discord.embeds.green)
+                          .setColor(config.other.colors.green.hex)
                           .setTitle(`Config has been saved for ${guild.name} (${guild.id})`)
                           .setDescription(
                             'Please click the refresh button to reload the configs that are displayed above'
@@ -1026,7 +1026,7 @@ module.exports = {
                     if (String(error).includes('NO_ERROR_ID_')) {
                       errorMessage(error);
                       const errorEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.red)
+                        .setColor(config.other.colors.red.hex)
                         .setTitle('An error occurred')
                         .setDescription(`Error Info - \`${cleanMessage(error)}\``)
                         .setFooter({
@@ -1044,7 +1044,7 @@ module.exports = {
                       errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
                       errorMessage(error);
                       const errorEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.red)
+                        .setColor(config.other.colors.red.hex)
                         .setTitle('An error occurred')
                         .setDescription(
                           `Use </report-bug:${
@@ -1092,7 +1092,7 @@ module.exports = {
                     currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                   }`;
                   const configEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
+                    .setColor(config.other.colors.green.hex)
                     .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
                     .setDescription(string);
                   await confirmation.update({ embeds: [configEmbed], components: [row] });
@@ -1123,7 +1123,7 @@ module.exports = {
                     currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                   }`;
                   const configEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
+                    .setColor(config.other.colors.green.hex)
                     .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
                     .setDescription(string);
                   await confirmation.update({ embeds: [configEmbed], components: [row] });
@@ -1160,7 +1160,7 @@ module.exports = {
               currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
             }`;
             const configEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
               .setDescription(string);
             const editButton = new ButtonBuilder()
@@ -1228,7 +1228,7 @@ module.exports = {
                   saveConfigInputIdButton
                 );
                 const editMessageInputIdEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
+                  .setColor(config.other.colors.green.hex)
                   .setTitle(`Edit Mode Enabled`)
                   .setDescription(string);
                 var editInputIdMessage = await interaction.reply({
@@ -1247,7 +1247,7 @@ module.exports = {
                       delete configs[configsObject[num]];
                       fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
                       var configDeletedInputIdEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.red)
+                        .setColor(config.other.colors.red.hex)
                         .setTitle('Config Deleted')
                         .setDescription(`The config for ${guild.name} (${guild.id}) has been deleted`)
                         .setTimestamp()
@@ -1281,7 +1281,7 @@ module.exports = {
                         currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                       }`;
                       var ghostPingUpdateInputIdEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
+                        .setColor(config.other.colors.green.hex)
                         .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                         .setDescription(string)
                         .setTimestamp()
@@ -1315,7 +1315,7 @@ module.exports = {
                         currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                       }`;
                       var updatedDeleteMessageInputIdEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
+                        .setColor(config.other.colors.green.hex)
                         .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                         .setDescription(string)
                         .setTimestamp()
@@ -1349,7 +1349,7 @@ module.exports = {
                         currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
                       }`;
                       var disableEnableUpdateInputIdEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
+                        .setColor(config.other.colors.green.hex)
                         .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
                         .setDescription(string)
                         .setTimestamp()
@@ -1372,7 +1372,7 @@ module.exports = {
                         setup: { by: currentConfig.setup.by, at: currentConfig.setup.at },
                       });
                       const savedConfigInputIdEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
+                        .setColor(config.other.colors.green.hex)
                         .setTitle(`Config has been saved for ${guild.name} (${guild.id})`)
                         .setDescription('Please click the refresh button to reload the config that is displayed above')
                         .setTimestamp()
@@ -1416,7 +1416,7 @@ module.exports = {
                 currentConfig.disabled ? config.discord.emojis.yes : config.discord.emojis.no
               }`;
               const configEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.green)
+                .setColor(config.other.colors.green.hex)
                 .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
                 .setDescription(string);
               await interaction.editReply({ embeds: [configEmbed], components: [row] });
@@ -1440,7 +1440,7 @@ module.exports = {
           registerData = await register(uuid);
           if (registerData.status != 201) throw new Error(registerData.error);
           embed = new EmbedBuilder()
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTitle('User Registered')
             .setDescription(`User ${username} has been registered to the pixelic api`)
             .setFooter({
@@ -1452,7 +1452,7 @@ module.exports = {
           var guildName = interaction.options.getString('guild');
           var guild = await getGuild(guildName);
           embed = new EmbedBuilder()
-            .setColor(config.discord.embeds.orange)
+            .setColor(config.other.colors.orange.hex)
             .setTitle('Attempting to register guild')
             .setDescription(`Attempting to register guild ${guild.name} to the pixelic api`)
             .setFooter({
@@ -1462,7 +1462,7 @@ module.exports = {
           await interaction.reply({ embeds: [embed] });
           registerData = await registerGuild(guild);
           embed = new EmbedBuilder()
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTitle('Guild Registered')
             .setDescription(`Successfully registered ${registerData}/${guild.totalMembers} members`)
             .setFooter({
@@ -1551,7 +1551,7 @@ module.exports = {
           const row = new ActionRowBuilder().addComponents(invite, source);
           var embed = new EmbedBuilder()
             .setTitle(`WynnTools Stats`)
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTimestamp()
             .addFields(
               {
@@ -1589,7 +1589,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -1607,7 +1607,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

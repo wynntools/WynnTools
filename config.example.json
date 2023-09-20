@@ -14,7 +14,8 @@
     "messages": { "stats": "STATS_MESSAGE_ID" },
     "commands": {
       "report-bug": "REPORT_BUG_COMMAND_ID",
-      "fun-facts": "FUN_FACTS_COMMAND_ID"
+      "fun-facts": "FUN_FACTS_COMMAND_ID",
+      "stats": "STATS_COMMAND_ID"
     },
     "roles": { "dev": "DEV_ROLE_ID" },
     "supportInvite": "SUPPORT_SERVER_INVITE",

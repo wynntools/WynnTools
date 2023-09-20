@@ -68,7 +68,7 @@ module.exports = {
         if (disable == null) disable = false;
         if (serverUptimeConfig[interaction.guild.id]) {
           const embed = new EmbedBuilder()
-            .setColor(config.discord.embeds.red)
+            .setColor(config.other.colors.red.hex)
             .setDescription(
               `This guild already has a config set for server uptime logging\nIts currently set to:\n**Channel:**<#${
                 serverUptimeConfig[interaction.guildId].channelId
@@ -114,7 +114,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Secondary);
               const confirmRow = new ActionRowBuilder().addComponents(confirmOverrideYes, confirmOverrideCancel);
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setTimestamp()
                 .setFooter({
                   text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -138,7 +138,7 @@ module.exports = {
                     setup: { by: interaction.user.id, at: toFixed(new Date().getTime() / 1000, 0) },
                   });
                   const overrideSuccessfully = new EmbedBuilder()
-                    .setColor(config.discord.embeds.green)
+                    .setColor(config.other.colors.green.hex)
                     .setDescription(
                       `Data has been updated\n\n**New Data:**\n**Channel:**<#${channel.id}>\n**Role:** ${
                         role != null ? `<@&${role.id}>` : 'None'
@@ -152,7 +152,7 @@ module.exports = {
                   return await confirmOverrideConfirmation.update({ embeds: [overrideSuccessfully], components: [] });
                 } else if (confirmOverrideConfirmation.customId == 'serverUptimeSetupConfirmOverrideCancel') {
                   const overrideCancel = new EmbedBuilder()
-                    .setColor(config.discord.embeds.red)
+                    .setColor(config.other.colors.red.hex)
                     .setDescription('Data override cancelled')
                     .setTimestamp()
                     .setFooter({
@@ -166,7 +166,7 @@ module.exports = {
                 errorMessage(`Error Id - ${errorIdOverrideData}`);
                 errorMessage(error);
                 const overrideCancel = new EmbedBuilder()
-                  .setColor(config.discord.embeds.red)
+                  .setColor(config.other.colors.red.hex)
                   .setDescription('Data override cancelled')
                   .setTimestamp()
                   .setFooter({
@@ -177,7 +177,7 @@ module.exports = {
               }
             } else if (confirmation.customId == 'serverUptimeSetupOverrideNo') {
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setDescription('Data override cancelled')
                 .setTimestamp()
                 .setFooter({
@@ -191,7 +191,7 @@ module.exports = {
             errorMessage(`Error ID: ${errorIdServerUptimeOverride}`);
             errorMessage(error);
             const updatedEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setDescription('Data override cancelled')
               .setTimestamp()
               .setFooter({
@@ -202,7 +202,7 @@ module.exports = {
           }
         } else {
           const embed = new EmbedBuilder()
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setDescription(
               `**Config has been set**\n\n**Channel:**<#${channel.id}>\n**Role:** ${
                 role != null ? `<@&${role.id}>` : 'None'
@@ -227,7 +227,7 @@ module.exports = {
         if (serverUptimeConfig[interaction.guild.id]) {
           if (serverUptimeConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setDescription(
                 `Server uptime logging is already disabled in this server\nUse </server-uptime enable:${config.discord.commands['server-uptime']}> to enable them`
               )
@@ -239,7 +239,7 @@ module.exports = {
             return await interaction.reply({ embeds: [embed] });
           } else {
             const embed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setDescription(
                 'Server uptime logging has been disabled. Do you want to delete your config? **THIS CANNOT BE UNDONE!**'
               )
@@ -279,7 +279,7 @@ module.exports = {
                 delete serverUptimeConfig[interaction.guild.id];
                 fs.writeFileSync('data/serverUptime/config.json', JSON.stringify(serverUptimeConfig));
                 const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
+                  .setColor(config.other.colors.green.hex)
                   .setDescription('Successfully Deleted this servers config.')
                   .setTimestamp()
                   .setFooter({
@@ -289,7 +289,7 @@ module.exports = {
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
               } else if (confirmation.customId == 'serverUptimeDeleteConfigNo') {
                 const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
+                  .setColor(config.other.colors.green.hex)
                   .setDescription('Config not deleted and server uptime logging has disabled.')
                   .setTimestamp()
                   .setFooter({
@@ -303,7 +303,7 @@ module.exports = {
               errorMessage(`Error ID: ${errorIdDisable}`);
               errorMessage(error);
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.green)
+                .setColor(config.other.colors.green.hex)
                 .setDescription('server uptime logging has been disabled')
                 .setTimestamp()
                 .setFooter({
@@ -315,7 +315,7 @@ module.exports = {
           }
         } else {
           const failEmbed = new EmbedBuilder()
-            .setColor(config.discord.embeds.red)
+            .setColor(config.other.colors.red.hex)
             .setDescription('This server does not have a config set for server uptime logging')
             .setTimestamp()
             .setFooter({
@@ -328,7 +328,7 @@ module.exports = {
         if (serverUptimeConfig[interaction.guild.id]) {
           if (serverUptimeConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
+              .setColor(config.other.colors.green.hex)
               .setDescription('Server Uptime Logging has been enabled')
               .setTimestamp()
               .setFooter({
@@ -338,7 +338,7 @@ module.exports = {
             await interaction.reply({ embeds: [embed] });
           } else {
             const embed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setDescription(
                 `Server Uptime Logging is already enabled in this server\nUse </server-uptime disable:${config.discord.commands['server-uptime']}> to disable them`
               )
@@ -352,7 +352,7 @@ module.exports = {
         }
       } else if (subcommand === 'setup-guide') {
         const embed = new EmbedBuilder()
-          .setColor(config.discord.embeds.green)
+          .setColor(config.other.colors.green.hex)
           .setTitle('Server Uptime Logging Setup Guide')
           .setDescription(
             `**Step 1:** Create a channel where you want the server uptime logging to be sent into\n**Step 2:** Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the channel\n**Step 3:** (Optional) Create a role to be pinged when the server changes state\n**Step 4:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the role\n**Step 5:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the ghost ping\n**Step 6:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the delete previous messages\n**Step 7:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the disable\n**Step 8:** Use </server-uptime enable:${config.discord.commands['server-uptime']}> to enable the server uptime logging\n**Step 9:** (Optional) Use </server-uptime disable:${config.discord.commands['server-uptime']}> to disable the server uptime logging`
@@ -365,7 +365,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -383,7 +383,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

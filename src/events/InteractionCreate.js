@@ -84,7 +84,7 @@ module.exports = {
             if (!interaction.commandName === 'report-bug') {
               if (blacklistTest) {
                 const blacklisted = new EmbedBuilder()
-                  .setColor(config.discord.embeds.red)
+                  .setColor(config.other.colors.red.hex)
                   .setDescription('You are blacklisted')
                   .setFooter({
                     text: `by @kathund | ${config.discord.supportInvite} for support`,
@@ -98,7 +98,7 @@ module.exports = {
             if (String(error).includes('NO_ERROR_ID_')) {
               errorMessage(error);
               const errorEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setTitle('An error occurred')
                 .setDescription(`Error Info - \`${cleanMessage(error)}\``)
                 .setFooter({
@@ -120,7 +120,7 @@ module.exports = {
               errorMessage(`Error ID: ${errorIdBlacklistCheck}`);
               errorMessage(error);
               const errorEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setTitle('An error occurred')
                 .setDescription(
                   `Use </report-bug:${
@@ -147,7 +147,7 @@ module.exports = {
           if (String(error).includes('NO_ERROR_ID_')) {
             errorMessage(error);
             const errorEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('An error occurred')
               .setDescription(`Error Info - \`${cleanMessage(error)}\``)
               .setFooter({
@@ -169,7 +169,7 @@ module.exports = {
             errorMessage(`Error ID: ${errorIdCheck}`);
             errorMessage(error);
             const errorEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('An error occurred')
               .setDescription(
                 `Use </report-bug:${
@@ -215,7 +215,7 @@ module.exports = {
           if (String(error).includes('NO_ERROR_ID_')) {
             errorMessage(error);
             const errorEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('An error occurred')
               .setDescription(`Error Info - \`${cleanMessage(error)}\``)
               .setFooter({
@@ -238,7 +238,7 @@ module.exports = {
             errorMessage(`Error Id - ${errorIdButtons}`);
             errorMessage(error);
             const errorEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.red)
+              .setColor(config.other.colors.red.hex)
               .setTitle('An error occurred')
               .setDescription(
                 `Use </report-bug:${

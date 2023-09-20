@@ -79,7 +79,7 @@ async function start() {
         scriptMessage(`Skipped ${file} event`);
         continue;
       }
-      client.on(Events[event.name], (...args) => event.execute(...args));
+      client.on(event.name, (...args) => event.execute(...args));
       await delay(300);
       scriptMessage(`Started ${file} event`);
     } catch (error) {
