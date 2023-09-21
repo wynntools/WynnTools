@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint:check": "npx eslint .",
-    "lint": "npx eslint . --fix",
-    "prettier": "npx prettier --write .",
-    "prettier:check": "npx prettier --check ."
+    "lint:check": "npx eslint src/ index.js deploy-commands.js",
+    "lint": "npx eslint src/ index.js deploy-commands.js --fix",
+    "prettier": "npx prettier --write src/ index.js deploy-commands.js",
+    "prettier:check": "npx prettier --check src/ index.js deploy-commands.js"
   },
   "keywords": [],
   "author": "kathund",
