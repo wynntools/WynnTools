@@ -30,7 +30,9 @@ module.exports = {
 
             eventMessage(
               `Interaction Event trigged by ${
-                interaction.user.discriminator == '0' ? '' : `#${interaction.user.discriminator}`
+                interaction.user.discriminator == '0'
+                  ? interaction.user.username
+                  : `${interaction.user.username}#${interaction.user.discriminator}`
               } (${interaction.user.id}) ran command ${commandString} in ${interaction.guild.id} in ${
                 interaction.channel.id
               }`
@@ -195,8 +197,10 @@ module.exports = {
       }
       if (interaction.isButton()) {
         eventMessage(
-          `${interaction.user.discriminator == '0' ? '' : `#${interaction.user.discriminator}`} (${
-            interaction.user.id
+          `${
+            interaction.user.discriminator == '0'
+              ? interaction.user.username
+              : `${interaction.user.username}#${interaction.user.discriminator}`
           }) clicked button ${interaction.customId} in ${interaction.guild.id} in ${interaction.channel.id} at ${
             interaction.message.id
           }`
