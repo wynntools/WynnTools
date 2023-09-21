@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, Butt
 const { getStats, getHighestProfile } = require('../../api/wynnCraftAPI.js');
 const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
+const { getUUID } = require('../../api/mojangAPI.js');
 const config = require('../../../config.json');
 const fs = require('fs');
 
@@ -109,6 +110,7 @@ module.exports = {
         const eventFilter = interaction.options.getBoolean('event') || false;
         const username = interaction.options.getString('username') || null;
         let filteredQuests = sortedQuests;
+        var filters = [];
         if (
           (dungeonFilter && specialFilter) ||
           (dungeonFilter && normalFilter) ||
@@ -123,23 +125,33 @@ module.exports = {
           throw new Error('NO_ERROR_ID_You need to provide a username to use the completed filter');
         }
         if (dungeonFilter) {
+          filters.push('Dungeon');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Dungeon');
         }
         if (specialFilter) {
+          filters.push('Special');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Special');
         }
         if (normalFilter) {
+          filters.push('Normal');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Normal');
         }
         if (eventFilter) {
+          filters.push('Event');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Event');
         }
         let num = 0;
         let currentQuest = filteredQuests[num];
+        let filtersString = '';
+        if (filters.length === 0) {
+          filtersString = 'None';
+        } else {
+          filtersString = filters.join(', ');
+        }
         if (completedFilter) {
           const stats = await getStats(username);
           var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
-          const completedQuests = currentProfileStats.quests;
+          const completedQuests = currentProfileStats.quests.list;
           filteredQuests.forEach((quest) => {
             if (completedQuests.includes(quest.name)) {
               quest.completed = true;
@@ -147,83 +159,74 @@ module.exports = {
               quest.completed = false;
             }
           });
-
           const questEmbed = new EmbedBuilder()
             .setColor(config.other.colors.green.hex)
             .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-            .setDescription(
-              `Quest Filters:\nDungeon Filter: ${
-                dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nSpecial Filter: ${
-                specialFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                completedFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nSort: ${sort}`
-            )
+            .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
             .addFields(
               {
                 name: 'Name',
-                value: currentQuest.name,
+                value: `${currentQuest.name}`,
                 inline: true,
               },
               {
                 name: 'Completed',
-                value: currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no,
+                value: `${currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no}`,
                 inline: true,
               },
               {
                 name: 'Xp',
-                value: currentQuest.xp,
+                value: `${currentQuest.xp}`,
                 inline: true,
               },
               {
                 name: 'Emeralds',
-                value: currentQuest.emeralds,
+                value: `${currentQuest.emeralds}`,
                 inline: true,
               },
               {
                 name: 'Wiki Url',
-                value: currentQuest.wikiUrl,
+                value: `${currentQuest.wikiUrl}`,
                 inline: true,
               },
               {
                 name: 'Combat Min Lvl',
-                value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Mining Min Lvl',
-                value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Wood Cutting Min Lvl',
-                value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Farming Min Lvl',
-                value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Fishing Min Lvl',
-                value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Type',
-                value: currentQuest.type,
+                value: `${currentQuest.type}`,
                 inline: true,
               },
               {
                 name: 'Length',
-                value: currentQuest.length,
+                value: `${currentQuest.length}`,
                 inline: true,
               },
               {
                 name: 'Main Province',
-                value: currentQuest.mainProvince,
+                value: `${currentQuest.mainProvince}`,
                 inline: true,
               }
             )
@@ -261,74 +264,66 @@ module.exports = {
                 const questEmbed = new EmbedBuilder()
                   .setColor(config.other.colors.green.hex)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-                  .setDescription(
-                    `Quest Filters:\nDungeon Filter: ${
-                      dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSpecial Filter: ${
-                      specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                      completedFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSort: ${sort}`
-                  )
+                  .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
                   .addFields(
                     {
                       name: 'Name',
-                      value: currentQuest.name,
+                      value: `${currentQuest.name}`,
                       inline: true,
                     },
                     {
                       name: 'Xp',
-                      value: currentQuest.xp,
+                      value: `${currentQuest.xp}`,
                       inline: true,
                     },
                     {
                       name: 'Emeralds',
-                      value: currentQuest.emeralds,
+                      value: `${currentQuest.emeralds}`,
                       inline: true,
                     },
                     {
                       name: 'Wiki Url',
-                      value: currentQuest.wikiUrl,
+                      value: `${currentQuest.wikiUrl}`,
                       inline: true,
                     },
                     {
                       name: 'Combat Min Lvl',
-                      value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                      value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Mining Min Lvl',
-                      value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                      value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Wood Cutting Min Lvl',
-                      value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                      value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Farming Min Lvl',
-                      value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                      value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Fishing Min Lvl',
-                      value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                      value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Type',
-                      value: currentQuest.type,
+                      value: `${currentQuest.type}`,
                       inline: true,
                     },
                     {
                       name: 'Length',
-                      value: currentQuest.length,
+                      value: `${currentQuest.length}`,
                       inline: true,
                     },
                     {
                       name: 'Main Province',
-                      value: currentQuest.mainProvince,
+                      value: `${currentQuest.mainProvince}`,
                       inline: true,
                     }
                   )
@@ -340,80 +335,72 @@ module.exports = {
                 await confirmationCompletedFilter.update({ embeds: [questEmbed], components: [row] });
               } else if (confirmationCompletedFilter.customId === 'rightButtonQuests') {
                 num = num + 1;
-                if (num <= 0) num = filteredQuests.length - 1;
+                if (num >= filteredQuests.length) num = 0;
                 currentQuest = filteredQuests[num];
 
                 const questEmbed = new EmbedBuilder()
                   .setColor(config.other.colors.green.hex)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-                  .setDescription(
-                    `Quest Filters:\nDungeon Filter: ${
-                      dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSpecial Filter: ${
-                      specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                      completedFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSort: ${sort}`
-                  )
+                  .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
                   .addFields(
                     {
                       name: 'Name',
-                      value: currentQuest.name,
+                      value: `${currentQuest.name}`,
                       inline: true,
                     },
                     {
                       name: 'Xp',
-                      value: currentQuest.xp,
+                      value: `${currentQuest.xp}`,
                       inline: true,
                     },
                     {
                       name: 'Emeralds',
-                      value: currentQuest.emeralds,
+                      value: `${currentQuest.emeralds}`,
                       inline: true,
                     },
                     {
                       name: 'Wiki Url',
-                      value: currentQuest.wikiUrl,
+                      value: `${currentQuest.wikiUrl}`,
                       inline: true,
                     },
                     {
                       name: 'Combat Min Lvl',
-                      value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                      value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Mining Min Lvl',
-                      value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                      value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Wood Cutting Min Lvl',
-                      value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                      value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Farming Min Lvl',
-                      value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                      value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Fishing Min Lvl',
-                      value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                      value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Type',
-                      value: currentQuest.type,
+                      value: `${currentQuest.type}`,
                       inline: true,
                     },
                     {
                       name: 'Length',
-                      value: currentQuest.length,
+                      value: `${currentQuest.length}`,
                       inline: true,
                     },
                     {
                       name: 'Main Province',
-                      value: currentQuest.mainProvince,
+                      value: `${currentQuest.mainProvince}`,
                       inline: true,
                     }
                   )
@@ -427,6 +414,7 @@ module.exports = {
             }
           } catch (error) {
             var errorIdButtonsComplete = generateID(config.other.errorIdLength);
+            await interaction.editReply({ components: [] });
             errorMessage(`Error ID: ${errorIdButtonsComplete}`);
             errorMessage(error);
           }
@@ -434,74 +422,66 @@ module.exports = {
           const questEmbed = new EmbedBuilder()
             .setColor(config.other.colors.green.hex)
             .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-            .setDescription(
-              `Quest Filters:\nDungeon Filter: ${
-                dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nSpecial Filter: ${
-                specialFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                completedFilter ? config.other.emojis.yes : config.other.emojis.no
-              }\nSort: ${sort}`
-            )
+            .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
             .addFields(
               {
                 name: 'Name',
-                value: currentQuest.name,
+                value: `${currentQuest.name}`,
                 inline: true,
               },
               {
                 name: 'Xp',
-                value: currentQuest.xp,
+                value: `${currentQuest.xp}`,
                 inline: true,
               },
               {
                 name: 'Emeralds',
-                value: currentQuest.emeralds,
+                value: `${currentQuest.emeralds}`,
                 inline: true,
               },
               {
                 name: 'Wiki Url',
-                value: currentQuest.wikiUrl,
+                value: `${currentQuest.wikiUrl}`,
                 inline: true,
               },
               {
                 name: 'Combat Min Lvl',
-                value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Mining Min Lvl',
-                value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Wood Cutting Min Lvl',
-                value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Farming Min Lvl',
-                value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Fishing Min Lvl',
-                value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                 inline: true,
               },
               {
                 name: 'Type',
-                value: currentQuest.type,
+                value: `${currentQuest.type}`,
                 inline: true,
               },
               {
                 name: 'Length',
-                value: currentQuest.length,
+                value: `${currentQuest.length}`,
                 inline: true,
               },
               {
                 name: 'Main Province',
-                value: currentQuest.mainProvince,
+                value: `${currentQuest.mainProvince}`,
                 inline: true,
               }
             )
@@ -539,74 +519,66 @@ module.exports = {
                 const questEmbed = new EmbedBuilder()
                   .setColor(config.other.colors.green.hex)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-                  .setDescription(
-                    `Quest Filters:\nDungeon Filter: ${
-                      dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSpecial Filter: ${
-                      specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                      completedFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSort: ${sort}`
-                  )
+                  .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
                   .addFields(
                     {
                       name: 'Name',
-                      value: currentQuest.name,
+                      value: `${currentQuest.name}`,
                       inline: true,
                     },
                     {
                       name: 'Xp',
-                      value: currentQuest.xp,
+                      value: `${currentQuest.xp}`,
                       inline: true,
                     },
                     {
                       name: 'Emeralds',
-                      value: currentQuest.emeralds,
+                      value: `${currentQuest.emeralds}`,
                       inline: true,
                     },
                     {
                       name: 'Wiki Url',
-                      value: currentQuest.wikiUrl,
+                      value: `${currentQuest.wikiUrl}`,
                       inline: true,
                     },
                     {
                       name: 'Combat Min Lvl',
-                      value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                      value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Mining Min Lvl',
-                      value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                      value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Wood Cutting Min Lvl',
-                      value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                      value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Farming Min Lvl',
-                      value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                      value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Fishing Min Lvl',
-                      value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                      value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Type',
-                      value: currentQuest.type,
+                      value: `${currentQuest.type}`,
                       inline: true,
                     },
                     {
                       name: 'Length',
-                      value: currentQuest.length,
+                      value: `${currentQuest.length}`,
                       inline: true,
                     },
                     {
                       name: 'Main Province',
-                      value: currentQuest.mainProvince,
+                      value: `${currentQuest.mainProvince}`,
                       inline: true,
                     }
                   )
@@ -618,80 +590,72 @@ module.exports = {
                 await confirmation.update({ embeds: [questEmbed], components: [row] });
               } else if (confirmation.customId === 'rightButtonQuests') {
                 num = num + 1;
-                if (num <= 0) num = filteredQuests.length - 1;
+                if (num >= filteredQuests.length) num = 0;
                 currentQuest = filteredQuests[num];
 
                 const questEmbed = new EmbedBuilder()
                   .setColor(config.other.colors.green.hex)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
-                  .setDescription(
-                    `Quest Filters:\nDungeon Filter: ${
-                      dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSpecial Filter: ${
-                      specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\nCompleted Filter: ${
-                      completedFilter ? config.other.emojis.yes : config.other.emojis.no
-                    }\nSort: ${sort}`
-                  )
+                  .setDescription(`**Quest Filters:** ${filtersString}\n${sort !== 'name' ? `Sort: ${sort}` : ''}`)
                   .addFields(
                     {
                       name: 'Name',
-                      value: currentQuest.name,
+                      value: `${currentQuest.name}`,
                       inline: true,
                     },
                     {
                       name: 'Xp',
-                      value: currentQuest.xp,
+                      value: `${currentQuest.xp}`,
                       inline: true,
                     },
                     {
                       name: 'Emeralds',
-                      value: currentQuest.emeralds,
+                      value: `${currentQuest.emeralds}`,
                       inline: true,
                     },
                     {
                       name: 'Wiki Url',
-                      value: currentQuest.wikiUrl,
+                      value: `${currentQuest.wikiUrl}`,
                       inline: true,
                     },
                     {
                       name: 'Combat Min Lvl',
-                      value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                      value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Mining Min Lvl',
-                      value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                      value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Wood Cutting Min Lvl',
-                      value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                      value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Farming Min Lvl',
-                      value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                      value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Fishing Min Lvl',
-                      value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                      value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                       inline: true,
                     },
                     {
                       name: 'Type',
-                      value: currentQuest.type,
+                      value: `${currentQuest.type}`,
                       inline: true,
                     },
                     {
                       name: 'Length',
-                      value: currentQuest.length,
+                      value: `${currentQuest.length}`,
                       inline: true,
                     },
                     {
                       name: 'Main Province',
-                      value: currentQuest.mainProvince,
+                      value: `${currentQuest.mainProvince}`,
                       inline: true,
                     }
                   )
@@ -705,6 +669,7 @@ module.exports = {
             }
           } catch (error) {
             var errorIdButtons = generateID(config.other.errorIdLength);
+            await interaction.editReply({ components: [] });
             errorMessage(`Error ID: ${errorIdButtons}`);
             errorMessage(error);
           }
@@ -714,17 +679,17 @@ module.exports = {
         if (username == null) {
           throw new Error('NO_ERROR_ID_You need to provide a username');
         }
-        const stats = await getStats(username);
+        const uuid = await getUUID(username);
+        const stats = await getStats(uuid);
+        const filters = [];
         const currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
-
         const level = interaction.options.getInteger('level') || currentProfileStats.professions.combat.level + 1;
         const dungeonFilter = interaction.options.getBoolean('dungeon') || false;
         const specialFilter = interaction.options.getBoolean('special') || false;
         const normalFilter = interaction.options.getBoolean('normal') || false;
         const eventFilter = interaction.options.getBoolean('event') || false;
-
         var sortedQuests = quests.sort((a, b) => b.xp - a.xp);
-        const completedQuests = currentProfileStats.quests;
+        const completedQuests = currentProfileStats.quests.list;
         sortedQuests.forEach((quest) => {
           if (completedQuests.includes(quest.name)) {
             quest.completed = true;
@@ -733,7 +698,7 @@ module.exports = {
           }
         });
         let filteredQuests = sortedQuests
-          .filter((quest) => quest.combatMinLvl > currentProfileStats.professions.combat.level)
+          .filter((quest) => quest.combatMinLvl <= currentProfileStats.professions.combat.level)
           .filter((quest) => quest.completed === false);
         if (
           (dungeonFilter && specialFilter) ||
@@ -749,16 +714,27 @@ module.exports = {
           throw new Error('NO_ERROR_ID_There are no quests that you can do to get to that level');
         }
         if (dungeonFilter) {
+          filters.push('Dungeon');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Dungeon');
         }
         if (specialFilter) {
+          filters.push('Special');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Special');
         }
         if (normalFilter) {
+          filters.push('Normal');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Normal');
         }
         if (eventFilter) {
+          filters.push('Event');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Event');
+        }
+
+        let filtersString = '';
+        if (filters.length === 0) {
+          filtersString = 'None';
+        } else {
+          filtersString = filters.join(', ');
         }
 
         if (filteredQuests.length === 0) {
@@ -773,72 +749,66 @@ module.exports = {
         var responseEmbed = new EmbedBuilder()
           .setColor(config.other.colors.green.hex)
           .setTitle(`Best Quests to get to level ${level}`)
-          .setDescription(
-            `**Quest Filters:**\nDungeon Filter: ${
-              dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-            }\nSpecial Filter: ${
-              specialFilter ? config.other.emojis.yes : config.other.emojis.no
-            }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\n\n${num}/${filteredQuests.length}`
-          )
+          .setDescription(`**Quest Filters:** ${filtersString}\n\n#${num + 1}/${filteredQuests.length}`)
           .addFields(
             {
               name: 'Name',
-              value: currentQuest.name,
+              value: `${currentQuest.name}`,
               inline: true,
             },
             {
               name: 'Xp',
-              value: currentQuest.xp,
+              value: `${currentQuest.xp}`,
               inline: true,
             },
             {
               name: 'Emeralds',
-              value: currentQuest.emeralds,
+              value: `${currentQuest.emeralds}`,
               inline: true,
             },
             {
               name: 'Wiki Url',
-              value: currentQuest.wikiUrl,
+              value: `${currentQuest.wikiUrl}`,
               inline: true,
             },
             {
               name: 'Combat Min Lvl',
-              value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+              value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
               inline: true,
             },
             {
               name: 'Mining Min Lvl',
-              value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+              value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
               inline: true,
             },
             {
               name: 'Wood Cutting Min Lvl',
-              value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+              value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
               inline: true,
             },
             {
               name: 'Farming Min Lvl',
-              value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+              value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
               inline: true,
             },
             {
               name: 'Fishing Min Lvl',
-              value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+              value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
               inline: true,
             },
             {
               name: 'Type',
-              value: currentQuest.type,
+              value: `${currentQuest.type}`,
               inline: true,
             },
             {
               name: 'Length',
-              value: currentQuest.length,
+              value: `${currentQuest.length}`,
               inline: true,
             },
             {
               name: 'Main Province',
-              value: currentQuest.mainProvince,
+              value: `${currentQuest.mainProvince}`,
               inline: true,
             }
           )
@@ -877,72 +847,66 @@ module.exports = {
               const questEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
                 .setTitle(`Best Quests to get to level ${level}`)
-                .setDescription(
-                  `**Quest Filters:**\nDungeon Filter: ${
-                    dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                  }\nSpecial Filter: ${
-                    specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                  }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\n\n${num}/${filteredQuests.length}`
-                )
+                .setDescription(`**Quest Filters:** ${filtersString}\n\n#${num + 1}/${filteredQuests.length}`)
                 .addFields(
                   {
                     name: 'Name',
-                    value: currentQuest.name,
+                    value: `${currentQuest.name}`,
                     inline: true,
                   },
                   {
                     name: 'Xp',
-                    value: currentQuest.xp,
+                    value: `${currentQuest.xp}`,
                     inline: true,
                   },
                   {
                     name: 'Emeralds',
-                    value: currentQuest.emeralds,
+                    value: `${currentQuest.emeralds}`,
                     inline: true,
                   },
                   {
                     name: 'Wiki Url',
-                    value: currentQuest.wikiUrl,
+                    value: `${currentQuest.wikiUrl}`,
                     inline: true,
                   },
                   {
                     name: 'Combat Min Lvl',
-                    value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                    value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Mining Min Lvl',
-                    value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                    value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Wood Cutting Min Lvl',
-                    value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                    value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Farming Min Lvl',
-                    value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                    value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Fishing Min Lvl',
-                    value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                    value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Type',
-                    value: currentQuest.type,
+                    value: `${currentQuest.type}`,
                     inline: true,
                   },
                   {
                     name: 'Length',
-                    value: currentQuest.length,
+                    value: `${currentQuest.length}`,
                     inline: true,
                   },
                   {
                     name: 'Main Province',
-                    value: currentQuest.mainProvince,
+                    value: `${currentQuest.mainProvince}`,
                     inline: true,
                   }
                 )
@@ -954,78 +918,72 @@ module.exports = {
               await confirmationQuestsTo.update({ embeds: [questEmbed], components: [row] });
             } else if (confirmationQuestsTo.customId === 'rightButtonQuests') {
               num = num + 1;
-              if (num <= 0) num = filteredQuests.length - 1;
+              if (num >= filteredQuests.length) num = 0;
               currentQuest = filteredQuests[num];
 
               const questEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
                 .setTitle(`Best Quests to get to level ${level}`)
-                .setDescription(
-                  `**Quest Filters:**\nDungeon Filter: ${
-                    dungeonFilter ? config.other.emojis.yes : config.other.emojis.no
-                  }\nSpecial Filter: ${
-                    specialFilter ? config.other.emojis.yes : config.other.emojis.no
-                  }\nNormal Filter: ${normalFilter}\nEvent Filter: ${eventFilter}\n\n${num}/${filteredQuests.length}`
-                )
+                .setDescription(`**Quest Filters:** ${filtersString}\n\n#${num + 1}/${filteredQuests.length}`)
                 .addFields(
                   {
                     name: 'Name',
-                    value: currentQuest.name,
+                    value: `${currentQuest.name}`,
                     inline: true,
                   },
                   {
                     name: 'Xp',
-                    value: currentQuest.xp,
+                    value: `${currentQuest.xp}`,
                     inline: true,
                   },
                   {
                     name: 'Emeralds',
-                    value: currentQuest.emeralds,
+                    value: `${currentQuest.emeralds}`,
                     inline: true,
                   },
                   {
                     name: 'Wiki Url',
-                    value: currentQuest.wikiUrl,
+                    value: `${currentQuest.wikiUrl}`,
                     inline: true,
                   },
                   {
                     name: 'Combat Min Lvl',
-                    value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
+                    value: `${currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Mining Min Lvl',
-                    value: currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl,
+                    value: `${currentQuest.miningMinLvl === null ? 'None' : currentQuest.miningMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Wood Cutting Min Lvl',
-                    value: currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl,
+                    value: `${currentQuest.woodCuttingMinLvl === null ? 'None' : currentQuest.woodCuttingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Farming Min Lvl',
-                    value: currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl,
+                    value: `${currentQuest.farmingMinLvl === null ? 'None' : currentQuest.farmingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Fishing Min Lvl',
-                    value: currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl,
+                    value: `${currentQuest.fishingMinLvl === null ? 'None' : currentQuest.fishingMinLvl}`,
                     inline: true,
                   },
                   {
                     name: 'Type',
-                    value: currentQuest.type,
+                    value: `${currentQuest.type}`,
                     inline: true,
                   },
                   {
                     name: 'Length',
-                    value: currentQuest.length,
+                    value: `${currentQuest.length}`,
                     inline: true,
                   },
                   {
                     name: 'Main Province',
-                    value: currentQuest.mainProvince,
+                    value: `${currentQuest.mainProvince}`,
                     inline: true,
                   }
                 )
@@ -1047,7 +1005,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -1065,7 +1023,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${
