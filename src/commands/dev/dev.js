@@ -763,19 +763,19 @@ module.exports = {
               .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
               .setDescription(string);
             const leftButton = new ButtonBuilder()
-              .setEmoji('1135038841426825297')
+              .setEmoji(config.other.emojis.left)
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('leftButtonConfigs');
             const editButton = new ButtonBuilder()
-              .setEmoji('📝')
+              .setEmoji(config.other.emojis.edit)
               .setStyle(ButtonStyle.Danger)
               .setCustomId('editButtonConfig');
             const rightButton = new ButtonBuilder()
-              .setEmoji('1135038844706762799')
+              .setEmoji(config.other.emojis.right)
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('rightButtonConfigs');
             const reloadButtonConfigs = new ButtonBuilder()
-              .setEmoji('🔄')
+              .setEmoji(config.other.emojis.reload)
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('reloadButtonConfigs');
             const row = new ActionRowBuilder().addComponents(leftButton, editButton, rightButton, reloadButtonConfigs);
@@ -1164,11 +1164,11 @@ module.exports = {
               .setTitle(`Fun Fact Configs - ${currentConfig.serverId}`)
               .setDescription(string);
             const editButton = new ButtonBuilder()
-              .setEmoji('📝')
+              .setEmoji(config.other.emojis.edit)
               .setStyle(ButtonStyle.Danger)
               .setCustomId('editButtonConfig');
             const reloadButtonConfigs = new ButtonBuilder()
-              .setEmoji('🔄️')
+              .setEmoji(config.other.emojis.reload)
               .setStyle(ButtonStyle.Secondary)
               .setCustomId('reloadButtonConfigs');
             const row = new ActionRowBuilder().addComponents(editButton, reloadButtonConfigs);
