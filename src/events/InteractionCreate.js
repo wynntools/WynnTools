@@ -1,11 +1,11 @@
 const { writeAt, toFixed, generateID, blacklistCheck, cleanMessage } = require('../functions/helper.js');
-const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
 const { eventMessage, errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const fs = require('fs');
 
 module.exports = {
-  name: 'InteractionCreate',
+  name: Events.InteractionCreate,
   async execute(interaction) {
     try {
       if (interaction.isChatInputCommand()) {
