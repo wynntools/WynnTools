@@ -25,14 +25,16 @@
   "api": { "pixelicAPIKey": "PIXELIC_API_KEY" },
   "other": {
     "colors": {
-      "red": { "hex": "#DE1A1A", "hsl": "0, 79, 49", "rgb": "222, 26, 26" },
+      "cherryBlossomPink": { "hex": "#EFADC0", "hsl": "343, 67, 81", "rgb": "239, 173, 192" },
+      "salmonPink": { "hex": "#ED8796", "hsl": "351, 74, 73", "rgb": "237, 135, 150" },
+      "staleBlue": { "hex": "#6665DD", "hsl": "241, 64, 63", "rgb": "102, 101, 221" },
       "pink": { "hex": "#D0A3BF", "hsl": "208, 163, 191", "rgb": "208, 163, 191" },
       "orange": { "hex": "#F9A03F", "hsl": "31, 94, 61", "rgb": "249, 160, 63" },
-      "blue": { "hex": "#6665DD", "hsl": "241, 64, 63", "rgb": "102, 101, 221" },
+      "blue": { "hex": "#7d8cc4", "hsl": "227, 38, 63", "rgb": "125, 140, 197" },
       "aqua": { "hex": "#AAFAC8", "hsl": "143, 89, 82", "rgb": "170, 250, 200" },
       "green": { "hex": "#00A176", "hsl": "164, 100, 32", "rgb": "0, 161, 118" },
       "peach": { "hex": "#FAB387", "hsl": "23, 92, 75", "rgb": "250, 179, 135" },
-      "cherryBlossomPink": { "hex": "#EFADC0", "hsl": "343, 67, 81", "rgb": "239, 173, 192" },
+      "red": { "hex": "#DE1A1A", "hsl": "0, 79, 49", "rgb": "222, 26, 26" },
       "gray": { "hex": "#343434", "hsl": "0, 0, 20", "rgb": "52, 52, 52" },
       "minecraft": {
         "black": { "hex": "#000000", "hsl": "0, 0, 0", "rgb": "0, 0, 0" },

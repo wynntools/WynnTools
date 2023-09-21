@@ -8,6 +8,7 @@ module.exports = {
   async execute(message) {
     try {
       if (message.author.bot) return;
+      if (config.other.devMode) return;
       if (message.channel.type == 'DM') return;
       if (!message.content.startsWith(`<@${message.client.user.id}>`)) return;
       eventMessage(
