@@ -158,6 +158,11 @@ module.exports = {
                 inline: true,
               },
               {
+                name: 'Wiki Url',
+                value: currentQuest.wikiUrl,
+                inline: true,
+              },
+              {
                 name: 'Combat Min Lvl',
                 value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
                 inline: true,
@@ -258,6 +263,11 @@ module.exports = {
                       inline: true,
                     },
                     {
+                      name: 'Wiki Url',
+                      value: currentQuest.wikiUrl,
+                      inline: true,
+                    },
+                    {
                       name: 'Combat Min Lvl',
                       value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
                       inline: true,
@@ -335,6 +345,11 @@ module.exports = {
                     {
                       name: 'Emeralds',
                       value: currentQuest.emeralds,
+                      inline: true,
+                    },
+                    {
+                      name: 'Wiki Url',
+                      value: currentQuest.wikiUrl,
                       inline: true,
                     },
                     {
@@ -418,6 +433,11 @@ module.exports = {
               {
                 name: 'Emeralds',
                 value: currentQuest.emeralds,
+                inline: true,
+              },
+              {
+                name: 'Wiki Url',
+                value: currentQuest.wikiUrl,
                 inline: true,
               },
               {
@@ -521,6 +541,11 @@ module.exports = {
                       inline: true,
                     },
                     {
+                      name: 'Wiki Url',
+                      value: currentQuest.wikiUrl,
+                      inline: true,
+                    },
+                    {
                       name: 'Combat Min Lvl',
                       value: currentQuest.combatMinLvl === null ? 'None' : currentQuest.combatMinLvl,
                       inline: true,
@@ -598,6 +623,11 @@ module.exports = {
                     {
                       name: 'Emeralds',
                       value: currentQuest.emeralds,
+                      inline: true,
+                    },
+                    {
+                      name: 'Wiki Url',
+                      value: currentQuest.wikiUrl,
                       inline: true,
                     },
                     {
