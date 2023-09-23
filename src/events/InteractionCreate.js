@@ -1,5 +1,5 @@
 const { writeAt, toFixed, generateID, blacklistCheck, cleanMessage } = require('../functions/helper.js');
-const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
+const { InteractionType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
 const { eventMessage, errorMessage } = require('../functions/logger.js');
 const config = require('../../config.json');
 const fs = require('fs');
@@ -194,8 +194,7 @@ module.exports = {
             }
           }
         }
-      }
-      if (interaction.isButton()) {
+      } else if (interaction.isButton()) {
         eventMessage(
           `${
             interaction.user.discriminator == '0'
@@ -264,6 +263,16 @@ module.exports = {
               await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
             }
           }
+        }
+      } else if (interaction.type === InteractionType.ApplicationCommandAutocomplete) {
+        try {
+          const command = client.commands.get(interaction.commandName);
+          if (!command) return;
+          await command.autoComplete(interaction);
+        } catch (error) {
+          var errorIdAutoComplete = generateID(config.other.errorIdLength);
+          errorMessage(`Error Id - ${errorIdAutoComplete}`);
+          errorMessage(error);
         }
       }
     } catch (error) {

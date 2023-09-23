@@ -47,6 +47,17 @@ module.exports = {
     )
     .addSubcommand((subcommand) =>
       subcommand
+        .setName('search')
+        .setDescription('Search for a quest')
+        .addStringOption((option) =>
+          option.setName('query').setDescription('The query to search for').setRequired(true).setAutocomplete(true)
+        )
+        .addStringOption((option) =>
+          option.setName('username').setDescription('The username to check').setRequired(false)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
         .setName('to')
         .setDescription('Shows the best quests to get to a certain level')
         .addStringOption((option) =>
@@ -70,6 +81,18 @@ module.exports = {
         .addBooleanOption((option) => option.setName('event').setDescription('Hide Event Quests').setRequired(false))
     ),
 
+  async autoComplete(interaction) {
+    const focusedOption = interaction.options.getFocused(true);
+    const input = focusedOption.value;
+    let choices = [];
+    if (interaction.options._subcommand === 'search' && focusedOption.name === 'query') {
+      choices = quests
+        .filter((quest) => quest.name.toLowerCase().startsWith(input.toLowerCase()))
+        .map((quest) => quest.name);
+    }
+    const displayedChoices = choices.slice(0, 25);
+    await interaction.respond(displayedChoices.map((choice) => ({ name: choice, value: choice })));
+  },
   async execute(interaction) {
     try {
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
@@ -541,6 +564,81 @@ module.exports = {
             errorMessage(error);
           }
         }
+      } else if (subcommand === 'search') {
+        var query = interaction.options.getString('query') || null;
+        if (query == null) {
+          throw new Error('NO_ERROR_ID_You need to provide a query');
+        }
+        const username = interaction.options.getString('username') || null;
+        const currentQuest = quests.find((quest) => quest.name.toLowerCase() === query.toLowerCase());
+        if (currentQuest == null) {
+          throw new Error('NO_ERROR_ID_That quest does not exist');
+        }
+
+        var levelReqs = [];
+        if (currentQuest.combatMinLvl !== null) {
+          levelReqs.push(`\` • \`   **Combat:** ${currentQuest.combatMinLvl}`);
+        }
+        if (currentQuest.miningMinLvl !== null) {
+          levelReqs.push(`\` • \`   **Mining:** ${currentQuest.miningMinLvl}`);
+        }
+        if (currentQuest.woodCuttingMinLvl !== null) {
+          levelReqs.push(`\` • \`   **Wood Cutting:** ${currentQuest.woodCuttingMinLvl}`);
+        }
+        if (currentQuest.farmingMinLvl !== null) {
+          levelReqs.push(`\` • \`   **Farming:** ${currentQuest.farmingMinLvl}`);
+        }
+        if (currentQuest.fishingMinLvl !== null) {
+          levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
+        }
+        var questEmbed = {
+          color: 0x00a176,
+          title: currentQuest.name,
+          fields: [
+            {
+              name: 'General',
+              value: `\` • \` **Name:** ${currentQuest.name}\n\` • \` **Xp:** ${addNotation(
+                'oneLetters',
+                currentQuest.xp
+              )}\n\` • \` **Emeralds:** ${addNotation('oneLetters', currentQuest.emeralds)}\n\` • \` **Length:** ${
+                currentQuest.length
+              }`,
+              inline: true,
+            },
+            {
+              name: 'Level Reqs',
+              value: levelReqs.join('\n'),
+              inline: true,
+            },
+            {
+              name: 'Other',
+              value: `\` • \` **Type:** ${currentQuest.type}\n\` • \` **Main Province:** ${currentQuest.mainProvince}\n\` • \` **Wiki Url:** [${currentQuest.name} Wiki Page](${currentQuest.wikiUrl})`,
+              inline: false,
+            },
+          ],
+          timestamp: new Date().toISOString(),
+          footer: {
+            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            icon_url: config.other.logo,
+          },
+        };
+
+        if (username) {
+          const uuid = await getUUID(username);
+          const stats = await getStats(uuid);
+          const currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
+          const completedQuests = currentProfileStats.quests.list;
+          if (completedQuests.includes(currentQuest.name)) {
+            currentQuest.completed = true;
+          } else {
+            currentQuest.completed = false;
+          }
+          questEmbed.description = `\` • \` **Completed:** ${
+            currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no
+          }`;
+        }
+
+        await interaction.reply({ embeds: [questEmbed] });
       } else if (subcommand === 'to') {
         const username = interaction.options.getString('username') || null;
         if (username == null) {

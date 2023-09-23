@@ -224,7 +224,7 @@ function addNotation(type, value) {
             returnVal = value / (checkNum / 100);
             returnVal = Math.floor(returnVal);
             returnVal = (returnVal / Math.pow(10, o)) * 10;
-            returnVal = +returnVal.toFixed(o - 1) + notValue;
+            returnVal = +returnVal.toFixed(o) + notValue;
           }
           checkNum *= 10;
         }
