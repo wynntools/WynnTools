@@ -212,7 +212,7 @@ function addNotation(type, value) {
       notList = [' Thousand', ' Million', ' Billion', ' Trillion', ' Quadrillion', ' Quintillion'];
     }
     if (type === 'oneLetters') {
-      notList = ['K', 'M', 'B', 'T'];
+      notList = ['k', 'm', 'b', 't'];
     }
     let checkNum = 1000;
     if (type !== 'none' && type !== 'commas') {
