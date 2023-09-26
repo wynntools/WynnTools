@@ -52,7 +52,7 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(invite, source);
         var embed = new EmbedBuilder()
           .setTitle(`WynnTools Stats`)
-          .setColor(config.discord.embeds.green)
+          .setColor(config.other.colors.green.hex)
           .setTimestamp()
           .addFields(
             {

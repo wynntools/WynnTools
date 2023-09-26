@@ -15,17 +15,13 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      if (!interaction.user.id == config.discord.devId) {
-        await interaction.reply({ content: 'No Perms?', ephemeral: true });
-        return;
-      }
       var user = interaction.options.getUser('user');
       if (user == null) user = interaction.user;
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var blacklist = JSON.parse(fs.readFileSync('data/blacklist.json'));
       if (userData[user.id] == undefined) {
         const invalid = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setDescription('User has no data')
           .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
         await interaction.reply({ embeds: [invalid], ephemeral: true });
@@ -48,7 +44,7 @@ module.exports = {
         if (blacklist[user.id]) {
           embed = new EmbedBuilder()
             .setTitle(`Information for ${user.username} | ${user.id}`)
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTimestamp()
             .addFields({
               name: 'General',
@@ -74,7 +70,7 @@ module.exports = {
         } else {
           embed = new EmbedBuilder()
             .setTitle(`Information for ${user.username} | ${user.id}`)
-            .setColor(config.discord.embeds.green)
+            .setColor(config.other.colors.green.hex)
             .setTimestamp()
             .addFields({
               name: 'General',
@@ -112,7 +108,7 @@ module.exports = {
             });
             if (confirmation.customId == 'deleteData') {
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.discord.embeds.red)
+                .setColor(config.other.colors.red.hex)
                 .setTimestamp()
                 .setDescription('Are you sure you want to delete your data? **THIS CANNOT BE UNDONE!**');
               await confirmation.update({ embeds: [updatedEmbed], components: [confirmRow] });
@@ -126,13 +122,13 @@ module.exports = {
                   delete userData[user.id];
                   fs.writeFileSync('data/userData.json', JSON.stringify(userData));
                   const updatedEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.red)
+                    .setColor(config.other.colors.red.hex)
                     .setTimestamp()
                     .setDescription('Data deleted');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
                 } else if (confirmation.customId == 'cancel') {
                   const updatedEmbed = new EmbedBuilder()
-                    .setColor(config.discord.embeds.red)
+                    .setColor(config.other.colors.red.hex)
                     .setTimestamp()
                     .setDescription('Cancelled');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -156,7 +152,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -174,7 +170,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.discord.embeds.red)
+          .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

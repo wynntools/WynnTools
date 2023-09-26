@@ -8,7 +8,15 @@ const path = require('path');
 const fs = require('fs');
 
 async function start() {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.DirectMessages,
+    ],
+  });
   client.commands = new Collection();
   const foldersPath = path.join(__dirname, 'src/commands');
   const commandFolders = fs.readdirSync(foldersPath);
@@ -78,7 +86,7 @@ async function start() {
         scriptMessage(`Skipped ${file} event`);
         continue;
       }
-      client.on(Events[event.name], (...args) => event.execute(...args));
+      client.on(event.name, (...args) => event.execute(...args));
       await delay(300);
       scriptMessage(`Started ${file} event`);
     } catch (error) {

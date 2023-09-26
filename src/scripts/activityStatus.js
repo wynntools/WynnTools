@@ -35,7 +35,15 @@ module.exports = {
     '*/5 * * * *',
     async function () {
       try {
-        if (config.other.devMode) return scriptMessage('Dev mode enabled - not changing activity status');
+        if (config.other.devMode) {
+        const { exec } = require('child_process');
+        exec('git rev-parse --abbrev-ref HEAD', (err, stdout, stderr) => {
+          client.user.setPresence({
+            activities: [{ name: `for errors on ${stdout} branch`, type: ActivityType.Watching }],
+          });
+        });
+        return scriptMessage('Dev mode enabled - Setting activity status to branch');
+      }
         scriptMessage(`Changing activity status - ${activities[num].id}`);
         let userData;
         let totalCommandsRun;
@@ -49,7 +57,7 @@ module.exports = {
           client.user.setPresence({
             activities: [
               {
-                name: `to ${totalCommandsRun} Total Commands Run`,
+                name: `${totalCommandsRun} Total Commands Run`,
                 type: ActivityType[activities[num].type],
               },
             ],

@@ -1,12 +1,14 @@
-const { generateMemberJoin } = require('../functions/generateImage.js');
 const { eventMessage, errorMessage } = require('../functions/logger.js');
+const { generateMemberJoin } = require('../functions/generateImage.js');
 const { generateID } = require('../functions/helper.js');
 const config = require('../../config.json');
+const { Events } = require('discord.js');
 
 module.exports = {
-  name: 'GuildMemberAdd',
+  name: Events.GuildMemberAdd,
   async execute(member) {
     try {
+      if (config.other.devMode) return;
       if (member.guild.id != config.discord.devServer) return;
       eventMessage(
         `GuildMemberAdd Event triggered for ${member.user.username}${
