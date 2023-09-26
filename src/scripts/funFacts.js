@@ -40,7 +40,7 @@ module.exports = {
         try {
           const validFacts = funFactList.facts.filter((fact) => !blacklist.has(fact.id));
           if (validFacts.length === 0) {
-              return null;
+            return null;
           }
           const randomFact = validFacts[Math.floor(Math.random() * validFacts.length)];
           return randomFact;
