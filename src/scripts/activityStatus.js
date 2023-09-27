@@ -54,7 +54,7 @@ cron.schedule(
         client.user.setPresence({
           activities: [
             {
-              name: `to ${totalCommandsRun} Total Commands Run`,
+              name: `${totalCommandsRun} Total Commands Run`,
               type: ActivityType[activities[num].type],
             },
           ],
