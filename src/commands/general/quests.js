@@ -95,9 +95,6 @@ module.exports = {
   },
   async execute(interaction) {
     try {
-      if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
-        throw new Error('No Perms');
-      }
       const subcommand = await interaction.options.getSubcommand();
       if (subcommand === 'list') {
         let levelReqs = [];
