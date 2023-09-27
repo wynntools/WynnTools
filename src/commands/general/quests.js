@@ -39,11 +39,11 @@ module.exports = {
         .addBooleanOption((option) =>
           option.setName('dungeon').setDescription('Hide Dungeon Quests').setRequired(false)
         )
+        .addBooleanOption((option) => option.setName('event').setDescription('Hide Event Quests').setRequired(false))
+        .addBooleanOption((option) => option.setName('normal').setDescription('Hide Normal Quests').setRequired(false))
         .addBooleanOption((option) =>
           option.setName('special').setDescription('Hide Special Quests').setRequired(false)
         )
-        .addBooleanOption((option) => option.setName('normal').setDescription('Hide Normal Quests').setRequired(false))
-        .addBooleanOption((option) => option.setName('event').setDescription('Hide Event Quests').setRequired(false))
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -74,11 +74,11 @@ module.exports = {
         .addBooleanOption((option) =>
           option.setName('dungeon').setDescription('Hide Dungeon Quests').setRequired(false)
         )
+        .addBooleanOption((option) => option.setName('event').setDescription('Hide Event Quests').setRequired(false))
+        .addBooleanOption((option) => option.setName('normal').setDescription('Hide Normal Quests').setRequired(false))
         .addBooleanOption((option) =>
           option.setName('special').setDescription('Hide Special Quests').setRequired(false)
         )
-        .addBooleanOption((option) => option.setName('normal').setDescription('Hide Normal Quests').setRequired(false))
-        .addBooleanOption((option) => option.setName('event').setDescription('Hide Event Quests').setRequired(false))
     ),
 
   async autoComplete(interaction) {
@@ -126,16 +126,6 @@ module.exports = {
         const username = interaction.options.getString('username') || null;
         let filteredQuests = sortedQuests;
         var filters = [];
-        if (
-          (dungeonFilter && specialFilter) ||
-          (dungeonFilter && normalFilter) ||
-          (dungeonFilter && eventFilter) ||
-          (specialFilter && normalFilter) ||
-          (specialFilter && eventFilter) ||
-          (normalFilter && eventFilter)
-        ) {
-          throw new Error('NO_ERROR_ID_Please only select one filter at a time');
-        }
         if (dungeonFilter) {
           filters.push('Dungeon');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Dungeon');
@@ -152,6 +142,7 @@ module.exports = {
           filters.push('Event');
           filteredQuests = sortedQuests.filter((quest) => quest.type !== 'Event');
         }
+        if (filters.length > 3) throw new Error('NO_ERROR_ID_Too many filters. Please only select 3 or less filters');
         let num = 0;
         let currentQuest = filteredQuests[num];
         let filtersString = '';
