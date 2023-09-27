@@ -36,14 +36,14 @@ module.exports = {
     async function () {
       try {
         if (config.other.devMode) {
-        const { exec } = require('child_process');
-        exec('git rev-parse --abbrev-ref HEAD', (err, stdout, stderr) => {
-          client.user.setPresence({
-            activities: [{ name: `for errors on ${stdout} branch`, type: ActivityType.Watching }],
+          const { exec } = require('child_process');
+          exec('git rev-parse --abbrev-ref HEAD', (err, stdout, stderr) => {
+            client.user.setPresence({
+              activities: [{ name: `for errors on ${stdout} branch`, type: ActivityType.Watching }],
+            });
           });
-        });
-        return scriptMessage('Dev mode enabled - Setting activity status to branch');
-      }
+          return scriptMessage('Dev mode enabled - Setting activity status to branch');
+        }
         scriptMessage(`Changing activity status - ${activities[num].id}`);
         let userData;
         let totalCommandsRun;

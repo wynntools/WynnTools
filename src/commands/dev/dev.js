@@ -8,16 +8,11 @@ const {
 const {
   SlashCommandBuilder,
   PermissionFlagsBits,
-  SelectMenuBuilder,
   ActionRowBuilder,
-  TextInputBuilder,
-  TextInputStyle,
   ButtonBuilder,
-  ModalBuilder,
   EmbedBuilder,
   ButtonStyle,
   ChannelType,
-  Events,
 } = require('discord.js');
 const {
   countStatsInDirectory,
@@ -51,7 +46,7 @@ function checkFunFact(fact, startTime) {
   } catch (error) {
     var errorIdCheckFact = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorIdCheckFact}`);
-    console.log(error);
+    errorMessage(error);
     return false;
   }
 }
@@ -67,7 +62,7 @@ function getRandomFact(funFactList, blacklist) {
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return null;
   }
 }
@@ -78,92 +73,92 @@ module.exports = {
     .setDescription('Developer commands (Dev Only)')
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    // .addSubcommandGroup((group) =>
-    //   group
-    //     .setName('blacklist')
-    //     .setDescription('Blacklist a user')
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('add')
-    //         .setDescription('Add a user to blacklist')
-    //         .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
-    //         .addStringOption((option) => option.setName('target-id').setDescription('The user'))
-    //         .addStringOption((option) => option.setName('reason').setDescription('The reason for blacklisting'))
-    //     )
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('remove')
-    //         .setDescription('Remove a user to blacklist')
-    //         .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
-    //         .addStringOption((option) => option.setName('target-id').setDescription('The user'))
-    //     )
-    // )
-    // .addSubcommand((subcommand) =>
-    //   subcommand
-    //     .setName('clear-cache')
-    //     .setDescription('Clear Cache')
-    //     .addStringOption((option) =>
-    //       option
-    //         .setName('cache')
-    //         .setDescription('The Cache you want to clear')
-    //         .setRequired(true)
-    //         .addChoices(
-    //           { name: 'Mojang', value: 'mojang' },
-    //           { name: 'WynnCraft', value: 'wynncraft' },
-    //           { name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
-    //           { name: 'Discord', value: 'discord' },
-    //           { name: 'Pixelic', value: 'pixelic' },
-    //           { name: 'Generate Stats', value: 'clearGenerateStatsCache' },
-    //           { name: 'Generate Profile Image', value: 'clearGenerateProfileImageCache' },
-    //           { name: 'Generate Guild', value: 'clearGenerateGuildCache' },
-    //           { name: 'Generate Server', value: 'clearGenerateServerCache' },
-    //           { name: 'Generate Server Graph', value: 'clearGenerateServerGraphCache' },
-    //           { name: 'All', value: 'all' }
-    //         )
-    //     )
-    // )
-    // .addSubcommandGroup((group) =>
-    //   group
-    //     .setName('embed')
-    //     .setDescription('Handles everything with embeds')
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('source')
-    //         .setDescription('Returns the starb.in link of a given embed')
-    //         .addStringOption((option) =>
-    //           option
-    //             .setName('message-link')
-    //             .setDescription('The message link of which you would get the embed')
-    //             .setRequired(true)
-    //         )
-    //     )
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('send')
-    //         .setDescription('Send an embed')
-    //         .addStringOption((option) =>
-    //           option.setName('embed').setDescription('The starb.in link for the embed').setRequired(true)
-    //         )
-    //         .addChannelOption((option) =>
-    //           option
-    //             .setName('channel')
-    //             .setDescription('the channel to send your embed in, if empty it will take the current channel')
-    //             .addChannelTypes(ChannelType.GuildText)
-    //         )
-    //     )
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('edit')
-    //         .setDescription('Edit an embed to a new embed')
-    //         .addStringOption((option) =>
-    //           option
-    //             .setName('message-link')
-    //             .setDescription("The link of the message you'd like to edit")
-    //             .setRequired(true)
-    //         )
-    //         .addStringOption((option) => option.setName('embed').setDescription('The new embed').setRequired(true))
-    //     )
-    // )
+    .addSubcommandGroup((group) =>
+      group
+        .setName('blacklist')
+        .setDescription('Blacklist a user')
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('add')
+            .setDescription('Add a user to blacklist')
+            .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
+            .addStringOption((option) => option.setName('target-id').setDescription('The user'))
+            .addStringOption((option) => option.setName('reason').setDescription('The reason for blacklisting'))
+        )
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('remove')
+            .setDescription('Remove a user to blacklist')
+            .addUserOption((option) => option.setName('target-mention').setDescription('The user'))
+            .addStringOption((option) => option.setName('target-id').setDescription('The user'))
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('clear-cache')
+        .setDescription('Clear Cache')
+        .addStringOption((option) =>
+          option
+            .setName('cache')
+            .setDescription('The Cache you want to clear')
+            .setRequired(true)
+            .addChoices(
+              { name: 'Mojang', value: 'mojang' },
+              { name: 'WynnCraft', value: 'wynncraft' },
+              { name: 'Wynncraft Guilds', value: 'wynncraftGuild' },
+              { name: 'Discord', value: 'discord' },
+              { name: 'Pixelic', value: 'pixelic' },
+              { name: 'Generate Stats', value: 'clearGenerateStatsCache' },
+              { name: 'Generate Profile Image', value: 'clearGenerateProfileImageCache' },
+              { name: 'Generate Guild', value: 'clearGenerateGuildCache' },
+              { name: 'Generate Server', value: 'clearGenerateServerCache' },
+              { name: 'Generate Server Graph', value: 'clearGenerateServerGraphCache' },
+              { name: 'All', value: 'all' }
+            )
+        )
+    )
+    .addSubcommandGroup((group) =>
+      group
+        .setName('embed')
+        .setDescription('Handles everything with embeds')
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('source')
+            .setDescription('Returns the starb.in link of a given embed')
+            .addStringOption((option) =>
+              option
+                .setName('message-link')
+                .setDescription('The message link of which you would get the embed')
+                .setRequired(true)
+            )
+        )
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('send')
+            .setDescription('Send an embed')
+            .addStringOption((option) =>
+              option.setName('embed').setDescription('The starb.in link for the embed').setRequired(true)
+            )
+            .addChannelOption((option) =>
+              option
+                .setName('channel')
+                .setDescription('the channel to send your embed in, if empty it will take the current channel')
+                .addChannelTypes(ChannelType.GuildText)
+            )
+        )
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('edit')
+            .setDescription('Edit an embed to a new embed')
+            .addStringOption((option) =>
+              option
+                .setName('message-link')
+                .setDescription("The link of the message you'd like to edit")
+                .setRequired(true)
+            )
+            .addStringOption((option) => option.setName('embed').setDescription('The new embed').setRequired(true))
+        )
+    )
     .addSubcommandGroup((group) =>
       group
         .setName('fun-facts')
@@ -239,31 +234,31 @@ module.exports = {
             )
         )
     )
-    // .addSubcommandGroup((group) =>
-    //   group
-    //     .setName('register')
-    //     .setDescription('Register a someone to the pixelic api')
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('player')
-    //         .setDescription('Register a player to the pixelic api')
-    //         .addStringOption((option) =>
-    //           option
-    //             .setName('username')
-    //             .setDescription('The Username of the person you want to register')
-    //             .setRequired(true)
-    //         )
-    //     )
-    //     .addSubcommand((subcommand) =>
-    //       subcommand
-    //         .setName('guild')
-    //         .setDescription('Register a guild to the pixelic api')
-    //         .addStringOption((option) =>
-    //           option.setName('guild').setDescription('The guild you want to register').setRequired(true)
-    //         )
-    //     )
-    // )
-    // .addSubcommand((subcommand) => subcommand.setName('update-stats').setDescription('Update the stats embed'))
+    .addSubcommandGroup((group) =>
+      group
+        .setName('register')
+        .setDescription('Register a someone to the pixelic api')
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('player')
+            .setDescription('Register a player to the pixelic api')
+            .addStringOption((option) =>
+              option
+                .setName('username')
+                .setDescription('The Username of the person you want to register')
+                .setRequired(true)
+            )
+        )
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName('guild')
+            .setDescription('Register a guild to the pixelic api')
+            .addStringOption((option) =>
+              option.setName('guild').setDescription('The guild you want to register').setRequired(true)
+            )
+        )
+    )
+    .addSubcommand((subcommand) => subcommand.setName('update-stats').setDescription('Update the stats embed'))
     .addSubcommandGroup((group) =>
       group
         .setName('script-management')
@@ -558,7 +553,7 @@ module.exports = {
               } catch (error) {
                 var errorIdSendFacts = generateID(config.other.errorIdLength);
                 errorMessage(`Error ID: ${errorIdSendFacts}`);
-                console.log(error);
+                errorMessage(error);
               }
               const updatedEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
@@ -583,7 +578,7 @@ module.exports = {
           } catch (error) {
             var errorIdSendingFacts = generateID(config.other.errorIdLength);
             errorMessage(`Error ID: ${errorIdSendingFacts}`);
-            console.log(error);
+            errorMessage(error);
             const cancelEmbed = new EmbedBuilder()
               .setColor(config.other.colors.red.hex)
               .setDescription('Cancelled sending Fun Facts')
@@ -1048,7 +1043,7 @@ module.exports = {
                     }
                   } catch (error) {
                     if (String(error).includes('NO_ERROR_ID_')) {
-                      console.log(error);
+                      errorMessage(error);
                       const errorEmbed = new EmbedBuilder()
                         .setColor(config.other.colors.red.hex)
                         .setTitle('An error occurred')
@@ -1066,7 +1061,7 @@ module.exports = {
                     } else {
                       var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
                       errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                      console.log(error);
+                      errorMessage(error);
                       const errorEmbed = new EmbedBuilder()
                         .setColor(config.other.colors.red.hex)
                         .setTitle('An error occurred')
@@ -1156,7 +1151,7 @@ module.exports = {
             } catch (error) {
               var errorIdChangingConfigs = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdChangingConfigs}`);
-              console.log(error);
+              errorMessage(error);
             }
           } else {
             currentConfig = configs[serverId];
@@ -1406,13 +1401,13 @@ module.exports = {
                 } catch (error) {
                   var errorIdEditingConfigData = generateID(config.other.errorIdLength);
                   errorMessage(`Error ID: ${errorIdEditingConfigData}`);
-                  console.log(error);
+                  errorMessage(error);
                 }
               }
             } catch (error) {
               var errorIdEditConfig = generateID(config.other.errorIdLength);
               errorMessage(`Error ID: ${errorIdEditConfig}`);
-              console.log(error);
+              errorMessage(error);
               const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
               const channel = guild.channels.cache.get(currentConfig.channelId);
               let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
@@ -1490,418 +1485,306 @@ module.exports = {
           return await interaction.editReply({ embeds: [embed] });
         }
       } else if (subCommandGroup === 'script-management') {
-        if (subCommand === 'status') {
-          var statusName = interaction.options.getString('name') || 'all';
-          if (statusName === 'all') {
-            var scripts = await getScripts();
-            let num = 0;
-            let currentScript = scripts[num];
-            let currentConfig = getScriptConfig(currentScript);
-            var scriptStatusEmbed = new EmbedBuilder()
-              .setColor(config.discord.embeds.green)
-              .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
-              .addFields(
-                {
-                  name: 'Description',
-                  value: currentConfig.description,
-                  inline: false,
-                },
-                {
-                  name: 'Type',
-                  value: shortenMessage(currentConfig.type, 25),
-                  inline: true,
-                },
-                {
-                  name: 'Running',
-                  value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
-                  inline: true,
-                },
-                {
-                  name: 'Enabled',
-                  value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
-                  inline: true,
-                }
-              )
-              .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
-                iconURL: 'https://i.imgur.com/uUuZx2E.png',
-              });
-
-            const leftButton = new ButtonBuilder()
-              .setEmoji('1135038841426825297')
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId('leftButtonConfigs');
-            const editButton = new ButtonBuilder()
-              .setEmoji('📝')
-              .setStyle(ButtonStyle.Danger)
-              .setCustomId('editButtonConfig');
-            const rightButton = new ButtonBuilder()
-              .setEmoji('1135038844706762799')
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId('rightButtonConfigs');
-            const reloadButtonConfigs = new ButtonBuilder()
-              .setEmoji('🔄')
-              .setStyle(ButtonStyle.Secondary)
-              .setCustomId('reloadButtonConfigs');
-            const row = new ActionRowBuilder().addComponents(leftButton, editButton, rightButton, reloadButtonConfigs);
-
-            var scriptMessage = await interaction.reply({ embeds: [scriptStatusEmbed], components: [row] });
-            const collectorFilter = (i) => i.user.id === interaction.user.id;
-
-            while (true) {
-              const scriptAllCollector = await scriptMessage.awaitMessageComponent({
-                time: config.discord.buttonTimeout * 1000,
-                filter: collectorFilter,
-              });
-              if (scriptAllCollector.customId === 'leftButtonConfigs') {
-                num = num - 1;
-                if (num <= 0) num = scripts.length - 1;
-                currentScript = scripts[num];
-                currentConfig = getScriptConfig(currentScript);
-                var scriptStatusLeftButtonEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
-                  .addFields(
-                    {
-                      name: 'Description',
-                      value: currentConfig.description,
-                      inline: false,
-                    },
-                    {
-                      name: 'Type',
-                      value: shortenMessage(currentConfig.type, 25),
-                      inline: true,
-                    },
-                    {
-                      name: 'Running',
-                      value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
-                      inline: true,
-                    },
-                    {
-                      name: 'Enabled',
-                      value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
-                      inline: true,
-                    }
-                  )
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
-                await scriptAllCollector.update({ embeds: [scriptStatusLeftButtonEmbed], components: [row] });
-              } else if (scriptAllCollector.customId === 'editButtonConfig') {
-                currentConfig = configs[configsObject[num]];
-                const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
-                const channel = guild.channels.cache.get(currentConfig.channelId);
-                let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-                if (currentConfig.roleId) {
-                  const role = guild.roles.cache.get(currentConfig.roleId);
-                  if (role.id === guild.id) {
-                    string += `\n**Role:** @everyone | @everyone (${role.id})`;
-                  } else {
-                    string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
+        try {
+          if (subCommand === 'status') {
+            var statusName = interaction.options.getString('name') || 'all';
+            if (statusName === 'all') {
+              var scripts = await getScripts();
+              let num = 0;
+              let currentScript = scripts[num];
+              let currentConfig = getScriptConfig(currentScript);
+              const scriptStatusEmbed = new EmbedBuilder()
+                .setColor(config.other.colors.green.hex)
+                .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                .addFields(
+                  {
+                    name: 'Description',
+                    value: currentConfig.description,
+                    inline: false,
+                  },
+                  {
+                    name: 'Type',
+                    value: shortenMessage(currentConfig.type, 25),
+                    inline: true,
+                  },
+                  {
+                    name: 'Running',
+                    value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                    inline: true,
+                  },
+                  {
+                    name: 'Enabled',
+                    value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                    inline: true,
                   }
-                } else {
-                  string += `\n**Role:** None`;
-                }
-                string += `\n**Ghost Ping:** ${
-                  currentConfig.ghostPing ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                string += `\n**Delete Messages:** ${
-                  currentConfig.deleteMsgs ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                string += `\n**Disabled:** ${
-                  currentConfig.disabled ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                const deleteConfigButton = new ButtonBuilder()
-                  .setCustomId('deleteConfigButton')
-                  .setLabel('Delete Config')
-                  .setStyle(ButtonStyle.Danger);
-                const ghostPingButton = new ButtonBuilder()
-                  .setCustomId('ghostPingButton')
-                  .setLabel(currentConfig.ghostPing ? 'Disable Ghost Ping' : 'Enable Ghost Ping')
-                  .setStyle(currentConfig.disabled ? ButtonStyle.Danger : ButtonStyle.Success);
-                const deleteMessagesButton = new ButtonBuilder()
-                  .setCustomId('deleteMessagesButton')
-                  .setLabel(currentConfig.deleteMsgs ? 'Disable Delete Messages' : 'Enable Delete Messages')
-                  .setStyle(currentConfig.disabled ? ButtonStyle.Danger : ButtonStyle.Success);
-                const disableEnableButton = new ButtonBuilder()
-                  .setCustomId('disableEnableButton')
-                  .setLabel(currentConfig.disabled ? 'Enable' : 'Disable')
-                  .setStyle(currentConfig.disabled ? ButtonStyle.Success : ButtonStyle.Danger);
-                const saveConfigButton = new ButtonBuilder()
-                  .setCustomId('saveConfigButton')
-                  .setLabel('Save Config')
-                  .setStyle(ButtonStyle.Success);
-                const editRow = new ActionRowBuilder().addComponents(
-                  deleteConfigButton,
-                  ghostPingButton,
-                  deleteMessagesButton,
-                  disableEnableButton,
-                  saveConfigButton
-                );
-                const editEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setTitle(`Edit Mode Enabled`)
-                  .setDescription(string);
-                var editMessage = await interaction.followUp({
-                  components: [editRow],
-                  embeds: [editEmbed],
-                  ephemeral: true,
+                )
+                .setFooter({
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
                 });
-                const collectorFilter = (i) => i.user.id === interaction.user.id;
-                try {
+
+              const leftButton = new ButtonBuilder()
+                .setEmoji('1135038841426825297')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('leftButtonConfigs');
+              const editButton = new ButtonBuilder()
+                .setEmoji('📝')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('editButtonConfig');
+              const rightButton = new ButtonBuilder()
+                .setEmoji('1135038844706762799')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('rightButtonConfigs');
+              const reloadButtonConfigs = new ButtonBuilder()
+                .setEmoji('🔄')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('reloadButtonConfigs');
+              const row = new ActionRowBuilder().addComponents(
+                leftButton,
+                editButton,
+                rightButton,
+                reloadButtonConfigs
+              );
+
+              var scriptMessage = await interaction.reply({ embeds: [scriptStatusEmbed], components: [row] });
+              const collectorFilter = (i) => i.user.id === interaction.user.id;
+
+              while (true) {
+                const scriptAllCollector = await scriptMessage.awaitMessageComponent({
+                  time: config.discord.buttonTimeout * 1000,
+                  filter: collectorFilter,
+                });
+                if (scriptAllCollector.customId === 'leftButtonConfigs') {
+                  num = num - 1;
+                  if (num <= 0) num = scripts.length - 1;
+                  currentScript = scripts[num];
+                  currentConfig = getScriptConfig(currentScript);
+                  var scriptStatusLeftButtonEmbed = new EmbedBuilder()
+                    .setColor(config.other.colors.green.hex)
+                    .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                    .addFields(
+                      {
+                        name: 'Description',
+                        value: currentConfig.description,
+                        inline: false,
+                      },
+                      {
+                        name: 'Type',
+                        value: shortenMessage(currentConfig.type, 25),
+                        inline: true,
+                      },
+                      {
+                        name: 'Running',
+                        value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Enabled',
+                        value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      }
+                    )
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+                  await scriptAllCollector.update({ embeds: [scriptStatusLeftButtonEmbed], components: [row] });
+                } else if (scriptAllCollector.customId === 'editButtonConfig') {
+                  var editButtonStopScript = new ButtonBuilder()
+                    .setLabel('Stop Script')
+                    .setStyle(ButtonStyle.Danger)
+                    .setCustomId('editButtonStopScript');
+                  var editButtonStartScript = new ButtonBuilder()
+                    .setLabel('Start Script')
+                    .setStyle(ButtonStyle.Success)
+                    .setCustomId('editButtonStartScript');
+                  var editButtonDisableScript = new ButtonBuilder()
+                    .setLabel('Disable Script')
+                    .setStyle(ButtonStyle.Danger)
+                    .setCustomId('editButtonDisableScript');
+                  var editButtonEnableScript = new ButtonBuilder()
+                    .setLabel('Enable Script')
+                    .setStyle(ButtonStyle.Success)
+                    .setCustomId('editButtonEnableScript');
+                  var editButtonGoBack = new ButtonBuilder()
+                    .setLabel('Go Back')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId('editButtonGoBack');
+
+                  const editScriptRow = new ActionRowBuilder().addComponents(
+                    currentConfig.running ? editButtonStopScript : editButtonStartScript,
+                    currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                    editButtonGoBack
+                  );
+                  await scriptAllCollector.update({ components: [editScriptRow] });
+
                   while (true) {
-                    var editMessageConfirmation = await editMessage.awaitMessageComponent({
+                    const collectorFilter = (i) => i.user.id === interaction.user.id;
+                    const scriptEditCollector = await scriptMessage.awaitMessageComponent({
                       time: config.discord.buttonTimeout * 1000,
                       filter: collectorFilter,
                     });
-                    if (editMessageConfirmation.customId === 'deleteConfigButton') {
-                      delete configs[configsObject[num]];
-                      fs.writeFileSync('data/funFacts/config.json', JSON.stringify(configs));
-                      var configDeletedEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.red)
-                        .setTitle('Config Deleted')
-                        .setDescription(`The config for ${guild.name} (${guild.id}) has been deleted`)
-                        .setTimestamp()
-                        .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
-                          iconURL: config.other.logo,
-                        });
-                      await editMessage.update({ embeds: [configDeletedEmbed], components: [] });
-                    } else if (editMessageConfirmation.customId === 'ghostPingButton') {
-                      currentConfig.ghostPing = !currentConfig.ghostPing;
-                      let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-                      if (currentConfig.roleId) {
-                        if (role.id === guild.id) {
-                          string += `\n**Role:** @everyone | @everyone (${role.id})`;
-                        } else {
-                          string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
-                        }
-                      } else {
-                        string += `\n**Role:** None`;
-                      }
-                      string += `\n**Ghost Ping:** ${
-                        currentConfig.ghostPing ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Delete Messages:** ${
-                        currentConfig.deleteMsgs ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Disabled:** ${
-                        currentConfig.disabled ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      var ghostPingUpdateEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
-                        .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
-                        .setDescription(string)
-                        .setTimestamp()
-                        .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
-                          iconURL: config.other.logo,
-                        });
-                      await editMessageConfirmation.update({ embeds: [ghostPingUpdateEmbed], components: [editRow] });
-                    } else if (editMessageConfirmation.customId === 'deleteMessagesButton') {
-                      currentConfig.deleteMsgs = !currentConfig.deleteMsgs;
-                      let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-                      if (currentConfig.roleId) {
-                        if (role.id === guild.id) {
-                          string += `\n**Role:** @everyone | @everyone (${role.id})`;
-                        } else {
-                          string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
-                        }
-                      } else {
-                        string += `\n**Role:** None`;
-                      }
-                      string += `\n**Ghost Ping:** ${
-                        currentConfig.ghostPing ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Delete Messages:** ${
-                        currentConfig.deleteMsgs ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Disabled:** ${
-                        currentConfig.disabled ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      var updatedDeleteMessageEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
-                        .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
-                        .setDescription(string)
-                        .setTimestamp()
-                        .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
-                          iconURL: config.other.logo,
-                        });
-                      await editMessageConfirmation.update({
-                        embeds: [updatedDeleteMessageEmbed],
-                        components: [editRow],
-                      });
-                    } else if (editMessageConfirmation.customId === 'disableEnableButton') {
-                      currentConfig.disabled = !currentConfig.disabled;
-                      let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-                      if (currentConfig.roleId) {
-                        if (role.id === guild.id) {
-                          string += `\n**Role:** @everyone | @everyone (${role.id})`;
-                        } else {
-                          string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
-                        }
-                      } else {
-                        string += `\n**Role:** None`;
-                      }
-                      string += `\n**Ghost Ping:** ${
-                        currentConfig.ghostPing ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Delete Messages:** ${
-                        currentConfig.deleteMsgs ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      string += `\n**Disabled:** ${
-                        currentConfig.disabled ? config.other.emojis.yes : config.other.emojis.no
-                      }`;
-                      var disableEnableUpdateEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
-                        .setTitle('Edit Mode Enabled - PLEASE SAVE THE CONFIG')
-                        .setDescription(string)
-                        .setTimestamp()
-                        .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
-                          iconURL: config.other.logo,
-                        });
-                      await editMessageConfirmation.update({
-                        embeds: [disableEnableUpdateEmbed],
-                        components: [editRow],
-                      });
-                    } else if (editMessageConfirmation === 'saveConfigButton') {
-                      await writeAt('data/funFacts/config.json', currentConfig.serverId, {
-                        serverId: currentConfig.serverId,
-                        channelId: currentConfig.channelId,
-                        roleId: currentConfig.roleId,
-                        ghostPing: currentConfig.ghostPing,
-                        deleteMsgs: currentConfig.deleteMsgs,
-                        disabled: currentConfig.disabled,
-                        setup: { by: currentConfig.setup.by, at: currentConfig.setup.at },
-                      });
-                      const savedConfigEmbed = new EmbedBuilder()
-                        .setColor(config.discord.embeds.green)
-                        .setTitle(`Config has been saved for ${guild.name} (${guild.id})`)
-                        .setDescription(
-                          'Please click the refresh button to reload the configs that are displayed above'
+                    if (scriptEditCollector.customId === 'editButtonStopScript') {
+                      await stopScript(currentConfig.name);
+                      const scriptStatusEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: currentConfig.description,
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: shortenMessage(currentConfig.type, 25),
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          }
                         )
-                        .setTimestamp()
                         .setFooter({
                           text: `by @kathund | ${config.discord.supportInvite} for support`,
-                          iconURL: config.other.logo,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
                         });
-                      await editMessageConfirmation.update({ embed: [savedConfigEmbed] });
+
+                      const editScriptRow = new ActionRowBuilder().addComponents(
+                        currentConfig.running ? editButtonStopScript : editButtonStartScript,
+                        currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                        editButtonGoBack
+                      );
+                      await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
+                    } else if (scriptEditCollector.customId === 'editButtonStartScript') {
+                      await startScript(currentConfig.name);
+                      const scriptStatusEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: currentConfig.description,
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: shortenMessage(currentConfig.type, 25),
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          }
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        });
+
+                      const editScriptRow = new ActionRowBuilder().addComponents(
+                        currentConfig.running ? editButtonStopScript : editButtonStartScript,
+                        currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                        editButtonGoBack
+                      );
+                      await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
                     }
                   }
-                } catch (error) {
-                  if (String(error).includes('NO_ERROR_ID_')) {
-                    console.log(error);
-                    const errorEmbed = new EmbedBuilder()
-                      .setColor(config.discord.embeds.red)
-                      .setTitle('An error occurred')
-                      .setDescription(`Error Info - \`${cleanMessage(error)}\``)
-                      .setFooter({
-                        text: `by @kathund | ${config.discord.supportInvite} for support`,
-                        iconURL: config.other.logo,
-                      });
-                    const supportDisc = new ButtonBuilder()
-                      .setLabel('Support Discord')
-                      .setURL(config.discord.supportInvite)
-                      .setStyle(ButtonStyle.Link);
-                    const row = new ActionRowBuilder().addComponents(supportDisc);
-                    return await interaction.reply({ embeds: [errorEmbed], rows: [row], ephemeral: true });
-                  } else {
-                    var errorIdUpdatingConfigs = generateID(config.other.errorIdLength);
-                    errorMessage(`Error ID: ${errorIdUpdatingConfigs}`);
-                    console.log(error);
-                    const errorEmbed = new EmbedBuilder()
-                      .setColor(config.discord.embeds.red)
-                      .setTitle('An error occurred')
-                      .setDescription(
-                        `Use </report-bug:${
-                          config.discord.commands['report-bug']
-                        }> to report it\nError id - ${errorIdUpdatingConfigs}\nError Info - \`${cleanMessage(error)}\``
-                      )
-                      .setFooter({
-                        text: `by @kathund | ${config.discord.supportInvite} for support`,
-                        iconURL: config.other.logo,
-                      });
-                    const supportDisc = new ButtonBuilder()
-                      .setLabel('Support Discord')
-                      .setURL(config.discord.supportInvite)
-                      .setStyle(ButtonStyle.Link);
-                    const row = new ActionRowBuilder().addComponents(supportDisc);
-                    await interaction.followUp({ embeds: [errorEmbed], rows: [row], ephemeral: true });
-                  }
+                } else if (scriptAllCollector.customId === 'rightButtonConfigs') {
+                  num = num + 1;
+                  if (num >= scripts.length) num = 0;
+                  currentScript = scripts[num];
+                  currentConfig = getScriptConfig(currentScript);
+                  var scriptStatusRightButtonEmbed = new EmbedBuilder()
+                    .setColor(config.other.colors.green.hex)
+                    .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                    .addFields(
+                      {
+                        name: 'Description',
+                        value: currentConfig.description,
+                        inline: false,
+                      },
+                      {
+                        name: 'Type',
+                        value: shortenMessage(currentConfig.type, 25),
+                        inline: true,
+                      },
+                      {
+                        name: 'Running',
+                        value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Enabled',
+                        value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      }
+                    )
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+                  await scriptAllCollector.update({ embeds: [scriptStatusRightButtonEmbed], components: [row] });
+                } else if (scriptAllCollector.customId === 'reloadButtonConfigs') {
+                  // a
                 }
-              } else if (scriptAllCollector.customId === 'rightButtonConfigs') {
-                num = num + 1;
-                if (num >= scripts.length) num = 0;
-                currentScript = scripts[num];
-                currentConfig = getScriptConfig(currentScript);
-                var scriptStatusRightButtonEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
-                  .addFields(
-                    {
-                      name: 'Description',
-                      value: currentConfig.description,
-                      inline: false,
-                    },
-                    {
-                      name: 'Type',
-                      value: shortenMessage(currentConfig.type, 25),
-                      inline: true,
-                    },
-                    {
-                      name: 'Running',
-                      value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
-                      inline: true,
-                    },
-                    {
-                      name: 'Enabled',
-                      value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
-                      inline: true,
-                    }
-                  )
-                  .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
-                    iconURL: 'https://i.imgur.com/uUuZx2E.png',
-                  });
-                await scriptAllCollector.update({ embeds: [scriptStatusRightButtonEmbed], components: [row] });
-              } else if (scriptAllCollector.customId === 'reloadButtonConfigs') {
-                configs = JSON.parse(fs.readFileSync('data/funFacts/config.json', 'utf8'));
-                configsObject = Object.keys(configs);
-                currentConfig = configs[configsObject[num]];
-                const guild = interaction.client.guilds.cache.get(currentConfig.serverId);
-                const channel = guild.channels.cache.get(currentConfig.channelId);
-                let string = `**Server Name:** ${guild.name} (${guild.id}) \n\n**Config**\n**Channel:** <#${channel.id}> | ${channel.name} (${channel.id})`;
-                if (currentConfig.roleId) {
-                  const role = guild.roles.cache.get(currentConfig.roleId);
-                  if (role.id === guild.id) {
-                    string += `\n**Role:** @everyone | @everyone (${role.id})`;
-                  } else {
-                    string += `\n**Role:** <@&${role.id}> | ${role.name} (${role.id})`;
-                  }
-                } else {
-                  string += `\n**Role:** None`;
-                }
-                string += `\n**Ghost Ping:** ${
-                  currentConfig.ghostPing ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                string += `\n**Delete Messages:** ${
-                  currentConfig.deleteMsgs ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                string += `\n**Disabled:** ${
-                  currentConfig.disabled ? config.other.emojis.yes : config.other.emojis.no
-                }`;
-                const configEmbed = new EmbedBuilder()
-                  .setColor(config.discord.embeds.green)
-                  .setTitle(`Fun Fact Configs - ${currentConfig.serverId} - ${num + 1}/${configsObject.length}`)
-                  .setDescription(string);
-                await confirmation.update({ embeds: [configEmbed], components: [row] });
               }
+            } else {
+              await interaction.reply({ content: 'Not implemented yet' });
             }
+          }
+        } catch (error) {
+          errorMessage(error);
+          if (String(error).includes('NO_ERROR_ID_')) {
+            const errorEmbed = new EmbedBuilder()
+              .setColor(config.other.colors.red.hex)
+              .setTitle('An error occurred')
+              .setDescription(`Error Info - \`${cleanMessage(error)}\``)
+              .setFooter({
+                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                iconURL: config.other.logo,
+              });
+            const supportDisc = new ButtonBuilder()
+              .setLabel('Support Discord')
+              .setURL(config.discord.supportInvite)
+              .setStyle(ButtonStyle.Link);
+            const row = new ActionRowBuilder().addComponents(supportDisc);
+            return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+          } else if (String(error).includes('Collector received no interactions before ending with reason: time')) {
+            return await interaction.editReply({ components: [] });
           } else {
-            await interaction.reply({ content: 'Not implemented yet' });
+            var errorIdScriptManagement = generateID(config.other.errorIdLength);
+            errorMessage(`Error Id - ${errorIdScriptManagement}`);
+            const errorEmbed = new EmbedBuilder()
+              .setColor(config.other.colors.red.hex)
+              .setTitle('An error occurred')
+              .setDescription(
+                `Use </report-bug:${
+                  config.discord.commands['report-bug']
+                }> to report it\nError id - ${errorIdScriptManagement}\nError Info - \`${cleanMessage(error)}\``
+              )
+              .setFooter({
+                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                iconURL: config.other.logo,
+              });
+            const supportDisc = new ButtonBuilder()
+              .setLabel('Support Discord')
+              .setURL(config.discord.supportInvite)
+              .setStyle(ButtonStyle.Link);
+            const row = new ActionRowBuilder().addComponents(supportDisc);
+            return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
           }
         }
       } else if (subCommandGroup === null) {
@@ -2020,7 +1903,7 @@ module.exports = {
       }
     } catch (error) {
       if (String(error).includes('NO_ERROR_ID_')) {
-        console.log(error);
+        errorMessage(error);
         const errorEmbed = new EmbedBuilder()
           .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')
@@ -2038,7 +1921,7 @@ module.exports = {
       } else {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
-        console.log(error);
+        errorMessage(error);
         const errorEmbed = new EmbedBuilder()
           .setColor(config.other.colors.red.hex)
           .setTitle('An error occurred')

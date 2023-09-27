@@ -25,6 +25,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      await interaction.deferReply();
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
       var profiles = await getProfiles(uuid);
@@ -36,7 +37,12 @@ module.exports = {
         .setPlaceholder('Select what profile')
         .addOptions(options);
       const row = new ActionRowBuilder().addComponents(select);
-      var msg = await interaction.reply({ files: [await generateStats(uuid)], components: [row] });
+      let msg;
+      if (interaction.replied || interaction.deferred) {
+        msg = await interaction.followUp({ files: [await generateStats(uuid)], components: [row] });
+      } else {
+        msg = await interaction.reply({ files: [await generateStats(uuid)], components: [row] });
+      }
       const filter = (i) => i.isStringSelectMenu(i);
       const collector = msg.createMessageComponentCollector({ time: config.discord.buttonTimeout * 1000, filter });
       collector.on('collect', async function (i) {

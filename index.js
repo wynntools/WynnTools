@@ -3,6 +3,7 @@ const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require(
 const { deployCommands, deployDevCommands } = require('./deploy-commands.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { toFixed, generateID } = require('./src/functions/helper.js');
+const { startScript } = require('./src/functions/scripts.js');
 const config = require('./config.json');
 const path = require('path');
 const fs = require('fs');
@@ -49,15 +50,13 @@ async function start() {
     for (const file of scriptFiles) {
       try {
         var { config } = require(`./src/scripts/${file}`);
-        if (file.toLowerCase().includes('disabled') || config.disabled) {
+        if (file.toLowerCase().includes('disabled') || !config.enabled) {
           skipped++;
           scriptMessage(`Skipped ${file} script`);
           continue;
         }
         if (config.type === 'cron') {
-          var { task } = require(`./src/scripts/${file}`);
-          task.start();
-          scriptMessage(`Started ${file} script`);
+          await startScript(config.name);
         } else {
           errorMessage(`Unknown script type for ${file} script`);
         }

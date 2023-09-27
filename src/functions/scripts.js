@@ -1,5 +1,5 @@
 const { generateID, cleanMessage } = require('./helper.js');
-const { errorMessage } = require('./logger.js');
+const { errorMessage, otherMessage } = require('./logger.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -11,7 +11,7 @@ function getScripts() {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -25,7 +25,7 @@ function getScriptFile(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -39,7 +39,7 @@ function getScriptConfig(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -53,7 +53,7 @@ function getScriptTask(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -70,7 +70,7 @@ function getScriptStatus(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -87,7 +87,7 @@ function startScript(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -104,7 +104,7 @@ function stopScript(fileName) {
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
@@ -128,7 +128,7 @@ function startAllScripts() {
           status: 'started',
         });
       } catch (error) {
-        console.log(error);
+        errorMessage(error);
         results.push({
           script: script,
           status: 'error',
@@ -136,12 +136,12 @@ function startAllScripts() {
         });
       }
     }
-    console.log(results);
+    otherMessage(results);
     return results;
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);
-    console.log(error);
+    errorMessage(error);
     return error;
   }
 }
