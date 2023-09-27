@@ -25,6 +25,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      await interaction.deferReply();
       const username = interaction.options.getString('username');
       const uuid = await getUUID(username);
       var profiles = await getProfiles(uuid);
@@ -36,7 +37,7 @@ module.exports = {
         .setPlaceholder('Select what profile')
         .addOptions(options);
       const row = new ActionRowBuilder().addComponents(select);
-      var msg = await interaction.reply({ files: [await generateStats(uuid)], components: [row] });
+      var msg = await interaction.editReply({ files: [await generateStats(uuid)], components: [row] });
       const filter = (i) => i.isStringSelectMenu(i);
       const collector = msg.createMessageComponentCollector({ time: config.discord.buttonTimeout * 1000, filter });
       collector.on('collect', async function (i) {
@@ -76,7 +77,7 @@ module.exports = {
           .setURL(config.discord.supportInvite)
           .setStyle(ButtonStyle.Link);
         const row = new ActionRowBuilder().addComponents(supportDisc);
-        await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
       }
     }
   },
