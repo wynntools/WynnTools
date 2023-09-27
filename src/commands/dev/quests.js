@@ -664,6 +664,10 @@ module.exports = {
         });
         let filteredQuests = sortedQuests
           .filter((quest) => quest.combatMinLvl <= currentProfileStats.professions.combat.level)
+          .filter((quest) => quest.miningMinLvl <= currentProfileStats.professions.mining.level)
+          .filter((quest) => quest.woodCuttingMinLvl <= currentProfileStats.professions.woodcutting.level)
+          .filter((quest) => quest.farmingMinLvl <= currentProfileStats.professions.farming.level)
+          .filter((quest) => quest.fishingMinLvl <= currentProfileStats.professions.fishing.level)
           .filter((quest) => quest.completed === false);
         if (
           (dungeonFilter && specialFilter) ||
@@ -729,7 +733,7 @@ module.exports = {
         }
         const responseEmbed = new EmbedBuilder()
           .setColor(config.other.colors.green.hex)
-          .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${sortedQuests.length}`)
+          .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
           .setDescription(
             `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
               currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no
@@ -808,7 +812,7 @@ module.exports = {
 
               const questEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
-                .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${sortedQuests.length}`)
+                .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
                 .setDescription(
                   `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
                     currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no
@@ -868,7 +872,7 @@ module.exports = {
 
               const questEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
-                .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${sortedQuests.length}`)
+                .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
                 .setDescription(
                   `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
                     currentQuest.completed ? config.other.emojis.yes : config.other.emojis.no
