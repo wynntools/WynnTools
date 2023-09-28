@@ -196,13 +196,13 @@ module.exports = {
         }
       } else if (interaction.isButton()) {
         eventMessage(
-          `${
+          `Interaction Event trigged by ${
             interaction.user.discriminator == '0'
               ? interaction.user.username
               : `${interaction.user.username}#${interaction.user.discriminator}`
-          }) clicked button ${interaction.customId} in ${interaction.guild.id} in ${interaction.channel.id} at ${
-            interaction.message.id
-          }`
+          } (${interaction.user.id}) clicked button ${interaction.customId} in ${interaction.guild.id} in ${
+            interaction.channel.id
+          } at ${interaction.message.id}`
         );
         try {
           if (interaction.customId.includes('setupGuideFunFacts')) {
