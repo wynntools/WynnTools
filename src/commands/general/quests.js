@@ -87,7 +87,7 @@ module.exports = {
     let choices = [];
     if (interaction.options._subcommand === 'search' && focusedOption.name === 'query') {
       choices = quests
-        .filter((quest) => quest.name.toLowerCase().startsWith(input.toLowerCase()))
+        .filter((quest) => quest.name.toLowerCase().includes(input.toLowerCase()))
         .map((quest) => quest.name);
     }
     const displayedChoices = choices.slice(0, 25);
