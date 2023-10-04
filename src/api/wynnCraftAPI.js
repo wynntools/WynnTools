@@ -6,7 +6,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => errorMessage(err));
+    .catch((error) => errorMessage(error));
 
 const wynncraftPlayerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const wynncraftGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });

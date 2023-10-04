@@ -68,7 +68,11 @@ module.exports = {
           .setURL(config.discord.supportInvite)
           .setStyle(ButtonStyle.Link);
         const row = new ActionRowBuilder().addComponents(supportDisc);
-        return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+        if (interaction.replied || interaction.deferred) {
+          return await interaction.editReply({ embeds: [errorEmbed], rows: [row] });
+        } else {
+          return await interaction.reply({ embeds: [errorEmbed], rows: [row] });
+        }
       } else {
         var errorId = generateID(config.other.errorIdLength);
         errorMessage(`Error Id - ${errorId}`);
