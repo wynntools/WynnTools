@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { addNotation, generateID, cleanMessage } = require('../../functions/helper.js');
-const { getStats, getHighestProfile } = require('../../api/wynnCraftAPI.js');
+const { addNotation, generateID, cleanMessage, getHighestProfile } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
+const { getStats } = require('../../api/wynnCraftAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
 const config = require('../../../config.json');
 const fs = require('fs');

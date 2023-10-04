@@ -383,6 +383,26 @@ function fixProfessionsData(professions) {
   return updatedProfessions;
 }
 
+async function getHighestProfile(characters) {
+  try {
+    let highestLevel = -Infinity;
+    let selectedId = null;
+    for (const id in characters) {
+      const currentObject = characters[id];
+      if (currentObject.level > highestLevel) {
+        highestLevel = currentObject.level;
+        selectedId = id;
+      }
+    }
+    return selectedId;
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
+    errorMessage(error);
+    return cleanMessage(error);
+  }
+}
+
 module.exports = {
   generateID,
   getCurrentTime,
@@ -402,4 +422,5 @@ module.exports = {
   validateUUID,
   cleanMessage,
   fixProfessionsData,
+  getHighestProfile,
 };

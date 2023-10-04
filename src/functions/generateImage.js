@@ -7,16 +7,15 @@ const {
   generateID,
 } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
-const { getStats, getHighestProfile } = require('../api/wynnCraftAPI.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
+const { getStats } = require('../api/wynnCraftAPI.js');
 const { AttachmentBuilder } = require('discord.js');
 var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
-const generateStatsCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateServerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -43,11 +42,11 @@ async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   ctx.strokeStyle = 'white';
 }
 
-async function generateStats(uuid) {
+async function generateProfileImage(uuid, profileId) {
   try {
-    if (generateStatsCache.has(uuid)) {
-      cacheMessage('Generate Stats', 'hit');
-      return generateStatsCache.get(uuid);
+    if (generateProfileImageCache.has(profileId)) {
+      cacheMessage('Generate Profile Image', 'hit');
+      return generateProfileImageCache.get(profileId);
     } else {
       const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
       const professionsIconBackgroundMaxLevel = await loadImage(
@@ -57,7 +56,8 @@ async function generateStats(uuid) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
-      var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
+      var currentProfileStats = stats.data.characters[profileId];
+      // console.log(currentProfileStats);
       currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
@@ -597,572 +597,8 @@ async function generateStats(uuid) {
         1136
       );
       const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'image.png' });
-      generateStatsCache.set(uuid, attachment);
+      generateProfileImageCache.set(profileId, attachment);
       return attachment;
-    }
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    errorMessage(error);
-  }
-}
-
-async function generateProfileImage(uuid, profileId) {
-  try {
-    if (generateProfileImageCache.has(profileId)) {
-      cacheMessage('Generate Profile Image', 'hit');
-      return generateProfileImageCache.get(profileId);
-    } else {
-      const professionsIconBackground = await loadImage('src/assets/statsCommand/professionsIconBackground.svg');
-      const professionsIconBackgroundMaxLevel = await loadImage(
-        'src/assets/statsCommand/professionsIconBackgroundMaxLevel.svg'
-      );
-      const canvas = createCanvas(1200, 1200);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
-      var stats = await getStats(uuid);
-      stats.data.professions = fixProfessionsData(stats.data.professions);
-      var currentProfileStats = stats.data.characters[profileId];
-      currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
-      const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
-      ctx.drawImage(img, 912, 32, 256, 256);
-      ctx.textBaseline = 'top';
-      ctx.font = '36px Karla';
-      ctx.textAlign = 'left';
-      if (stats.rank === 'Media') {
-        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
-        ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.rank === 'Administrator') {
-        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.red.hex;
-        ctx.fillText(stats.rank, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.data.meta.veteran) {
-        ctx.fillStyle = config.other.colors.peach.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
-        ctx.fillText('Vet', 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.peach.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText('Vet').width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.data.meta.tag.value === 'VIP') {
-        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.green.hex;
-        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.data.meta.tag.value).width +
-            ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.data.meta.tag.value === 'VIP+') {
-        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
-        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.data.meta.tag.value).width +
-            ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.data.meta.tag.value === 'HERO') {
-        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
-        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.data.meta.tag.value).width +
-            ctx.measureText(']').width,
-          52
-        );
-      } else if (stats.data.meta.tag.value === 'CHAMPION') {
-        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
-        ctx.fillText('[', 62, 52);
-        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
-        ctx.fillText(stats.data.meta.tag.value, 62 + ctx.measureText('[').width, 52);
-        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
-        ctx.fillText(']', 62 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 52);
-        ctx.fillText(
-          ` ${stats.username}`,
-          62 +
-            ctx.measureText('[').width +
-            ctx.measureText(stats.data.meta.tag.value).width +
-            ctx.measureText(']').width,
-          52
-        );
-      } else {
-        ctx.fillStyle = 'white';
-        ctx.fillText(stats.username, 62, 52);
-      }
-      if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
-        if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
-          if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
-            if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
-            }
-          }
-        } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
-          if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
-          }
-        } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
-        }
-      } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
-        if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
-          if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
-          }
-        } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
-        }
-      } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
-        if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
-        }
-      } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
-      }
-      ctx.font = '24px Karla';
-      ctx.fillStyle = 'white';
-      if (stats.data.guild.name != null) {
-        ctx.font = '24px Karla';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${stats.data.guild.rank} of ${stats.data.guild.name}`, 62, 140);
-        ctx.fillText(
-          `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
-          }`,
-          481,
-          140
-        );
-        if (stats.data.meta.location.online == true) {
-          ctx.fillText(`Online - ${stats.data.meta.location.server}`, 581, 208);
-        } else {
-          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 208);
-        }
-        ctx.textAlign = 'left';
-        ctx.fillText(
-          `First Login - ${new Date(stats.data.meta.firstJoin).toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            timeZone: 'America/New_York',
-          })}`,
-          62,
-          208
-        );
-      } else {
-        ctx.font = '24px Karla';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
-        ctx.fillText(
-          `Current Selected Class - ${
-            currentProfileStats.type.charAt(0).toUpperCase() + currentProfileStats.type.slice(1).toLowerCase()
-          }`,
-          64,
-          140
-        );
-        if (stats.data.meta.location.online == true) {
-          ctx.textAlign = 'right';
-          ctx.fillText(`Online - ${stats.data.meta.location.server}`, 866, 140);
-        } else {
-          ctx.fillText(`Last Seen - ${getRelativeTime(new Date(stats.data.meta.lastJoin).getTime(), 'ms')}`, 581, 140);
-        }
-        ctx.textAlign = 'left';
-        ctx.fillText(
-          `First Login - ${new Date(stats.data.meta.firstJoin).toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            timeZone: 'America/New_York',
-          })}`,
-          62,
-          208
-        );
-      }
-      ctx.font = '22px Karla';
-      ctx.fillStyle = 'white';
-      ctx.textAlign = 'left';
-      ctx.fillText(
-        `General\n\nTotal Level - ${currentProfileStats.level}\nPlaytime - ${Math.floor(
-          (stats.data.meta.playtime * 4.7) / 60
-        )}h\nDiscoveries - ${currentProfileStats.discoveries}\nMobs Killed - ${
-          currentProfileStats.mobsKilled
-        }\nFinished Dungeons - ${currentProfileStats.dungeons.completed}\nRaids Completed - ${
-          currentProfileStats.raids.completed
-        }`,
-        62,
-        322
-      );
-      ctx.font = '22px Karla';
-      ctx.fillStyle = 'white';
-      ctx.textAlign = 'left';
-      var skillsY = 464;
-      var StrengthX = 430;
-      var DexterityX = 581;
-      var IntelligenceX = 721;
-      var DefenseX = 891;
-      var AgilityX = 1055;
-      const textStrength = `Strength\n${currentProfileStats.skills.strength}`;
-      const textLinesStrength = textStrength.split('\n');
-      ctx.fillText(textLinesStrength[0], StrengthX, skillsY);
-      ctx.fillText(
-        textLinesStrength[1],
-        StrengthX + (ctx.measureText(textLinesStrength[0]).width - ctx.measureText(textLinesStrength[1]).width) / 2,
-        470 + parseInt(ctx.font, 10)
-      );
-      const textDexterity = `Dexterity\n${currentProfileStats.skills.dexterity}`;
-      const textLinesDexterity = textDexterity.split('\n');
-      ctx.fillText(textLinesDexterity[0], DexterityX, skillsY);
-      ctx.fillText(
-        textLinesDexterity[1],
-        DexterityX + (ctx.measureText(textLinesDexterity[0]).width - ctx.measureText(textLinesDexterity[1]).width) / 2,
-        470 + parseInt(ctx.font, 10)
-      );
-      const textIntelligence = `Intelligence\n${currentProfileStats.skills.intelligence}`;
-      const textLinesIntelligence = textIntelligence.split('\n');
-      ctx.fillText(textLinesIntelligence[0], IntelligenceX, skillsY);
-      ctx.fillText(
-        textLinesIntelligence[1],
-        IntelligenceX +
-          (ctx.measureText(textLinesIntelligence[0]).width - ctx.measureText(textLinesIntelligence[1]).width) / 2,
-        470 + parseInt(ctx.font, 10)
-      );
-      const textDefense = `Defense\n${currentProfileStats.skills.defense}`;
-      const textLinesDefense = textDefense.split('\n');
-      ctx.fillText(textLinesDefense[0], DefenseX, skillsY);
-      ctx.fillText(
-        textLinesDefense[1],
-        DefenseX + (ctx.measureText(textLinesDefense[0]).width - ctx.measureText(textLinesDefense[1]).width) / 2,
-        470 + parseInt(ctx.font, 10)
-      );
-      const textAgility = `Agility\n${currentProfileStats.skills.agility}`;
-      const textLinesAgility = textAgility.split('\n');
-      ctx.fillText(textLinesAgility[0], AgilityX, skillsY);
-      ctx.fillText(
-        textLinesAgility[1],
-        AgilityX + (ctx.measureText(textLinesAgility[0]).width - ctx.measureText(textLinesAgility[1]).width) / 2,
-        470 + parseInt(ctx.font, 10)
-      );
-      ctx.font = '22px Karla';
-      ctx.textAlign = 'left';
-      ctx.fillStyle = 'white';
-
-      // ? Combat
-      ctx.fillText(`Combat ${currentProfileStats.professions.combat.level}`, 168, 662);
-      if (currentProfileStats.professions.combat.level == 106) {
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
-        await bar(ctx, 140, 689, 946, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = 'black';
-        ctx.fillText('Max Level', 18 + 1056, 662 + 27);
-        ctx.fillStyle = 'white';
-      } else {
-        ctx.drawImage(professionsIconBackground, 104, 661);
-        ctx.fillText(currentProfileStats.professions.combat.level + 1, 1056, 662);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.combat.xp}%`, 18 + 1056, 662 + 27);
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/combatIcon.png'), 108, 665);
-      ctx.textAlign = 'left';
-
-      // ? Mining
-      if (currentProfileStats.professions.mining.level == 132) {
-        await bar(ctx, 140, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 370, 742 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 140, 769, Math.floor((currentProfileStats.professions.mining.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 104, 741);
-        ctx.fillText(currentProfileStats.professions.mining.level + 1, 370, 742);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.mining.xp}%`, 18 + 370, 742 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/miningIcon.png'), 104, 745);
-      ctx.fillText(`Mining ${currentProfileStats.professions.mining.level}`, 168, 742);
-
-      // ? Farming
-      if (currentProfileStats.professions.farming.level == 132) {
-        await bar(ctx, 483, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 713, 742 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 483, 769, Math.floor((currentProfileStats.professions.farming.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 447, 741);
-        ctx.fillText(currentProfileStats.professions.farming.level + 1, 713, 742);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.farming.xp}%`, 18 + 713, 742 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/farmingIcon.png'), 447, 745);
-      ctx.fillText(`Farming ${currentProfileStats.professions.farming.level}`, 511, 742);
-
-      // ? Woodcutting
-      if (currentProfileStats.professions.woodcutting.level == 132) {
-        await bar(ctx, 824, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 1056, 742 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 824, 769, Math.floor((currentProfileStats.professions.woodcutting.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 791, 741);
-        ctx.fillText(currentProfileStats.professions.woodcutting.level + 1, 1056, 742);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.woodcutting.xp}%`, 18 + 1056, 742 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/woodcuttingIcon.png'), 791, 745);
-      ctx.fillText(`Woodcutting ${currentProfileStats.professions.woodcutting.level}`, 854, 742);
-
-      // ? Fishing
-      if (currentProfileStats.professions.fishing.level == 132) {
-        await bar(ctx, 140, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 370, 814 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 140, 841, Math.floor((currentProfileStats.professions.fishing.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 104, 813);
-        ctx.fillText(currentProfileStats.professions.fishing.level + 1, 370, 814);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.fishing.xp}%`, 18 + 370, 814 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/fishingIcon.png'), 104, 817);
-      ctx.fillText(`Fishing ${currentProfileStats.professions.fishing.level}`, 168, 814);
-
-      // ? Scribing
-      if (currentProfileStats.professions.scribing.level == 132) {
-        await bar(ctx, 483, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 713, 814 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 483, 841, Math.floor((currentProfileStats.professions.scribing.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 447, 813);
-        ctx.fillText(currentProfileStats.professions.scribing.level + 1, 713, 814);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.scribing.xp}%`, 18 + 713, 814 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/scribingIcon.png'), 447, 817);
-      ctx.fillText(`Scribing ${currentProfileStats.professions.scribing.level}`, 511, 814);
-
-      // ? Jeweling
-      if (currentProfileStats.professions.jeweling.level == 132) {
-        await bar(ctx, 824, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 1056, 814 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 824, 841, Math.floor((currentProfileStats.professions.jeweling.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 791, 813);
-        ctx.fillText(currentProfileStats.professions.jeweling.level + 1, 1056, 814);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.jeweling.xp}%`, 18 + 1056, 814 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/jewelingIcon.png'), 791, 817);
-      ctx.fillText(`Jeweling ${currentProfileStats.professions.jeweling.level}`, 854, 814);
-
-      // ? Alchemism
-      if (currentProfileStats.professions.alchemism.level == 132) {
-        await bar(ctx, 140, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 370, 886 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 140, 913, Math.floor((currentProfileStats.professions.alchemism.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 104, 885);
-        ctx.fillText(currentProfileStats.professions.alchemism.level + 1, 370, 886);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.alchemism.xp}%`, 18 + 370, 886 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/alchemismIcon.png'), 104, 889);
-      ctx.fillText(`Alchemism ${currentProfileStats.professions.alchemism.level}`, 168, 886);
-
-      // ? Cooking
-      if (currentProfileStats.professions.cooking.level == 132) {
-        await bar(ctx, 483, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 713, 886 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 483, 913, Math.floor((currentProfileStats.professions.cooking.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 447, 885);
-        ctx.fillText(currentProfileStats.professions.cooking.level + 1, 713, 886);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.cooking.xp}%`, 18 + 713, 886 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.fillText(`Cooking ${currentProfileStats.professions.cooking.level}`, 511, 886);
-      ctx.drawImage(await loadImage('src/assets/statsCommand/cookingIcon.png'), 447, 889);
-
-      // ? Weaponsmithing
-      if (currentProfileStats.professions.weaponsmithing.level == 132) {
-        await bar(ctx, 824, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 1056, 886 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 824, 913, Math.floor((currentProfileStats.professions.weaponsmithing.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 791, 885);
-        ctx.fillText(currentProfileStats.professions.weaponsmithing.level + 1, 1056, 886);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.weaponsmithing.xp}%`, 18 + 1056, 886 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/weaponsmithingIcon.png'), 791, 889);
-      ctx.fillText(`Weaponsmithing ${currentProfileStats.professions.weaponsmithing.level}`, 854, 886);
-
-      // ? Tailoring
-      if (currentProfileStats.professions.tailoring.level == 132) {
-        await bar(ctx, 140, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 370, 958 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 140, 985, Math.floor((currentProfileStats.professions.tailoring.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 104, 957);
-        ctx.fillText(currentProfileStats.professions.tailoring.level + 1, 370, 958);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.tailoring.xp}%`, 18 + 370, 958 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/tailoringIcon.png'), 104, 961);
-      ctx.fillText(`Tailoring ${currentProfileStats.professions.tailoring.level}`, 168, 958);
-
-      // ? Woodworking
-      if (currentProfileStats.professions.woodworking.level == 132) {
-        await bar(ctx, 483, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 713, 958 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 483, 985, Math.floor((currentProfileStats.professions.woodworking.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 447, 957);
-        ctx.fillText(currentProfileStats.professions.woodworking.level + 1, 713, 958);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.woodworking.xp}%`, 18 + 713, 958 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/woodworkingIcon.png'), 447, 961);
-      ctx.fillText(`Woodworking ${currentProfileStats.professions.woodworking.level}`, 511, 958);
-
-      // ? Armouring
-      if (currentProfileStats.professions.armouring.level == 132) {
-        await bar(ctx, 824, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
-        ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'right';
-        ctx.fillText('Max Level', 18 + 1056, 958 + 27);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = 'white';
-      } else {
-        await bar(ctx, 824, 985, Math.floor((currentProfileStats.professions.armouring.xp / 100) * 262), 28);
-        ctx.drawImage(professionsIconBackground, 791, 957);
-        ctx.fillText(currentProfileStats.professions.armouring.level + 1, 1056, 958);
-        ctx.textAlign = 'right';
-        ctx.fillText(`${currentProfileStats.professions.armouring.xp}%`, 18 + 1056, 958 + 27);
-        ctx.textAlign = 'left';
-      }
-      ctx.drawImage(await loadImage('src/assets/statsCommand/armouringIcon.png'), 791, 961);
-      ctx.fillText(`Armouring ${currentProfileStats.professions.armouring.level}`, 854, 958);
-
-      ctx.font = '32px Karla';
-      ctx.fillStyle = 'white';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(
-        `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
-        600,
-        1120,
-        1136
-      );
-      var buffer = canvas.toBuffer('image/png');
-      generateProfileImageCache.set(profileId, buffer);
-      return buffer;
     }
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
@@ -1843,19 +1279,6 @@ async function generateServerGraph(server) {
   }
 }
 
-function clearGenerateStatsCache() {
-  try {
-    cacheMessage('Generate Stats', 'Cleared');
-    generateStatsCache.flushAll();
-    return 'Cleared';
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    errorMessage(error);
-    return error;
-  }
-}
-
 function clearGenerateProfileImageCache() {
   try {
     cacheMessage('Generate Profile Image', 'Cleared');
@@ -1910,7 +1333,6 @@ function clearGenerateServerGraphCache() {
 
 module.exports = {
   bar,
-  generateStats,
   generateProfileImage,
   generateGuild,
   generateMemberJoin,
@@ -1918,7 +1340,6 @@ module.exports = {
   generateServers,
   generateServerChart,
   generateServerGraph,
-  clearGenerateStatsCache,
   clearGenerateProfileImageCache,
   clearGenerateGuildCache,
   clearGenerateServerCache,

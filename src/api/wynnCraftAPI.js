@@ -83,26 +83,6 @@ async function getStats(uuid) {
   }
 }
 
-async function getHighestProfile(characters) {
-  try {
-    let highestLevel = -Infinity;
-    let selectedId = null;
-    for (const id in characters) {
-      const currentObject = characters[id];
-      if (currentObject.level > highestLevel) {
-        highestLevel = currentObject.level;
-        selectedId = id;
-      }
-    }
-    return selectedId;
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error ID: ${errorId}`);
-    errorMessage(error);
-    return cleanMessage(error);
-  }
-}
-
 async function getProfiles(uuid) {
   try {
     var stats = await getStats(uuid);
@@ -243,7 +223,6 @@ function clearWynnCraftGuildCache() {
 
 module.exports = {
   getStats,
-  getHighestProfile,
   getProfiles,
   getGuild,
   getServers,
