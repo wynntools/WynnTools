@@ -10,10 +10,11 @@ const fs = require('fs');
 module.exports = {
   config: {
     running: false,
-    enabled: false,
+    enabled: true,
     type: 'cron',
     name: 'funFacts',
-    description: "place holder description of this script's purpose",
+    description: 'Sends the daily fun fact',
+    timesRun: 0,
   },
   task: cron.schedule(
     '00 00 * * *',
@@ -130,6 +131,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
       }
+      this.config.timesRun++;
     },
     {
       scheduled: false,

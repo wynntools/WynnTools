@@ -10,10 +10,11 @@ const fs = require('fs');
 module.exports = {
   config: {
     running: false,
-    enabled: false,
+    enabled: true,
     type: 'cron',
     name: 'statsChannel',
-    description: "place holder description of this script's purpose",
+    description: 'Script that updates the stats channel every 5 mins',
+    timesRun: 0,
   },
   task: cron.schedule(
     '*/5 * * * *',
@@ -88,6 +89,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
       }
+      this.config.timesRun++;
     },
     {
       scheduled: false,

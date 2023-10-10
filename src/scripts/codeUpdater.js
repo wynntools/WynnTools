@@ -7,10 +7,11 @@ const cron = require('node-cron');
 module.exports = {
   config: {
     running: false,
-    enabled: false,
+    enabled: true,
     type: 'cron',
     name: 'codeUpdateChecker',
-    description: "place holder description of this script's purpose",
+    description: 'Checks for new code updates every 6 hours',
+    timesRun: 0,
   },
   task: cron.schedule(
     '0 */6 * * *',
@@ -26,6 +27,7 @@ module.exports = {
         }
         updateMessage();
       });
+      this.config.timesRun++;
     },
     {
       scheduled: false,
