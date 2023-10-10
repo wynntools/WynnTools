@@ -69,7 +69,9 @@ async function start() {
       }
     }
     scriptMessage(`Started ${scriptFiles.length - skipped} script(s) and skipped ${skipped} script(s)`);
-    client.user.setPresence({ activities: [{ name: 'to crys', type: ActivityType.Listening }] });
+    client.user.setPresence({
+      activities: [{ name: `over ${client.guilds.cache.size} servers`, type: ActivityType.Watching }],
+    });
   });
 
   const eventsPath = path.join(__dirname, 'src/events');
