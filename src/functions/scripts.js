@@ -7,7 +7,12 @@ const scriptsPath = path.join(__dirname, '../scripts');
 
 function getScripts() {
   try {
-    return fs.readdirSync(scriptsPath).filter((file) => file.endsWith('.js'));
+    return fs
+      .readdirSync(scriptsPath)
+      .filter((file) => file.endsWith('.js'))
+      .map((file) => {
+        return file.replace('.js', '');
+      });
   } catch (error) {
     var errorId = generateID(10);
     errorMessage(`Error Id - ${errorId}`);

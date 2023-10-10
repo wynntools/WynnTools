@@ -80,7 +80,6 @@ module.exports = {
           option.setName('special').setDescription('Hide Special Quests').setRequired(false)
         )
     ),
-
   async autoComplete(interaction) {
     const focusedOption = interaction.options.getFocused(true);
     const input = focusedOption.value;

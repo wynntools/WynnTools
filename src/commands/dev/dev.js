@@ -273,6 +273,20 @@ module.exports = {
         )
     ),
 
+  async autoComplete(interaction) {
+    const focusedOption = interaction.options.getFocused(true);
+    const input = focusedOption.value;
+    let choices = [];
+    if (
+      interaction.options._group === 'script-management' &&
+      interaction.options._subcommand === 'status' &&
+      focusedOption.name === 'name'
+    ) {
+      choices = await getScripts().filter((script) => script.includes(input));
+    }
+    await interaction.respond(choices.map((choice) => ({ name: choice, value: choice })));
+  },
+
   async execute(interaction) {
     try {
       if (!(await interaction.guild.members.fetch(interaction.user)).roles.cache.has(config.discord.roles.dev)) {
@@ -1489,32 +1503,37 @@ module.exports = {
           if (subCommand === 'status') {
             var statusName = interaction.options.getString('name') || 'all';
             if (statusName === 'all') {
-              var scripts = await getScripts();
+              let scripts = await getScripts();
               let num = 0;
               let currentScript = scripts[num];
-              let currentConfig = getScriptConfig(currentScript);
+              let currentScriptConfig = getScriptConfig(currentScript);
               const scriptStatusEmbed = new EmbedBuilder()
                 .setColor(config.other.colors.green.hex)
-                .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
                 .addFields(
                   {
                     name: 'Description',
-                    value: currentConfig.description,
+                    value: shortenMessage(currentScriptConfig.description, 25),
                     inline: false,
                   },
                   {
                     name: 'Type',
-                    value: shortenMessage(currentConfig.type, 25),
+                    value: currentScriptConfig.type,
                     inline: true,
                   },
                   {
                     name: 'Running',
-                    value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                    value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
                     inline: true,
                   },
                   {
                     name: 'Enabled',
-                    value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                    value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                    inline: true,
+                  },
+                  {
+                    name: 'Times Run',
+                    value: currentScriptConfig.timesRun,
                     inline: true,
                   }
                 )
@@ -1538,7 +1557,7 @@ module.exports = {
               const reloadButtonConfigs = new ButtonBuilder()
                 .setEmoji('🔄')
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId('reloadButtonConfigs');
+                .setCustomId('reloadButtonConfigsScript');
               const row = new ActionRowBuilder().addComponents(
                 leftButton,
                 editButton,
@@ -1546,7 +1565,7 @@ module.exports = {
                 reloadButtonConfigs
               );
 
-              var scriptMessage = await interaction.reply({ embeds: [scriptStatusEmbed], components: [row] });
+              const scriptMessage = await interaction.reply({ embeds: [scriptStatusEmbed], components: [row] });
               const collectorFilter = (i) => i.user.id === interaction.user.id;
 
               while (true) {
@@ -1558,29 +1577,34 @@ module.exports = {
                   num = num - 1;
                   if (num <= 0) num = scripts.length - 1;
                   currentScript = scripts[num];
-                  currentConfig = getScriptConfig(currentScript);
+                  currentScriptConfig = getScriptConfig(currentScript);
                   var scriptStatusLeftButtonEmbed = new EmbedBuilder()
                     .setColor(config.other.colors.green.hex)
-                    .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                    .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
                     .addFields(
                       {
                         name: 'Description',
-                        value: currentConfig.description,
+                        value: shortenMessage(currentScriptConfig.description, 25),
                         inline: false,
                       },
                       {
                         name: 'Type',
-                        value: shortenMessage(currentConfig.type, 25),
+                        value: currentScriptConfig.type,
                         inline: true,
                       },
                       {
                         name: 'Running',
-                        value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                        value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
                         inline: true,
                       },
                       {
                         name: 'Enabled',
-                        value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Times Run',
+                        value: currentScriptConfig.timesRun,
                         inline: true,
                       }
                     )
@@ -1590,30 +1614,21 @@ module.exports = {
                     });
                   await scriptAllCollector.update({ embeds: [scriptStatusLeftButtonEmbed], components: [row] });
                 } else if (scriptAllCollector.customId === 'editButtonConfig') {
-                  var editButtonStopScript = new ButtonBuilder()
+                  const editButtonStopScript = new ButtonBuilder()
                     .setLabel('Stop Script')
                     .setStyle(ButtonStyle.Danger)
                     .setCustomId('editButtonStopScript');
-                  var editButtonStartScript = new ButtonBuilder()
+                  const editButtonStartScript = new ButtonBuilder()
                     .setLabel('Start Script')
                     .setStyle(ButtonStyle.Success)
                     .setCustomId('editButtonStartScript');
-                  var editButtonDisableScript = new ButtonBuilder()
-                    .setLabel('Disable Script')
-                    .setStyle(ButtonStyle.Danger)
-                    .setCustomId('editButtonDisableScript');
-                  var editButtonEnableScript = new ButtonBuilder()
-                    .setLabel('Enable Script')
-                    .setStyle(ButtonStyle.Success)
-                    .setCustomId('editButtonEnableScript');
-                  var editButtonGoBack = new ButtonBuilder()
+                  const editButtonGoBack = new ButtonBuilder()
                     .setLabel('Go Back')
                     .setStyle(ButtonStyle.Secondary)
                     .setCustomId('editButtonGoBack');
 
                   const editScriptRow = new ActionRowBuilder().addComponents(
-                    currentConfig.running ? editButtonStopScript : editButtonStartScript,
-                    currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                    currentScriptConfig.running ? editButtonStopScript : editButtonStartScript,
                     editButtonGoBack
                   );
                   await scriptAllCollector.update({ components: [editScriptRow] });
@@ -1625,29 +1640,34 @@ module.exports = {
                       filter: collectorFilter,
                     });
                     if (scriptEditCollector.customId === 'editButtonStopScript') {
-                      await stopScript(currentConfig.name);
+                      await stopScript(currentScriptConfig.name);
                       const scriptStatusEmbed = new EmbedBuilder()
                         .setColor(config.other.colors.green.hex)
-                        .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                        .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
                         .addFields(
                           {
                             name: 'Description',
-                            value: currentConfig.description,
+                            value: shortenMessage(currentScriptConfig.description, 25),
                             inline: false,
                           },
                           {
                             name: 'Type',
-                            value: shortenMessage(currentConfig.type, 25),
+                            value: currentScriptConfig.type,
                             inline: true,
                           },
                           {
                             name: 'Running',
-                            value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
                             inline: true,
                           },
                           {
                             name: 'Enabled',
-                            value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: currentScriptConfig.timesRun,
                             inline: true,
                           }
                         )
@@ -1657,35 +1677,39 @@ module.exports = {
                         });
 
                       const editScriptRow = new ActionRowBuilder().addComponents(
-                        currentConfig.running ? editButtonStopScript : editButtonStartScript,
-                        currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                        currentScriptConfig.running ? editButtonStopScript : editButtonStartScript,
                         editButtonGoBack
                       );
                       await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
                     } else if (scriptEditCollector.customId === 'editButtonStartScript') {
-                      await startScript(currentConfig.name);
+                      await startScript(currentScriptConfig.name);
                       const scriptStatusEmbed = new EmbedBuilder()
                         .setColor(config.other.colors.green.hex)
-                        .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                        .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
                         .addFields(
                           {
                             name: 'Description',
-                            value: currentConfig.description,
+                            value: shortenMessage(currentScriptConfig.description, 25),
                             inline: false,
                           },
                           {
                             name: 'Type',
-                            value: shortenMessage(currentConfig.type, 25),
+                            value: currentScriptConfig.type,
                             inline: true,
                           },
                           {
                             name: 'Running',
-                            value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
                             inline: true,
                           },
                           {
                             name: 'Enabled',
-                            value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: currentScriptConfig.timesRun,
                             inline: true,
                           }
                         )
@@ -1695,40 +1719,82 @@ module.exports = {
                         });
 
                       const editScriptRow = new ActionRowBuilder().addComponents(
-                        currentConfig.running ? editButtonStopScript : editButtonStartScript,
-                        currentConfig.enabled ? editButtonDisableScript : editButtonEnableScript,
+                        currentScriptConfig.running ? editButtonStopScript : editButtonStartScript,
                         editButtonGoBack
                       );
                       await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
+                    } else if (scriptEditCollector.customId === 'editButtonGoBack') {
+                      currentScript = scripts[num];
+                      currentScriptConfig = getScriptConfig(currentScript);
+                      const goBackEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: shortenMessage(currentScriptConfig.description, 25),
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: currentScriptConfig.type,
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: currentScriptConfig.timesRun,
+                            inline: true,
+                          }
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        });
+                      await scriptAllCollector.update({ embeds: [goBackEmbed], components: [row] });
                     }
                   }
                 } else if (scriptAllCollector.customId === 'rightButtonConfigs') {
                   num = num + 1;
                   if (num >= scripts.length) num = 0;
                   currentScript = scripts[num];
-                  currentConfig = getScriptConfig(currentScript);
+                  currentScriptConfig = getScriptConfig(currentScript);
                   var scriptStatusRightButtonEmbed = new EmbedBuilder()
                     .setColor(config.other.colors.green.hex)
-                    .setTitle(`Script Status - ${currentConfig.name} - ${num + 1}/${scripts.length}`)
+                    .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
                     .addFields(
                       {
                         name: 'Description',
-                        value: currentConfig.description,
+                        value: shortenMessage(currentScriptConfig.description, 25),
                         inline: false,
                       },
                       {
                         name: 'Type',
-                        value: shortenMessage(currentConfig.type, 25),
+                        value: currentScriptConfig.type,
                         inline: true,
                       },
                       {
                         name: 'Running',
-                        value: currentConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                        value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
                         inline: true,
                       },
                       {
                         name: 'Enabled',
-                        value: currentConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Times Run',
+                        value: currentScriptConfig.timesRun,
                         inline: true,
                       }
                     )
@@ -1737,12 +1803,290 @@ module.exports = {
                       iconURL: 'https://i.imgur.com/uUuZx2E.png',
                     });
                   await scriptAllCollector.update({ embeds: [scriptStatusRightButtonEmbed], components: [row] });
-                } else if (scriptAllCollector.customId === 'reloadButtonConfigs') {
-                  // a
+                } else if (scriptAllCollector.customId === 'reloadButtonConfigsScript') {
+                  scripts = await getScripts();
+                  currentScript = scripts[num];
+                  currentScriptConfig = getScriptConfig(currentScript);
+                  const scriptStatusEmbed = new EmbedBuilder()
+                    .setColor(config.other.colors.green.hex)
+                    .setTitle(`Script Status - ${currentScriptConfig.name} - ${num + 1}/${scripts.length}`)
+                    .addFields(
+                      {
+                        name: 'Description',
+                        value: shortenMessage(currentScriptConfig.description, 25),
+                        inline: false,
+                      },
+                      {
+                        name: 'Type',
+                        value: currentScriptConfig.type,
+                        inline: true,
+                      },
+                      {
+                        name: 'Running',
+                        value: currentScriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Enabled',
+                        value: currentScriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                        inline: true,
+                      },
+                      {
+                        name: 'Times Run',
+                        value: currentScriptConfig.timesRun,
+                        inline: true,
+                      }
+                    )
+                    .setFooter({
+                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                    });
+
+                  const leftButton = new ButtonBuilder()
+                    .setEmoji('1135038841426825297')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId('leftButtonConfigs');
+                  const editButton = new ButtonBuilder()
+                    .setEmoji('📝')
+                    .setStyle(ButtonStyle.Danger)
+                    .setCustomId('editButtonConfig');
+                  const rightButton = new ButtonBuilder()
+                    .setEmoji('1135038844706762799')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId('rightButtonConfigs');
+                  const reloadButtonConfigs = new ButtonBuilder()
+                    .setEmoji('🔄')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId('reloadButtonConfigsScript');
+                  const row = new ActionRowBuilder().addComponents(
+                    leftButton,
+                    editButton,
+                    rightButton,
+                    reloadButtonConfigs
+                  );
+                  await scriptAllCollector.update({ embeds: [scriptStatusEmbed], components: [row] });
                 }
               }
             } else {
-              await interaction.reply({ content: 'Not implemented yet' });
+              let scriptConfig = getScriptConfig(statusName);
+              const scriptStatusEmbed = new EmbedBuilder()
+                .setColor(config.other.colors.green.hex)
+                .setTitle(`Script Status - ${scriptConfig.name}`)
+                .addFields(
+                  {
+                    name: 'Description',
+                    value: shortenMessage(scriptConfig.description, 25),
+                    inline: false,
+                  },
+                  {
+                    name: 'Type',
+                    value: scriptConfig.type,
+                    inline: true,
+                  },
+                  {
+                    name: 'Running',
+                    value: scriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                    inline: true,
+                  },
+                  {
+                    name: 'Enabled',
+                    value: scriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                    inline: true,
+                  },
+                  {
+                    name: 'Times Run',
+                    value: scriptConfig.timesRun,
+                    inline: true,
+                  }
+                )
+                .setFooter({
+                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                });
+
+              const leftButton = new ButtonBuilder()
+                .setEmoji('1135038841426825297')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('leftButtonConfigs');
+              const editButton = new ButtonBuilder()
+                .setEmoji('📝')
+                .setStyle(ButtonStyle.Danger)
+                .setCustomId('editButtonConfig');
+              const rightButton = new ButtonBuilder()
+                .setEmoji('1135038844706762799')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('rightButtonConfigs');
+              const reloadButtonConfigs = new ButtonBuilder()
+                .setEmoji('🔄')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId('reloadButtonConfigsScript');
+              const row = new ActionRowBuilder().addComponents(
+                leftButton,
+                editButton,
+                rightButton,
+                reloadButtonConfigs
+              );
+
+              const scriptMessage = await interaction.reply({ embeds: [scriptStatusEmbed], components: [row] });
+              const collectorFilter = (i) => i.user.id === interaction.user.id;
+
+              while (true) {
+                const scriptAllCollector = await scriptMessage.awaitMessageComponent({
+                  time: config.discord.buttonTimeout * 1000,
+                  filter: collectorFilter,
+                });
+                if (scriptAllCollector.customId === 'editButtonConfig') {
+                  const editButtonStopScript = new ButtonBuilder()
+                    .setLabel('Stop Script')
+                    .setStyle(ButtonStyle.Danger)
+                    .setCustomId('editButtonStopScript');
+                  const editButtonStartScript = new ButtonBuilder()
+                    .setLabel('Start Script')
+                    .setStyle(ButtonStyle.Success)
+                    .setCustomId('editButtonStartScript');
+                  const editButtonGoBack = new ButtonBuilder()
+                    .setLabel('Go Back')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId('editButtonGoBack');
+
+                  const editScriptRow = new ActionRowBuilder().addComponents(
+                    scriptConfig.running ? editButtonStopScript : editButtonStartScript,
+                    editButtonGoBack
+                  );
+                  await scriptAllCollector.update({ components: [editScriptRow] });
+
+                  while (true) {
+                    const collectorFilter = (i) => i.user.id === interaction.user.id;
+                    const scriptEditCollector = await scriptMessage.awaitMessageComponent({
+                      time: config.discord.buttonTimeout * 1000,
+                      filter: collectorFilter,
+                    });
+                    if (scriptEditCollector.customId === 'editButtonStopScript') {
+                      await stopScript(scriptConfig.name);
+                      const scriptStatusEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${scriptConfig.name}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: shortenMessage(scriptConfig.description, 25),
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: scriptConfig.type,
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: scriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: scriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: scriptConfig.timesRun,
+                            inline: true,
+                          }
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        });
+
+                      const editScriptRow = new ActionRowBuilder().addComponents(
+                        scriptConfig.running ? editButtonStopScript : editButtonStartScript,
+                        editButtonGoBack
+                      );
+                      await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
+                    } else if (scriptEditCollector.customId === 'editButtonStartScript') {
+                      await startScript(scriptConfig.name);
+                      const scriptStatusEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${scriptConfig.name}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: shortenMessage(scriptConfig.description, 25),
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: scriptConfig.type,
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: scriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: scriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: scriptConfig.timesRun,
+                            inline: true,
+                          }
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        });
+
+                      const editScriptRow = new ActionRowBuilder().addComponents(
+                        scriptConfig.running ? editButtonStopScript : editButtonStartScript,
+                        editButtonGoBack
+                      );
+                      await scriptEditCollector.update({ embeds: [scriptStatusEmbed], components: [editScriptRow] });
+                    } else if (scriptEditCollector.customId === 'editButtonGoBack') {
+                      scriptConfig = getScriptConfig(statusName);
+                      const goBackEmbed = new EmbedBuilder()
+                        .setColor(config.other.colors.green.hex)
+                        .setTitle(`Script Status - ${scriptConfig.name}`)
+                        .addFields(
+                          {
+                            name: 'Description',
+                            value: shortenMessage(scriptConfig.description, 25),
+                            inline: false,
+                          },
+                          {
+                            name: 'Type',
+                            value: scriptConfig.type,
+                            inline: true,
+                          },
+                          {
+                            name: 'Running',
+                            value: scriptConfig.running ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Enabled',
+                            value: scriptConfig.enabled ? config.other.emojis.yes : config.other.emojis.no,
+                            inline: true,
+                          },
+                          {
+                            name: 'Times Run',
+                            value: scriptConfig.timesRun,
+                            inline: true,
+                          }
+                        )
+                        .setFooter({
+                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          iconURL: 'https://i.imgur.com/uUuZx2E.png',
+                        });
+
+                      await scriptAllCollector.update({ embeds: [goBackEmbed], components: [row] });
+                    }
+                  }
+                }
+              }
             }
           }
         } catch (error) {
