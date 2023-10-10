@@ -212,7 +212,7 @@ function addNotation(type, value) {
       notList = [' Thousand', ' Million', ' Billion', ' Trillion', ' Quadrillion', ' Quintillion'];
     }
     if (type === 'oneLetters') {
-      notList = ['K', 'M', 'B', 'T'];
+      notList = ['k', 'm', 'b', 't'];
     }
     let checkNum = 1000;
     if (type !== 'none' && type !== 'commas') {
@@ -224,7 +224,7 @@ function addNotation(type, value) {
             returnVal = value / (checkNum / 100);
             returnVal = Math.floor(returnVal);
             returnVal = (returnVal / Math.pow(10, o)) * 10;
-            returnVal = +returnVal.toFixed(o - 1) + notValue;
+            returnVal = +returnVal.toFixed(o) + notValue;
           }
           checkNum *= 10;
         }
@@ -398,6 +398,26 @@ function shortenMessage(message, length) {
   }
 }
 
+async function getHighestProfile(characters) {
+  try {
+    let highestLevel = -Infinity;
+    let selectedId = null;
+    for (const id in characters) {
+      const currentObject = characters[id];
+      if (currentObject.level > highestLevel) {
+        highestLevel = currentObject.level;
+        selectedId = id;
+      }
+    }
+    return selectedId;
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error ID: ${errorId}`);
+    errorMessage(error);
+    return cleanMessage(error);
+  }
+}
+
 module.exports = {
   generateID,
   getCurrentTime,
@@ -418,4 +438,5 @@ module.exports = {
   cleanMessage,
   fixProfessionsData,
   shortenMessage,
+  getHighestProfile,
 };

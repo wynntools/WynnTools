@@ -359,7 +359,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => errorMessage(err));
+                .catch((error) => errorMessage(error));
             const response = await fetch(url);
             const data = await response.text();
             const channel = interaction.options.getChannel('channel') ?? interaction.channel;
@@ -384,7 +384,7 @@ module.exports = {
             const fetch = (...args) =>
               import('node-fetch')
                 .then(({ default: fetch }) => fetch(...args))
-                .catch((err) => errorMessage(err));
+                .catch((error) => errorMessage(error));
             const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
             const response = await fetch(url);
             const data = await response.text();

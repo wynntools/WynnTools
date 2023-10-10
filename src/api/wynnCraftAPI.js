@@ -6,7 +6,7 @@ const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch')
     .then(({ default: fetch }) => fetch(...args))
-    .catch((err) => errorMessage(err));
+    .catch((error) => errorMessage(error));
 
 const wynncraftPlayerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const wynncraftGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -75,26 +75,6 @@ async function getStats(uuid) {
         return response;
       }
     }
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error ID: ${errorId}`);
-    errorMessage(error);
-    return cleanMessage(error);
-  }
-}
-
-async function getHighestProfile(characters) {
-  try {
-    let highestLevel = -Infinity;
-    let selectedId = null;
-    for (const id in characters) {
-      const currentObject = characters[id];
-      if (currentObject.level > highestLevel) {
-        highestLevel = currentObject.level;
-        selectedId = id;
-      }
-    }
-    return selectedId;
   } catch (error) {
     var errorId = generateID(config.other.errorIdLength);
     errorMessage(`Error ID: ${errorId}`);
@@ -243,7 +223,6 @@ function clearWynnCraftGuildCache() {
 
 module.exports = {
   getStats,
-  getHighestProfile,
   getProfiles,
   getGuild,
   getServers,
