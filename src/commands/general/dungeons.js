@@ -51,7 +51,8 @@ module.exports = {
         collector.on('collect', async function (i) {
           const selectedProfile = i.values[0];
           await i.update({
-            files: [await generateProfileDungeons(uuid, selectedProfile)], components: [row]
+            files: [await generateProfileDungeons(uuid, selectedProfile)],
+            components: [row],
           });
         });
       }

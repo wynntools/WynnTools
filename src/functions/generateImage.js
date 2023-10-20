@@ -766,12 +766,12 @@ async function generateProfileDungeons(uuid, profileId) {
       var dungeons = currentProfileStats.dungeons;
 
       let dungeonData;
-      let corruptedDungeonData;
+      // let corruptedDungeonData;
       const leftNormalX = 336;
       const leftCorruptedX = 435;
-      const rightNormalX = 336;
-      const rightCorruptedX = 336;
-      console.log(dungeons.list);
+      // const rightNormalX = 336;
+      // const rightCorruptedX = 336;
+      // console.log(dungeons.list);
 
       // ? Decrepit Sewers
       ctx.drawImage(await loadImage('src/assets/dungeonsCommand/decrepitSewersIcon.png'), 146, 266, 128, 128);
@@ -779,9 +779,10 @@ async function generateProfileDungeons(uuid, profileId) {
       ctx.fillStyle = 'white';
       ctx.textAlign = 'left';
       ctx.fillText('Decrepit Sewers', 280, 270);
+      // eslint-disable-next-line prefer-const
       dungeonData = dungeons.list.find((dungeon) => dungeon.name === 'Decrepit Sewers');
-      corruptedDungeonData = dungeons.list.find((dungeon) => dungeon.name === 'Corrupted Decrepit Sewers');
-      console.log(dungeonData);
+      // corruptedDungeonData = dungeons.list.find((dungeon) => dungeon.name === 'Corrupted Decrepit Sewers');
+      // console.log(dungeonData);
       ctx.font = '30px Karla';
       ctx.fillText('Completion', 336, 307);
       ctx.font = '18px Karla';
