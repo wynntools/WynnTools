@@ -6,7 +6,7 @@ const {
   EmbedBuilder,
   ButtonStyle,
 } = require('discord.js');
-const { generateProfileImage } = require('../../functions/generateImage.js');
+const { generateProfileDungeons } = require('../../functions/generateImage.js');
 const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
 const { getProfiles } = require('../../api/wynnCraftAPI.js');
@@ -16,8 +16,8 @@ const config = require('../../../config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('stats')
-    .setDescription('Display Stats about a user')
+    .setName('dungeons')
+    .setDescription('Display Dungeon stats about a user')
     .setDMPermission(false)
     .addStringOption((option) =>
       option.setName('username').setDescription('Username of user you want to see the stats for').setRequired(true)
@@ -33,7 +33,7 @@ module.exports = {
       const sortedProfiles = profiles.sort((a, b) => b.level - a.level);
       if (sortedProfiles.length === 1) {
         return await interaction.editReply({
-          files: [await generateProfileImage(uuid, sortedProfiles[0].key)],
+          files: [await generateProfileDungeons(uuid, sortedProfiles[0].key)],
         });
       } else {
         const options = sortedProfiles.map((entry) => ({ label: `${entry.type} - ${entry.level}`, value: entry.key }));
@@ -43,7 +43,7 @@ module.exports = {
           .addOptions(options);
         const row = new ActionRowBuilder().addComponents(select);
         var msg = await interaction.editReply({
-          files: [await generateProfileImage(uuid, sortedProfiles[0].key)],
+          files: [await generateProfileDungeons(uuid, sortedProfiles[0].key)],
           components: [row],
         });
         const filter = (i) => i.isStringSelectMenu(i);
@@ -51,7 +51,7 @@ module.exports = {
         collector.on('collect', async function (i) {
           const selectedProfile = i.values[0];
           await i.update({
-            files: [await generateProfileImage(uuid, selectedProfile)], components: [row]
+            files: [await generateProfileDungeons(uuid, selectedProfile)], components: [row]
           });
         });
       }

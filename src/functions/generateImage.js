@@ -4,6 +4,7 @@ const {
   getRelativeTime,
   generateDate,
   getMaxMembers,
+  addNotation,
   generateID,
 } = require('./helper.js');
 const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
@@ -16,6 +17,7 @@ const QuickChart = require('quickchart-js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
 
+const generateProfileDungeonsCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateServerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -57,7 +59,6 @@ async function generateProfileImage(uuid, profileId) {
       ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.data.characters[profileId];
-      // console.log(currentProfileStats);
       currentProfileStats.professions = fixProfessionsData(currentProfileStats.professions);
       const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
       ctx.drawImage(img, 912, 32, 256, 256);
@@ -165,40 +166,40 @@ async function generateProfileImage(uuid, profileId) {
         ctx.fillText(stats.username, 62, 52);
       }
       if (currentProfileStats.gamemode.craftsman) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/craftsmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/other/craftsmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hardcore) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/hardcoreGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.ironman) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 720, 52);
             if (currentProfileStats.gamemode.hunted) {
-              ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 664, 52);
+              ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 664, 52);
             }
           }
         } else if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hardcore) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/hardcoreGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/other/hardcoreGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.ironman) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 776, 52);
           if (currentProfileStats.gamemode.hunted) {
-            ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 720, 52);
+            ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 720, 52);
           }
         } else if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.ironman) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/ironmanGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 832, 52);
         if (currentProfileStats.gamemode.hunted) {
-          ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 776, 52);
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 776, 52);
         }
       } else if (currentProfileStats.gamemode.hunted) {
-        ctx.drawImage(await loadImage('src/assets/statsCommand/huntedGamemodeIcon.png'), 832, 52);
+        ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 832, 52);
       }
       ctx.font = '24px Karla';
       ctx.fillStyle = 'white';
@@ -265,11 +266,13 @@ async function generateProfileImage(uuid, profileId) {
       ctx.fillText(
         `General\n\nTotal Level - ${currentProfileStats.level}\nPlaytime - ${Math.floor(
           (stats.data.meta.playtime * 4.7) / 60
-        )}h\nDiscoveries - ${currentProfileStats.discoveries}\nMobs Killed - ${
+        )}h\nDiscoveries - ${addNotation('oneLetters', currentProfileStats.discoveries)}\nMobs Killed - ${addNotation(
+          'oneLetters',
           currentProfileStats.mobsKilled
-        }\nFinished Dungeons - ${currentProfileStats.dungeons.completed}\nRaids Completed - ${
-          currentProfileStats.raids.completed
-        }`,
+        )}\nFinished Dungeons - ${addNotation(
+          'oneLetters',
+          currentProfileStats.dungeons.completed
+        )}\nRaids Completed - ${addNotation('oneLetters', currentProfileStats.raids.completed)}`,
         62,
         322
       );
@@ -598,6 +601,242 @@ async function generateProfileImage(uuid, profileId) {
       );
       const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'image.png' });
       generateProfileImageCache.set(profileId, attachment);
+      return attachment;
+    }
+  } catch (error) {
+    var errorId = generateID(config.other.errorIdLength);
+    errorMessage(`Error Id - ${errorId}`);
+    errorMessage(error);
+  }
+}
+
+async function generateProfileDungeons(uuid, profileId) {
+  try {
+    if (generateProfileDungeonsCache.has(profileId)) {
+      cacheMessage('Generate Profile Image', 'hit');
+      return generateProfileDungeonsCache.get(profileId);
+    } else {
+      const canvas = createCanvas(1200, 1200);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/background.png'), 0, 0, canvas.width, canvas.height);
+      var stats = await getStats(uuid);
+      var currentProfileStats = stats.data.characters[profileId];
+      const img = await loadImage(`https://visage.surgeplay.com/bust/256/${uuid}.png`);
+      ctx.drawImage(img, 32, 32, 128, 128);
+      ctx.textBaseline = 'top';
+      ctx.font = '36px Karla';
+      ctx.textAlign = 'left';
+      if (stats.rank === 'Media') {
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
+        ctx.fillText(stats.rank, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.rank === 'Administrator') {
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.red.hex;
+        ctx.fillText(stats.rank, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.darkRed.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.rank).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 + ctx.measureText('[').width + ctx.measureText(stats.rank).width + ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.data.meta.veteran) {
+        ctx.fillStyle = config.other.colors.peach.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.cherryBlossomPink.hex;
+        ctx.fillText('Vet', 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.peach.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText('Vet').width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 + ctx.measureText('[').width + ctx.measureText('Vet').width + ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.data.meta.tag.value === 'VIP') {
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.green.hex;
+        ctx.fillText(stats.data.meta.tag.value, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.darkGreen.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.data.meta.tag.value === 'VIP+') {
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.darkAqua.hex;
+        ctx.fillText(stats.data.meta.tag.value, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.aqua.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.data.meta.tag.value === 'HERO') {
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.lightPurple.hex;
+        ctx.fillText(stats.data.meta.tag.value, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.darkPurple.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          75
+        );
+      } else if (stats.data.meta.tag.value === 'CHAMPION') {
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
+        ctx.fillText('[', 160, 75);
+        ctx.fillStyle = config.other.colors.minecraft.yellow.hex;
+        ctx.fillText(stats.data.meta.tag.value, 160 + ctx.measureText('[').width, 75);
+        ctx.fillStyle = config.other.colors.minecraft.gold.hex;
+        ctx.fillText(']', 160 + ctx.measureText('[').width + ctx.measureText(stats.data.meta.tag.value).width, 75);
+        ctx.fillText(
+          ` ${stats.username}`,
+          160 +
+            ctx.measureText('[').width +
+            ctx.measureText(stats.data.meta.tag.value).width +
+            ctx.measureText(']').width,
+          75
+        );
+      } else {
+        ctx.fillStyle = 'white';
+        ctx.fillText(stats.username, 160, 75);
+      }
+      if (currentProfileStats.gamemode.craftsman) {
+        ctx.drawImage(await loadImage('src/assets/other/craftsmanGamemodeIcon.png'), 1000, 75);
+        if (currentProfileStats.gamemode.hardcore) {
+          ctx.drawImage(await loadImage('src/assets/other/hardcoreGamemodeIcon.png'), 944, 75);
+          if (currentProfileStats.gamemode.ironman) {
+            ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 888, 75);
+            if (currentProfileStats.gamemode.hunted) {
+              ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 832, 75);
+            }
+          }
+        } else if (currentProfileStats.gamemode.ironman) {
+          ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 944, 75);
+          if (currentProfileStats.gamemode.hunted) {
+            ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 888, 75);
+          }
+        } else if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 944, 75);
+        }
+      } else if (currentProfileStats.gamemode.hardcore) {
+        ctx.drawImage(await loadImage('src/assets/other/hardcoreGamemodeIcon.png'), 1000, 75);
+        if (currentProfileStats.gamemode.ironman) {
+          ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 944, 75);
+          if (currentProfileStats.gamemode.hunted) {
+            ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 888, 75);
+          }
+        } else if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 944, 75);
+        }
+      } else if (currentProfileStats.gamemode.ironman) {
+        ctx.drawImage(await loadImage('src/assets/other/ironmanGamemodeIcon.png'), 1000, 75);
+        if (currentProfileStats.gamemode.hunted) {
+          ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 944, 75);
+        }
+      } else if (currentProfileStats.gamemode.hunted) {
+        ctx.drawImage(await loadImage('src/assets/other/huntedGamemodeIcon.png'), 1000, 75);
+      }
+
+      var dungeons = currentProfileStats.dungeons;
+
+      let dungeonData;
+      let corruptedDungeonData;
+      const leftNormalX = 336;
+      const leftCorruptedX = 435;
+      const rightNormalX = 336;
+      const rightCorruptedX = 336;
+      console.log(dungeons.list);
+
+      // ? Decrepit Sewers
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/decrepitSewersIcon.png'), 146, 266, 128, 128);
+      ctx.font = '36px Karla';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'left';
+      ctx.fillText('Decrepit Sewers', 280, 270);
+      dungeonData = dungeons.list.find((dungeon) => dungeon.name === 'Decrepit Sewers');
+      corruptedDungeonData = dungeons.list.find((dungeon) => dungeon.name === 'Corrupted Decrepit Sewers');
+      console.log(dungeonData);
+      ctx.font = '30px Karla';
+      ctx.fillText('Completion', 336, 307);
+      ctx.font = '18px Karla';
+
+      // * Normal
+      var textNormalDecrepitSewers = 'Normal\n0';
+      if (dungeonData.name === 'Decrepit Sewers') textNormalDecrepitSewers = `Normal\n${dungeonData.completed}`;
+      const textLinesNormalDecrepitSewers = textNormalDecrepitSewers.split('\n');
+      ctx.fillText(textLinesNormalDecrepitSewers[0], leftNormalX, 340);
+      ctx.fillText(
+        textLinesNormalDecrepitSewers[1],
+        leftNormalX +
+          (ctx.measureText(textLinesNormalDecrepitSewers[0]).width -
+            ctx.measureText(textLinesNormalDecrepitSewers[1]).width) /
+            2,
+        340 + parseInt(ctx.font, 10)
+      );
+
+      // * Corrupted
+      var textCorruptedDecrepitSewers = 'Corrupt\n0';
+      if (dungeonData.name === 'Decrepit Sewers') textCorruptedDecrepitSewers = `Corrupt\n${dungeonData.completed}`;
+      const textLinesCorruptedDecrepitSewers = textCorruptedDecrepitSewers.split('\n');
+      ctx.fillText(textLinesCorruptedDecrepitSewers[0], leftCorruptedX, 340);
+      ctx.fillText(
+        textLinesCorruptedDecrepitSewers[1],
+        leftCorruptedX +
+          (ctx.measureText(textLinesCorruptedDecrepitSewers[0]).width -
+            ctx.measureText(textLinesCorruptedDecrepitSewers[1]).width) /
+            2,
+        340 + parseInt(ctx.font, 10)
+      );
+
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/infestedPitIcon.png'), 146, 425, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/underworldCryptIcon.png'), 146, 584, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/lostSanctuaryIcon.png'), 146, 743, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/sandSweptTombIcon.png'), 146, 902, 128, 128);
+
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/iceBarrowsIcon.png'), 637, 266, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/undergrowthRuinsIcon.png'), 637, 425, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/galleonGraveyardIcon.png'), 637, 584, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/fallenFactoryIcon.png'), 637, 743, 128, 128);
+      ctx.drawImage(await loadImage('src/assets/dungeonsCommand/eldritchOutlookIcon.png'), 637, 902, 128, 128);
+
+      ctx.font = '32px Karla';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(
+        `WynnTools v${packageJson.version} - ${generateDate()} - Made by @${packageJson.author}`,
+        600,
+        1120,
+        1136
+      );
+      const attachment = new AttachmentBuilder(canvas.toBuffer('image/png'), { name: 'image.png' });
+      generateProfileDungeonsCache.set(profileId, attachment);
       return attachment;
     }
   } catch (error) {
@@ -1334,6 +1573,7 @@ function clearGenerateServerGraphCache() {
 module.exports = {
   bar,
   generateProfileImage,
+  generateProfileDungeons,
   generateGuild,
   generateMemberJoin,
   generateServer,
