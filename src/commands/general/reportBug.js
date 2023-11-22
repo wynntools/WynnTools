@@ -71,7 +71,10 @@ module.exports = {
           .setColor(config.other.colors.green.hex)
           .setAuthor({ name: 'Bug Report Submitted' })
           .setDescription(`Your bug report has been successfully sent to the dev.`)
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const bugReportEmbed = new EmbedBuilder()
           .setColor(config.other.colors.red.hex)
           .setTitle(`BUG REPORT`)
@@ -115,7 +118,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -136,7 +139,10 @@ module.exports = {
               config.discord.channels.support
             }> to report this bug\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const supportDisc = new ButtonBuilder()
           .setLabel('Support Discord')
           .setURL(config.discord.supportInvite)

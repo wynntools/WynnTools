@@ -98,7 +98,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           const overrideYes = new ButtonBuilder()
@@ -131,7 +131,7 @@ module.exports = {
                 .setColor(config.other.colors.red.hex)
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 })
                 .setDescription('Are you sure you want to override the data? **THIS CANNOT BE UNDONE!**');
@@ -163,7 +163,7 @@ module.exports = {
                     )
                     .setTimestamp()
                     .setFooter({
-                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      text: `by @kathund. | ${config.discord.supportInvite} for support`,
                       iconURL: config.other.logo,
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideSuccessfully], components: [] });
@@ -173,7 +173,7 @@ module.exports = {
                     .setDescription('Data override cancelled')
                     .setTimestamp()
                     .setFooter({
-                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      text: `by @kathund. | ${config.discord.supportInvite} for support`,
                       iconURL: config.other.logo,
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideCancel], components: [] });
@@ -187,7 +187,7 @@ module.exports = {
                   .setDescription('Data override cancelled')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await interaction.editReply({ embeds: [overrideCancel], components: [] });
@@ -198,7 +198,7 @@ module.exports = {
                 .setDescription('Data override cancelled')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -212,7 +212,7 @@ module.exports = {
               .setDescription('Data override cancelled')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.editReply({ embeds: [updatedEmbed], components: [] });
@@ -237,7 +237,7 @@ module.exports = {
               }\nDo you wanna see an example of a fun fact? (Note that this will be sent to the channel you set and will ping the role you set)`
             )
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           await writeAt('data/funFacts/config.json', interaction.guild.id, {
@@ -263,7 +263,7 @@ module.exports = {
                 .setDescription('This is an example of a fun fact')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               const row = new ActionRowBuilder().addComponents(
@@ -285,7 +285,7 @@ module.exports = {
                   }`
                 )
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -298,7 +298,7 @@ module.exports = {
                   }`
                 )
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -322,7 +322,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await writeAt('data/funFacts/config.json', interaction.guild.id, {
@@ -361,7 +361,7 @@ module.exports = {
                   .setDescription('Successfully Deleted this servers config.')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -371,7 +371,7 @@ module.exports = {
                   .setDescription('Config not deleted and fun facts disabled.')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -385,7 +385,7 @@ module.exports = {
                 .setDescription('Fun facts have been disabled')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               return await interaction.editReply({ embeds: [updatedEmbed], components: [] });
@@ -398,7 +398,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [embed] });
@@ -409,7 +409,7 @@ module.exports = {
             .setDescription('This server does not have a config set for fun facts')
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [failEmbed] });
@@ -425,7 +425,7 @@ module.exports = {
               .setDescription('Fun Facts have been enabled')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [embed] });
@@ -437,7 +437,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [embed] });
@@ -451,7 +451,7 @@ module.exports = {
             .setDescription('The fun fact you suggested is too long please keep it under 1024 characters')
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [embed] });
@@ -462,7 +462,10 @@ module.exports = {
             'Suggestions are not guaranteed to be added to the bot and are not anonymous. Suggestions must follow the rules of the Support discord failure to do so will result in a blacklist from using the bot. These are the important rules and there title - **Rule #1 - Rudeness/Slurs, Rule #2 - Spamming, Rule #3 - No advertising, Rule #5 - English only, Rule #7 - Threats** If you wish to read more please join the support discord with the button below\nDo you wish to continue?'
           )
           .setTimestamp()
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const suggestYes = new ButtonBuilder()
           .setCustomId('funFactsSuggestYes')
           .setLabel('Yes')
@@ -489,7 +492,7 @@ module.exports = {
               .setDescription('Do you want to be notified when your fun fact is added?')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             const notifyYes = new ButtonBuilder()
@@ -509,7 +512,7 @@ module.exports = {
                 .setDescription('Your fun fact has been submitted')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               const channel = await interaction.client.channels.fetch(config.discord.channels['fun-facts-suggestions']);
@@ -535,7 +538,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await channel.send({ content: `<@&${config.discord.roles.dev}>`, embeds: [suggestionEmbed] });
@@ -556,7 +559,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await channel.send({ content: `<@&${config.discord.roles.dev}>`, embeds: [suggestionEmbed] });
@@ -571,7 +574,7 @@ module.exports = {
                 .setDescription('Fun fact suggestion cancelled')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               errorMessage(error);
@@ -584,7 +587,7 @@ module.exports = {
               .setDescription('Fun fact suggestion cancelled')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await confirmation.update({ embeds: [embed], components: [] });
@@ -598,7 +601,7 @@ module.exports = {
             .setDescription('Fun fact suggestion cancelled')
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           await interaction.editReply({ embeds: [embed], components: [] });
@@ -630,7 +633,10 @@ module.exports = {
               inline: false,
             }
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const invite = new ButtonBuilder()
           .setLabel('Bot invite')
           .setURL('https://discord.com/api/oauth2/authorize?client_id=1127383186683465758&permissions=8&scope=bot')
@@ -697,7 +703,10 @@ module.exports = {
               inline: false,
             }
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const invite = new ButtonBuilder()
           .setLabel('Bot invite')
           .setURL('https://discord.com/api/oauth2/authorize?client_id=1127383186683465758&permissions=8&scope=bot')
@@ -713,7 +722,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -734,7 +743,10 @@ module.exports = {
               config.discord.commands['report-bug']
             }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const supportDisc = new ButtonBuilder()
           .setLabel('Support Discord')
           .setURL(config.discord.supportInvite)

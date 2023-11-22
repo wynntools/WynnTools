@@ -43,7 +43,7 @@ cron.schedule(
       const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
       const source = new ButtonBuilder()
         .setLabel('source')
-        .setURL('https://github.com/Kathund/WynnTools')
+        .setURL('https://github.com/WynnTools/WynnTools')
         .setStyle(ButtonStyle.Link);
       const row = new ActionRowBuilder().addComponents(invite, source);
       var embed = new EmbedBuilder()
@@ -53,7 +53,7 @@ cron.schedule(
         .addFields(
           {
             name: 'General',
-            value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${
+            value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
               genCommands.length
             } (${
               devCommands.length
@@ -75,7 +75,7 @@ cron.schedule(
           }
         )
         .setFooter({
-          text: `by @kathund | Stats maybe inaccurate/outdated/cached`,
+          text: `by @kathund. | Stats maybe inaccurate/outdated/cached`,
           iconURL: config.other.logo,
         });
       await message.edit({ embeds: [embed], components: [row] });

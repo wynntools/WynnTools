@@ -23,7 +23,7 @@ module.exports = {
       const invite = new ButtonBuilder().setLabel('invite').setURL(config.discord.botInvite).setStyle(ButtonStyle.Link);
       const source = new ButtonBuilder()
         .setLabel('source')
-        .setURL('https://github.com/Kathund/WynnTools')
+        .setURL('https://github.com/WynnTools/WynnTools')
         .setStyle(ButtonStyle.Link);
       const row = new ActionRowBuilder().addComponents(support, invite, source);
       const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
@@ -54,7 +54,7 @@ module.exports = {
         .addFields(
           {
             name: 'General',
-            value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${
+            value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
               genCommands.length
             } (${
               devCommands.length
@@ -75,7 +75,10 @@ module.exports = {
             inline: true,
           }
         )
-        .setFooter({ text: `by @kathund | Stats maybe inaccurate/outdated/cached`, iconURL: config.other.logo });
+        .setFooter({
+          text: `by @kathund. | Stats maybe inaccurate/outdated/cached`,
+          iconURL: config.other.logo,
+        });
       await interaction.reply({ embeds: [embed], components: [row] });
     } catch (error) {
       if (String(error).includes('NO_ERROR_ID_')) {
@@ -85,7 +88,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -106,7 +109,10 @@ module.exports = {
               config.discord.commands['report-bug']
             }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const supportDisc = new ButtonBuilder()
           .setLabel('Support Discord')
           .setURL(config.discord.supportInvite)

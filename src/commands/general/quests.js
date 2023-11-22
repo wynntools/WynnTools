@@ -211,7 +211,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
 
@@ -288,7 +288,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await confirmationCompletedFilter.update({ embeds: [questEmbed], components: [row] });
@@ -346,7 +346,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await confirmationCompletedFilter.update({ embeds: [questEmbed], components: [row] });
@@ -405,7 +405,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
 
@@ -481,7 +481,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
 
@@ -538,7 +538,7 @@ module.exports = {
                   )
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
 
@@ -606,7 +606,7 @@ module.exports = {
           ],
           timestamp: new Date().toISOString(),
           footer: {
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             icon_url: config.other.logo,
           },
         };
@@ -751,7 +751,7 @@ module.exports = {
           )
           .setTimestamp()
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
 
@@ -831,7 +831,7 @@ module.exports = {
                 )
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
 
@@ -891,7 +891,7 @@ module.exports = {
                 )
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
 
@@ -912,7 +912,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -934,7 +934,7 @@ module.exports = {
             }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()

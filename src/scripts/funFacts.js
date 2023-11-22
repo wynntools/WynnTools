@@ -84,7 +84,7 @@ cron.schedule(
           `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${startTime + 86400}:R>`
         )
         .setFooter({
-          text: `by @kathund | ${config.discord.supportInvite} for support`,
+          text: `by @kathund. | ${config.discord.supportInvite} for support`,
           iconURL: config.other.logo,
         });
       let currentConfig;

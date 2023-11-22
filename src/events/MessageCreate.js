@@ -24,7 +24,7 @@ module.exports = {
         )
         .setTimestamp()
         .setFooter({
-          text: `by @kathund`,
+          text: `by @kathund.`,
           iconURL: config.other.logo,
         });
       const supportDisc = new ButtonBuilder()
@@ -45,7 +45,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -71,7 +71,7 @@ module.exports = {
             }> to report it\nError id - ${errorIdCheck}\nError Info - \`${cleanMessage(error)}\``
           )
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()

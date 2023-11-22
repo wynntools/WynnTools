@@ -84,7 +84,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           const overrideYes = new ButtonBuilder()
@@ -117,7 +117,7 @@ module.exports = {
                 .setColor(config.other.colors.red.hex)
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 })
                 .setDescription('Are you sure you want to override the data? **THIS CANNOT BE UNDONE!**');
@@ -146,7 +146,7 @@ module.exports = {
                     )
                     .setTimestamp()
                     .setFooter({
-                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      text: `by @kathund. | ${config.discord.supportInvite} for support`,
                       iconURL: config.other.logo,
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideSuccessfully], components: [] });
@@ -156,7 +156,7 @@ module.exports = {
                     .setDescription('Data override cancelled')
                     .setTimestamp()
                     .setFooter({
-                      text: `by @kathund | ${config.discord.supportInvite} for support`,
+                      text: `by @kathund. | ${config.discord.supportInvite} for support`,
                       iconURL: config.other.logo,
                     });
                   return await confirmOverrideConfirmation.update({ embeds: [overrideCancel], components: [] });
@@ -170,7 +170,7 @@ module.exports = {
                   .setDescription('Data override cancelled')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 await interaction.editReply({ embeds: [overrideCancel], components: [] });
@@ -181,7 +181,7 @@ module.exports = {
                 .setDescription('Data override cancelled')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -195,7 +195,7 @@ module.exports = {
               .setDescription('Data override cancelled')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.editReply({ embeds: [updatedEmbed], components: [] });
@@ -210,7 +210,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           await writeAt('data/serverUptime/config.json', interaction.guild.id, {
@@ -233,7 +233,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [embed] });
@@ -245,7 +245,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await writeAt('data/serverUptime/config.json', interaction.guild.id, {
@@ -283,7 +283,7 @@ module.exports = {
                   .setDescription('Successfully Deleted this servers config.')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -293,7 +293,7 @@ module.exports = {
                   .setDescription('Config not deleted and server uptime logging has disabled.')
                   .setTimestamp()
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -307,7 +307,7 @@ module.exports = {
                 .setDescription('server uptime logging has been disabled')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               return await interaction.editReply({ embeds: [updatedEmbed], components: [] });
@@ -319,7 +319,7 @@ module.exports = {
             .setDescription('This server does not have a config set for server uptime logging')
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [failEmbed] });
@@ -332,7 +332,7 @@ module.exports = {
               .setDescription('Server Uptime Logging has been enabled')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [embed] });
@@ -344,7 +344,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [embed] });
@@ -358,7 +358,10 @@ module.exports = {
             `**Step 1:** Create a channel where you want the server uptime logging to be sent into\n**Step 2:** Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the channel\n**Step 3:** (Optional) Create a role to be pinged when the server changes state\n**Step 4:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the role\n**Step 5:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the ghost ping\n**Step 6:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the delete previous messages\n**Step 7:** (Optional) Use </server-uptime config:${config.discord.commands['server-uptime']}> to set the disable\n**Step 8:** Use </server-uptime enable:${config.discord.commands['server-uptime']}> to enable the server uptime logging\n**Step 9:** (Optional) Use </server-uptime disable:${config.discord.commands['server-uptime']}> to disable the server uptime logging`
           )
           .setTimestamp()
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         return await interaction.reply({ embeds: [embed] });
       }
     } catch (error) {
@@ -369,7 +372,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -390,7 +393,10 @@ module.exports = {
               config.discord.commands['report-bug']
             }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
-          .setFooter({ text: `by @kathund | ${config.discord.supportInvite} for support`, iconURL: config.other.logo });
+          .setFooter({
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
+            iconURL: config.other.logo,
+          });
         const supportDisc = new ButtonBuilder()
           .setLabel('Support Discord')
           .setURL(config.discord.supportInvite)

@@ -89,7 +89,7 @@ module.exports = {
                   .setColor(config.other.colors.red.hex)
                   .setDescription('You are blacklisted')
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 return await interaction.reply({ embeds: [blacklisted], ephemeral: true });
@@ -104,7 +104,7 @@ module.exports = {
                 .setTitle('An error occurred')
                 .setDescription(`Error Info - \`${cleanMessage(error)}\``)
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               const supportDisc = new ButtonBuilder()
@@ -130,7 +130,7 @@ module.exports = {
                   }> to report it\nError id - ${errorIdBlacklistCheck}\nError Info - \`${cleanMessage(error)}\``
                 )
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               const supportDisc = new ButtonBuilder()
@@ -153,7 +153,7 @@ module.exports = {
               .setTitle('An error occurred')
               .setDescription(`Error Info - \`${cleanMessage(error)}\``)
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             const supportDisc = new ButtonBuilder()
@@ -179,7 +179,7 @@ module.exports = {
                 }> to report it\nError id - ${errorIdCheck}\nError Info - \`${cleanMessage(error)}\``
               )
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             const supportDisc = new ButtonBuilder()
@@ -222,7 +222,7 @@ module.exports = {
               .setTitle('An error occurred')
               .setDescription(`Error Info - \`${cleanMessage(error)}\``)
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             const supportDisc = new ButtonBuilder()
@@ -249,7 +249,7 @@ module.exports = {
                 }> to report it\nError id - ${errorIdButtons}\nError Info - \`${cleanMessage(error)}\``
               )
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             const supportDisc = new ButtonBuilder()

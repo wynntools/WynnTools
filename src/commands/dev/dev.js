@@ -410,7 +410,7 @@ module.exports = {
               .setTitle('Fun Facts List')
               .setDescription(list)
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [listEmbed] });
@@ -425,7 +425,7 @@ module.exports = {
               .setTitle('Fun Facts List')
               .setDescription(list)
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             return await interaction.reply({ embeds: [listEmbed] });
@@ -436,7 +436,7 @@ module.exports = {
             .setTitle('Are you sure?')
             .setDescription('This will send fun-facts to every setup server')
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           const confirmButton = new ButtonBuilder()
@@ -491,7 +491,7 @@ module.exports = {
                     }:R>`
                   )
                   .setFooter({
-                    text: `by @kathund | ${config.discord.supportInvite} for support`,
+                    text: `by @kathund. | ${config.discord.supportInvite} for support`,
                     iconURL: config.other.logo,
                   });
                 let currentConfig;
@@ -541,7 +541,7 @@ module.exports = {
                 .setDescription('Sent all Fun Facts')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -551,7 +551,7 @@ module.exports = {
                 .setDescription('Cancelled sending Fun Facts')
                 .setTimestamp()
                 .setFooter({
-                  text: `by @kathund | ${config.discord.supportInvite} for support`,
+                  text: `by @kathund. | ${config.discord.supportInvite} for support`,
                   iconURL: config.other.logo,
                 });
               await confirmation.update({ embeds: [cancelEmbed], components: [] });
@@ -565,7 +565,7 @@ module.exports = {
               .setDescription('Cancelled sending Fun Facts')
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.editReply({ embeds: [cancelEmbed], components: [] });
@@ -592,7 +592,7 @@ module.exports = {
               .setDescription(`${fact.fact}\n\n${requestedByString}`)
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -607,7 +607,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -625,7 +625,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
@@ -637,7 +637,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -650,7 +650,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -671,7 +671,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.client.users.send(suggestedData[id].by, { embeds: [notifyEmbed] });
@@ -683,7 +683,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -696,7 +696,7 @@ module.exports = {
               )
               .setTimestamp()
               .setFooter({
-                text: `by @kathund | ${config.discord.supportInvite} for support`,
+                text: `by @kathund. | ${config.discord.supportInvite} for support`,
                 iconURL: config.other.logo,
               });
             await interaction.reply({ embeds: [factEmbed] });
@@ -715,7 +715,7 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
               iconURL: config.other.logo,
             });
           const confirmButton = new ButtonBuilder()
@@ -895,7 +895,7 @@ module.exports = {
                           .setDescription(`The config for ${guild.name} (${guild.id}) has been deleted`)
                           .setTimestamp()
                           .setFooter({
-                            text: `by @kathund | ${config.discord.supportInvite} for support`,
+                            text: `by @kathund. | ${config.discord.supportInvite} for support`,
                             iconURL: config.other.logo,
                           });
                         await editMessage.update({ embeds: [configDeletedEmbed], components: [] });
@@ -926,7 +926,7 @@ module.exports = {
                           .setDescription(string)
                           .setTimestamp()
                           .setFooter({
-                            text: `by @kathund | ${config.discord.supportInvite} for support`,
+                            text: `by @kathund. | ${config.discord.supportInvite} for support`,
                             iconURL: config.other.logo,
                           });
                         await editMessageConfirmation.update({ embeds: [ghostPingUpdateEmbed], components: [editRow] });
@@ -957,7 +957,7 @@ module.exports = {
                           .setDescription(string)
                           .setTimestamp()
                           .setFooter({
-                            text: `by @kathund | ${config.discord.supportInvite} for support`,
+                            text: `by @kathund. | ${config.discord.supportInvite} for support`,
                             iconURL: config.other.logo,
                           });
                         await editMessageConfirmation.update({
@@ -991,7 +991,7 @@ module.exports = {
                           .setDescription(string)
                           .setTimestamp()
                           .setFooter({
-                            text: `by @kathund | ${config.discord.supportInvite} for support`,
+                            text: `by @kathund. | ${config.discord.supportInvite} for support`,
                             iconURL: config.other.logo,
                           });
                         await editMessageConfirmation.update({
@@ -1016,7 +1016,7 @@ module.exports = {
                           )
                           .setTimestamp()
                           .setFooter({
-                            text: `by @kathund | ${config.discord.supportInvite} for support`,
+                            text: `by @kathund. | ${config.discord.supportInvite} for support`,
                             iconURL: config.other.logo,
                           });
                         await editMessageConfirmation.update({ embed: [savedConfigEmbed] });
@@ -1030,7 +1030,7 @@ module.exports = {
                         .setTitle('An error occurred')
                         .setDescription(`Error Info - \`${cleanMessage(error)}\``)
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       const supportDisc = new ButtonBuilder()
@@ -1054,7 +1054,7 @@ module.exports = {
                           )}\``
                         )
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       const supportDisc = new ButtonBuilder()
@@ -1252,7 +1252,7 @@ module.exports = {
                         .setDescription(`The config for ${guild.name} (${guild.id}) has been deleted`)
                         .setTimestamp()
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       await editMessageInputIdConfirmation.update({
@@ -1286,7 +1286,7 @@ module.exports = {
                         .setDescription(string)
                         .setTimestamp()
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       await editMessageInputIdConfirmation.update({
@@ -1320,7 +1320,7 @@ module.exports = {
                         .setDescription(string)
                         .setTimestamp()
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       await editMessageInputIdConfirmation.update({
@@ -1354,7 +1354,7 @@ module.exports = {
                         .setDescription(string)
                         .setTimestamp()
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       await editMessageInputIdConfirmation.update({
@@ -1377,7 +1377,7 @@ module.exports = {
                         .setDescription('Please click the refresh button to reload the config that is displayed above')
                         .setTimestamp()
                         .setFooter({
-                          text: `by @kathund | ${config.discord.supportInvite} for support`,
+                          text: `by @kathund. | ${config.discord.supportInvite} for support`,
                           iconURL: config.other.logo,
                         });
                       await editMessageInputIdConfirmation.update({ embed: [savedConfigInputIdEmbed], components: [] });
@@ -1444,8 +1444,8 @@ module.exports = {
             .setTitle('User Registered')
             .setDescription(`User ${username} has been registered to the pixelic api`)
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
+              iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [embed] });
         } else if (subCommand === 'guild') {
@@ -1456,8 +1456,8 @@ module.exports = {
             .setTitle('Attempting to register guild')
             .setDescription(`Attempting to register guild ${guild.name} to the pixelic api`)
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
+              iconURL: config.other.logo,
             });
           await interaction.reply({ embeds: [embed] });
           registerData = await registerGuild(guild);
@@ -1466,8 +1466,8 @@ module.exports = {
             .setTitle('Guild Registered')
             .setDescription(`Successfully registered ${registerData}/${guild.totalMembers} members`)
             .setFooter({
-              text: `by @kathund | ${config.discord.supportInvite} for support`,
-              iconURL: 'https://i.imgur.com/uUuZx2E.png',
+              text: `by @kathund. | ${config.discord.supportInvite} for support`,
+              iconURL: config.other.logo,
             });
           return await interaction.editReply({ embeds: [embed] });
         }
@@ -1546,7 +1546,7 @@ module.exports = {
             .setStyle(ButtonStyle.Link);
           const source = new ButtonBuilder()
             .setLabel('source')
-            .setURL('https://github.com/Kathund/WynnTools')
+            .setURL('https://github.com/WynnTools/WynnTools')
             .setStyle(ButtonStyle.Link);
           const row = new ActionRowBuilder().addComponents(invite, source);
           var embed = new EmbedBuilder()
@@ -1556,7 +1556,7 @@ module.exports = {
             .addFields(
               {
                 name: 'General',
-                value: `<:Dev:1130772126769631272> Developer - \`@kathund\`\n<:commands:1130772895891738706> Commands - \`${
+                value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
                   genCommands.length
                 } (${
                   devCommands.length
@@ -1577,7 +1577,10 @@ module.exports = {
                 inline: true,
               }
             )
-            .setFooter({ text: `by @kathund | Stats maybe inaccurate/outdated/cached`, iconURL: config.other.logo });
+            .setFooter({
+              text: `by @kathund. | Stats maybe inaccurate/outdated/cached`,
+              iconURL: config.other.logo,
+            });
           await message.edit({ embeds: [embed], components: [row] });
           await interaction.reply({ content: 'Updated Stats', ephemeral: true });
         }
@@ -1593,7 +1596,7 @@ module.exports = {
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
@@ -1615,7 +1618,7 @@ module.exports = {
             }> to report it\nError id - ${errorId}\nError Info - \`${cleanMessage(error)}\``
           )
           .setFooter({
-            text: `by @kathund | ${config.discord.supportInvite} for support`,
+            text: `by @kathund. | ${config.discord.supportInvite} for support`,
             iconURL: config.other.logo,
           });
         const supportDisc = new ButtonBuilder()
