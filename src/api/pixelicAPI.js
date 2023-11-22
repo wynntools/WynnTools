@@ -6,9 +6,7 @@ const config = require('../../config.json');
 const nodeCache = require('node-cache');
 const { getGuild } = require('./wynnCraftAPI.js');
 const fetch = (...args) =>
-  import('node-fetch')
-    .then(({ default: fetch }) => fetch(...args))
-    .catch((error) => errorMessage(error));
+  import('node-fetch').then(({ default: fetch }) => fetch(...args)).catch((error) => errorMessage(error));
 
 const pixelicCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 

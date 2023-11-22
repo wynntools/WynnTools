@@ -342,9 +342,7 @@ module.exports = {
             const rawPath = pathSegments.slice(4).join('/');
             const url = `http://${validHosts[0]}/raw/${rawPath}`;
             const fetch = (...args) =>
-              import('node-fetch')
-                .then(({ default: fetch }) => fetch(...args))
-                .catch((error) => errorMessage(error));
+              import('node-fetch').then(({ default: fetch }) => fetch(...args)).catch((error) => errorMessage(error));
             const response = await fetch(url);
             const data = await response.text();
             const channel = interaction.options.getChannel('channel') ?? interaction.channel;
@@ -367,9 +365,7 @@ module.exports = {
           const message = await channel.messages.fetch(messageId);
           if (newEmbed.startsWith('https://')) {
             const fetch = (...args) =>
-              import('node-fetch')
-                .then(({ default: fetch }) => fetch(...args))
-                .catch((error) => errorMessage(error));
+              import('node-fetch').then(({ default: fetch }) => fetch(...args)).catch((error) => errorMessage(error));
             const url = `http://starb.in/raw/${newEmbed.split('.')[1].split('/')[1]}`;
             const response = await fetch(url);
             const data = await response.text();
