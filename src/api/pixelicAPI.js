@@ -1,10 +1,10 @@
 const { validateUUID, generateID, cleanMessage } = require('../functions/helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { getGuild } = require('./wynnCraftAPI.js');
 const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
-const { getGuild } = require('./wynnCraftAPI.js');
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args)).catch((error) => errorMessage(error));
 
