@@ -1,5 +1,4 @@
-const { cleanUpTimestampData, getRelativeTime, generateDate, getMaxMembers, generateID } = require('./helper.js');
-const { getServerHistory, getServerUptime } = require('../api/pixelicAPI.js');
+const { getRelativeTime, generateDate, getMaxMembers, generateID } = require('./helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
 const { getStats } = require('../api/wynnCraftAPI.js');
@@ -11,8 +10,6 @@ const nodeCache = require('node-cache');
 
 const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
-const generateServerCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
-const generateServerGraphCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 
 registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
@@ -746,44 +743,6 @@ async function generateMemberJoin(data) {
   }
 }
 
-async function generateServer(server) {
-  try {
-    if (generateServerCache.has(server.server)) {
-      cacheMessage('Generate Server', 'hit');
-      return generateServerCache.get(server.server);
-    } else {
-      const canvas = createCanvas(1200, 600);
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'white';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
-      ctx.font = '128px Karla';
-      if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 96, 118, 256, 256);
-      } else if (server.status === 'offline') {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 96, 118, 256, 256);
-      }
-      ctx.fillText(server.server, 514, 169);
-      ctx.fillText(server.count, 946, 169);
-      var uptime = await getServerUptime(server.server);
-      ctx.font = '48px Karla';
-      ctx.fillText(`Uptime - ${getRelativeTime(uptime.onlineSince, 's')}`, 347, 374);
-      ctx.font = '32px Karla';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(`WynnTools v${packageJson.version} - ${generateDate()} - Made by @kathund.`, 600, 520, 1136);
-      var buffer = canvas.toBuffer('image/png');
-      generateServerCache.set(server.server, buffer);
-      return buffer;
-    }
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    errorMessage(error);
-  }
-}
-
 const serversXY = [
   { circle: { x: 99, y: 105 }, id: { x: 224, y: 121 }, count: { x: 355, y: 121 } },
   { circle: { x: 447, y: 105 }, id: { x: 571, y: 121 }, count: { x: 704, y: 121 } },
@@ -923,63 +882,6 @@ async function generateServerChart(data) {
   }
 }
 
-async function generateServerGraph(server) {
-  // unix timestamp in seconds as a var
-  if (generateServerGraphCache.has(server.server)) {
-    cacheMessage('Generate Server Graph', 'hit');
-    return generateServerGraphCache.get(server.server);
-  } else {
-    const canvas = createCanvas(1200, 600);
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(await loadImage('src/assets/serverCommand/background.png'), 0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'white';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    var badData = await getServerHistory(server.server, 'day');
-    if (badData.success) {
-      ctx.font = '16px Karla';
-      if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 1078, 48, 32, 32);
-      } else {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 1078, 48, 32, 32);
-      }
-      ctx.fillText(server.server, 1118, 55);
-      var data = await cleanUpTimestampData(badData);
-      var url = await generateServerChart(data);
-      ctx.drawImage(await loadImage(url), 32, 32, 1136, 428);
-    } else {
-      ctx.font = '32px Karla';
-      if (server.status === 'online') {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/onlineIcon.png'), 525, 88, 64, 64);
-      } else {
-        ctx.drawImage(await loadImage('src/assets/serverCommand/offlineIcon.png'), 525, 88, 64, 64);
-      }
-      ctx.fillText(server.server, 605, 102);
-      if (badData.error === 'No data was found about the specified server') {
-        const text = `No data was found about\nthe specified server`;
-        const textLines = text.split('\n');
-        ctx.font = '64px Karla';
-        ctx.fillText(textLines[0], 218, 184);
-        ctx.fillText(
-          textLines[1],
-          218 + (ctx.measureText(textLines[0]).width - ctx.measureText(textLines[1]).width) / 2,
-          184 + parseInt(ctx.font, 10)
-        );
-      } else {
-        ctx.fillText(badData.error, 218, 184);
-      }
-    }
-    ctx.fillStyle = 'white';
-    ctx.font = '32px Karla';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(`WynnTools v${packageJson.version} - ${generateDate()} - Made by @kathund.`, 600, 520, 1136);
-    var buffer = canvas.toBuffer('image/png');
-    generateServerGraphCache.set(server.server, buffer);
-    return buffer;
-  }
-}
-
 function clearGenerateProfileImageCache() {
   try {
     cacheMessage('Generate Profile Image', 'Cleared');
@@ -1006,43 +908,13 @@ function clearGenerateGuildCache() {
   }
 }
 
-function clearGenerateServerCache() {
-  try {
-    cacheMessage('Generate Server', 'Cleared');
-    generateServerCache.flushAll();
-    return 'Cleared';
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    errorMessage(error);
-    return error;
-  }
-}
-
-function clearGenerateServerGraphCache() {
-  try {
-    cacheMessage('Generate Server Graph', 'Cleared');
-    generateServerGraphCache.flushAll();
-    return 'Cleared';
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error Id - ${errorId}`);
-    errorMessage(error);
-    return error;
-  }
-}
-
 module.exports = {
   bar,
   generateProfileImage,
   generateGuild,
   generateMemberJoin,
-  generateServer,
   generateServers,
   generateServerChart,
-  generateServerGraph,
   clearGenerateProfileImageCache,
   clearGenerateGuildCache,
-  clearGenerateServerCache,
-  clearGenerateServerGraphCache,
 };

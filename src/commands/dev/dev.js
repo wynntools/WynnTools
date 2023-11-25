@@ -1,9 +1,9 @@
 const {
-  clearGenerateStatsCache,
   clearGenerateProfileImageCache,
+  clearGenerateServerGraphCache,
+  clearGenerateStatsCache,
   clearGenerateGuildCache,
   clearGenerateServerCache,
-  clearGenerateServerGraphCache,
 } = require('../../functions/generateImage.js');
 const {
   SlashCommandBuilder,
@@ -16,16 +16,16 @@ const {
 } = require('discord.js');
 const {
   countStatsInDirectory,
+  cleanMessage,
   addNotation,
+  generateID,
   writeAt,
   toFixed,
-  generateID,
-  cleanMessage,
 } = require('../../functions/helper.js');
-const { getGuild, clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
-const { register, registerGuild, clearPixelicCache } = require('../../api/pixelicAPI.js');
+const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
 const { getDiscordUsername, clearDiscordCache } = require('../../api/discordAPI.js');
 const { getUsername, getUUID, clearMojangCache } = require('../../api/mojangAPI.js');
+const { register, clearPixelicCache } = require('../../api/pixelicAPI.js');
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const { errorMessage } = require('../../functions/logger.js');
 const packageJson = require('../../../package.json');
@@ -245,14 +245,6 @@ module.exports = {
                 .setName('username')
                 .setDescription('The Username of the person you want to register')
                 .setRequired(true)
-            )
-        )
-        .addSubcommand((subcommand) =>
-          subcommand
-            .setName('guild')
-            .setDescription('Register a guild to the pixelic api')
-            .addStringOption((option) =>
-              option.setName('guild').setDescription('The guild you want to register').setRequired(true)
             )
         )
     )
@@ -1444,28 +1436,6 @@ module.exports = {
               iconURL: config.other.logo,
             });
           return await interaction.reply({ embeds: [embed] });
-        } else if (subCommand === 'guild') {
-          var guildName = interaction.options.getString('guild');
-          var guild = await getGuild(guildName);
-          embed = new EmbedBuilder()
-            .setColor(config.other.colors.orange.hex)
-            .setTitle('Attempting to register guild')
-            .setDescription(`Attempting to register guild ${guild.name} to the pixelic api`)
-            .setFooter({
-              text: `by @kathund. | ${config.discord.supportInvite} for support`,
-              iconURL: config.other.logo,
-            });
-          await interaction.reply({ embeds: [embed] });
-          registerData = await registerGuild(guild);
-          embed = new EmbedBuilder()
-            .setColor(config.other.colors.green.hex)
-            .setTitle('Guild Registered')
-            .setDescription(`Successfully registered ${registerData}/${guild.totalMembers} members`)
-            .setFooter({
-              text: `by @kathund. | ${config.discord.supportInvite} for support`,
-              iconURL: config.other.logo,
-            });
-          return await interaction.editReply({ embeds: [embed] });
         }
       } else if (subCommandGroup === null) {
         if (subCommand === 'clear-cache') {

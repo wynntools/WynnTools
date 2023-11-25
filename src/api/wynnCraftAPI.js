@@ -2,7 +2,6 @@ const {
   convertToUnixTimestamp,
   fixGuildMemberData,
   getOnlineMembers,
-  validateUUID,
   cleanMessage,
   formatUUID,
   generateID,
@@ -10,6 +9,7 @@ const {
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { getUUID } = require('./mojangAPI.js');
 const config = require('../../config.json');
+const validate = require('uuid-validate');
 const nodeCache = require('node-cache');
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args)).catch((error) => errorMessage(error));
@@ -43,14 +43,14 @@ function formatData(data) {
 
 async function getStats(uuid) {
   try {
-    var check = validateUUID(uuid);
+    var check = validate(uuid);
     if (!check) {
       await getUUID(uuid);
-      check = validateUUID(uuid);
+      check = validate(uuid);
     }
     if (!check) {
       uuid = formatUUID(uuid);
-      check = validateUUID(uuid);
+      check = validate(uuid);
     }
     if (!check) throw new Error('Invalid UUID');
     if (!uuid.includes('-')) uuid = formatUUID(uuid);
