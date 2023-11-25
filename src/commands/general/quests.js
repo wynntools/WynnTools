@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { addNotation, generateID, cleanMessage, getHighestProfile } = require('../../functions/helper.js');
+const { addNotation, generateID, cleanMessage } = require('../../functions/helper.js');
+const { getStats, getProfiles } = require('../../api/wynnCraftAPI.js');
 const { errorMessage } = require('../../functions/logger.js');
-const { getStats } = require('../../api/wynnCraftAPI.js');
 const { getUUID } = require('../../api/mojangAPI.js');
 const config = require('../../../config.json');
 const fs = require('fs');
@@ -153,9 +153,12 @@ module.exports = {
         }
         if (username) {
           const uuid = await getUUID(username);
+          const profiles = await getProfiles(uuid);
+          if (profiles === 'Player has no stats') throw new Error('NO_ERROR_ID_Player has no stats');
+          const sortedProfiles = profiles.sort((a, b) => b.totalLevel - a.totalLevel);
           const stats = await getStats(uuid);
-          var currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
-          const completedQuests = currentProfileStats.quests.list;
+          const currentProfileStats = stats.characters[sortedProfiles[0].key];
+          const completedQuests = currentProfileStats.quests;
           filteredQuests.forEach((quest) => {
             if (completedQuests.includes(quest.name)) {
               quest.completed = true;
@@ -613,9 +616,12 @@ module.exports = {
 
         if (username) {
           const uuid = await getUUID(username);
+          const profiles = await getProfiles(uuid);
+          if (profiles === 'Player has no stats') throw new Error('NO_ERROR_ID_Player has no stats');
+          const sortedProfiles = profiles.sort((a, b) => b.totalLevel - a.totalLevel);
           const stats = await getStats(uuid);
-          const currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
-          const completedQuests = currentProfileStats.quests.list;
+          const currentProfileStats = stats.characters[sortedProfiles[0].key];
+          const completedQuests = currentProfileStats.quests;
           if (completedQuests.includes(currentQuest.name)) {
             currentQuest.completed = true;
           } else {
@@ -633,16 +639,19 @@ module.exports = {
           throw new Error('NO_ERROR_ID_You need to provide a username');
         }
         const uuid = await getUUID(username);
+        const profiles = await getProfiles(uuid);
+        if (profiles === 'Player has no stats') throw new Error('NO_ERROR_ID_Player has no stats');
+        const sortedProfiles = profiles.sort((a, b) => b.totalLevel - a.totalLevel);
         const stats = await getStats(uuid);
+        const currentProfileStats = stats.characters[sortedProfiles[0].key];
         const filters = [];
-        const currentProfileStats = stats.data.characters[await getHighestProfile(stats.data.characters)];
-        const level = interaction.options.getInteger('level') || currentProfileStats.professions.combat.level + 1;
+        const level = interaction.options.getInteger('level') || currentProfileStats.level + 1;
         const dungeonFilter = interaction.options.getBoolean('dungeon') || false;
         const specialFilter = interaction.options.getBoolean('special') || false;
         const normalFilter = interaction.options.getBoolean('normal') || false;
         const eventFilter = interaction.options.getBoolean('event') || false;
         var sortedQuests = quests.sort((a, b) => b.xp - a.xp);
-        const completedQuests = currentProfileStats.quests.list;
+        const completedQuests = currentProfileStats.quests;
         sortedQuests.forEach((quest) => {
           if (completedQuests.includes(quest.name)) {
             quest.completed = true;
@@ -651,7 +660,7 @@ module.exports = {
           }
         });
         let filteredQuests = sortedQuests
-          .filter((quest) => quest.combatMinLvl <= currentProfileStats.professions.combat.level)
+          .filter((quest) => quest.combatMinLvl <= currentProfileStats.level)
           .filter((quest) => quest.miningMinLvl <= currentProfileStats.professions.mining.level)
           .filter((quest) => quest.woodCuttingMinLvl <= currentProfileStats.professions.woodcutting.level)
           .filter((quest) => quest.farmingMinLvl <= currentProfileStats.professions.farming.level)

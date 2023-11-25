@@ -2,7 +2,6 @@ const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, Butt
 const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { generateGuild } = require('../../functions/generateImage.js');
 const { errorMessage } = require('../../functions/logger.js');
-const { registerGuild } = require('../../api/pixelicAPI.js');
 const { getGuild } = require('../../api/wynnCraftAPI.js');
 const config = require('../../../config.json');
 
@@ -21,7 +20,6 @@ module.exports = {
       if (guild === 'Invalid Guild Name') {
         throw new Error('Invalid Guild Name');
       } else {
-        await registerGuild(guild);
         await interaction.editReply({ files: [await generateGuild(guild)] });
       }
     } catch (error) {

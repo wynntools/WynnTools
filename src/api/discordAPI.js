@@ -32,31 +32,6 @@ async function getDiscordUsername(id) {
   }
 }
 
-async function getDisplayName(id) {
-  try {
-    if (discordCache.has(id)) {
-      cacheMessage('DiscordAPI', 'Cache hit');
-      return discordCache.get(id).global_name;
-    } else {
-      const res = await fetch(`https://discord.com/api/v9/users/${id}`, {
-        headers: { Authorization: `Bot ${config.discord.token}` },
-      });
-      if (res.status != 200) {
-        throw new Error({ status: res.status, error: 'Invalid ID' });
-      } else {
-        var data = await res.json();
-        discordCache.set(id, data);
-        return data.global_name;
-      }
-    }
-  } catch (error) {
-    var errorId = generateID(config.other.errorIdLength);
-    errorMessage(`Error ID: ${errorId}`);
-    errorMessage(error);
-    return cleanMessage(error);
-  }
-}
-
 function clearDiscordCache() {
   try {
     cacheMessage('DiscordAPI', 'Cleared');
@@ -70,4 +45,4 @@ function clearDiscordCache() {
   }
 }
 
-module.exports = { getDiscordUsername, getDisplayName, clearDiscordCache };
+module.exports = { getDiscordUsername, clearDiscordCache };
