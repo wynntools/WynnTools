@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } = require('discord.js');
-const { countStatsInDirectory, addNotation, generateID, cleanMessage } = require('../../functions/helper.js');
+const { generateID, cleanMessage } = require('../../functions/helper.js');
 const { errorMessage } = require('../../functions/logger.js');
 const packageJson = require('../../../package.json');
 const config = require('../../../config.json');
@@ -26,7 +26,6 @@ module.exports = {
         .setURL('https://github.com/WynnTools/WynnTools')
         .setStyle(ButtonStyle.Link);
       const row = new ActionRowBuilder().addComponents(support, invite, source);
-      const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
       var userData = JSON.parse(fs.readFileSync('data/userData.json'));
       var totalCommandsRun = 0;
       for (const entry in userData) {
@@ -51,30 +50,17 @@ module.exports = {
         .setDescription(
           'WynnTools - A bot that does stuff with the wynncraft api - The Only bot that uses images **that i have seen**'
         )
-        .addFields(
-          {
-            name: 'General',
-            value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
-              genCommands.length
-            } (${
-              devCommands.length
-            } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
-              packageJson.version
-            }\`\nServers - \`${await client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
-            inline: true,
-          },
-          {
-            name: 'Code Stats',
-            value: `Files - \`${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
-              'oneLetters',
-              totalLines
-            )}\`\nCharacters - \`${addNotation(
-              'oneLetters',
-              totalCharacters
-            )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
-            inline: true,
-          }
-        )
+        .addFields({
+          name: 'General',
+          value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
+            genCommands.length
+          } (${
+            devCommands.length
+          } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
+            packageJson.version
+          }\`\nServers - \`${await client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
+          inline: true,
+        })
         .setFooter({
           text: `by @kathund. | Stats maybe inaccurate/outdated/cached`,
           iconURL: config.other.logo,

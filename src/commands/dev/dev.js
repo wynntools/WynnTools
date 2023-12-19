@@ -14,15 +14,8 @@ const {
   ButtonStyle,
   ChannelType,
 } = require('discord.js');
-const {
-  countStatsInDirectory,
-  cleanMessage,
-  addNotation,
-  generateID,
-  writeAt,
-  toFixed,
-} = require('../../functions/helper.js');
 const { clearWynnCraftCache, clearWynnCraftGuildCache } = require('../../api/wynnCraftAPI.js');
+const { cleanMessage, generateID, writeAt, toFixed } = require('../../functions/helper.js');
 const { getDiscordUsername, clearDiscordCache } = require('../../api/discordAPI.js');
 const { getUsername, getUUID, clearMojangCache } = require('../../api/mojangAPI.js');
 const { register, clearPixelicCache } = require('../../api/pixelicAPI.js');
@@ -1490,7 +1483,6 @@ module.exports = {
             throw new Error('uhhh something went wrong');
           }
         } else if (subCommand === 'update-stats') {
-          const { totalFiles, totalLines, totalCharacters, totalWhitespace } = countStatsInDirectory(process.cwd());
           const channel = await interaction.client.channels.fetch(config.discord.channels.stats);
           const message = await channel.messages.fetch(config.discord.messages.stats);
           var userData = JSON.parse(fs.readFileSync('data/userData.json'));
@@ -1523,30 +1515,17 @@ module.exports = {
             .setTitle(`WynnTools Stats`)
             .setColor(config.other.colors.green)
             .setTimestamp()
-            .addFields(
-              {
-                name: 'General',
-                value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
-                  genCommands.length
-                } (${
-                  devCommands.length
-                } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
-                  packageJson.version
-                }\`\nServers - \`${await interaction.client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
-                inline: true,
-              },
-              {
-                name: 'Code Stats',
-                value: `Files - \`${addNotation('oneLetters', totalFiles)}\`\nLines - \`${addNotation(
-                  'oneLetters',
-                  totalLines
-                )}\`\nCharacters - \`${addNotation(
-                  'oneLetters',
-                  totalCharacters
-                )}\`\nCharacters with out spaces - \`${addNotation('oneLetters', totalCharacters - totalWhitespace)}\``,
-                inline: true,
-              }
-            )
+            .addFields({
+              name: 'General',
+              value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
+                genCommands.length
+              } (${
+                devCommands.length
+              } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
+                packageJson.version
+              }\`\nServers - \`${await interaction.client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
+              inline: true,
+            })
             .setFooter({
               text: `by @kathund. | Stats maybe inaccurate/outdated/cached`,
               iconURL: config.other.logo,
