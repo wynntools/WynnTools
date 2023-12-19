@@ -7,6 +7,7 @@ var packageJson = require('../../package.json');
 const QuickChart = require('quickchart-js');
 const config = require('../../config.json');
 const nodeCache = require('node-cache');
+const fs = require('fs');
 
 const generateProfileImageCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
 const generateGuildCache = new nodeCache({ stdTTL: config.other.cacheTimeout });
@@ -15,7 +16,7 @@ registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   if (rectWidth == 0) return;
-  if (color == null) color = `rgb(${hexToRgb(config.other.colors.salmonPink)})`;
+  if (color == null) color = hexToRgb(config.other.colors.salmonPink);
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   var cornerRadius = 28;
@@ -47,20 +48,21 @@ async function generateProfileImage(uuid, profileId) {
       ctx.drawImage(await loadImage('src/assets/statsCommand/background.png'), 0, 0, canvas.width, canvas.height);
       var stats = await getStats(uuid);
       var currentProfileStats = stats.characters[profileId];
-      const img = await loadImage(`https://visage.surgeplay.com/head/256/${uuid}.png`);
-      ctx.drawImage(img, 912, 32, 256, 256);
+      const img = await loadImage(`https://www.mc-heads.net/head/${uuid}/256/left.png`);
+      ctx.drawImage(img, 928, 48, 224, 240);
       ctx.textBaseline = 'top';
       ctx.font = '36px Karla';
       ctx.textAlign = 'left';
-      if (stats.rank.badge === 'TBA') {
-        ctx.fillStyle = 'white';
-        if (currentProfileStats.nickname !== null) {
-          ctx.fillText(`${stats.username} (${currentProfileStats.nickname})`, 62, 52);
-        } else {
-          ctx.fillText(stats.username, 62, 52);
-        }
-      } else {
-        const rankBadge = await loadImage(`https://cdn.wynncraft.com/${stats.rank.badge}`);
+      if (stats.rank.badge) {
+        const file = await fs.promises
+          .access(`src/assets/wynnCraft/${stats.rank.badge}`)
+          .then(() => true)
+          .catch((e) => {
+            false;
+          });
+        const rankBadge = await loadImage(
+          file ? `src/assets/wynnCraft/${stats.rank.badge}` : `https://cdn.wynncraft.com/${stats.rank.badge}`
+        );
         const rankBadgeWidth = rankBadge.width * 3;
         const rankBadgeHeight = rankBadge.height * 3;
         ctx.drawImage(rankBadge, 65, 60, rankBadgeWidth, rankBadgeHeight);
@@ -74,6 +76,13 @@ async function generateProfileImage(uuid, profileId) {
             rankBadgeWidth + 75 + ctx.measureText(` ${currentProfileStats.username} `).width + 8,
             52
           );
+        }
+      } else {
+        ctx.fillStyle = 'white';
+        if (currentProfileStats.nickname !== null) {
+          ctx.fillText(`${stats.username} (${currentProfileStats.nickname})`, 62, 52);
+        } else {
+          ctx.fillText(stats.username, 62, 52);
         }
       }
 
@@ -235,7 +244,7 @@ async function generateProfileImage(uuid, profileId) {
       // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.level}`, 168, 662);
       if (currentProfileStats.level == 106) {
-        await bar(ctx, 140, 689, 946, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 140, 689, 946, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
         ctx.textAlign = 'right';
         ctx.fillStyle = 'black';
@@ -253,7 +262,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Mining
       if (currentProfileStats.professions.mining.level == 132) {
-        await bar(ctx, 140, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 140, 769, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -273,7 +282,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Farming
       if (currentProfileStats.professions.farming.level == 132) {
-        await bar(ctx, 483, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 483, 769, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -293,7 +302,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Woodcutting
       if (currentProfileStats.professions.woodcutting.level == 132) {
-        await bar(ctx, 824, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 824, 769, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -313,7 +322,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Fishing
       if (currentProfileStats.professions.fishing.level == 132) {
-        await bar(ctx, 140, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 140, 841, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -333,7 +342,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Scribing
       if (currentProfileStats.professions.scribing.level == 132) {
-        await bar(ctx, 483, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 483, 841, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -353,7 +362,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Jeweling
       if (currentProfileStats.professions.jeweling.level == 132) {
-        await bar(ctx, 824, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 824, 841, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -373,7 +382,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Alchemism
       if (currentProfileStats.professions.alchemism.level == 132) {
-        await bar(ctx, 140, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 140, 913, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -393,7 +402,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Cooking
       if (currentProfileStats.professions.cooking.level == 132) {
-        await bar(ctx, 483, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 483, 913, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -413,7 +422,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Weaponsmithing
       if (currentProfileStats.professions.weaponsmithing.level == 132) {
-        await bar(ctx, 824, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 824, 913, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -439,7 +448,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Tailoring
       if (currentProfileStats.professions.tailoring.level == 132) {
-        await bar(ctx, 140, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 140, 985, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -459,7 +468,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Woodworking
       if (currentProfileStats.professions.woodworking.level == 132) {
-        await bar(ctx, 483, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 483, 985, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -479,7 +488,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Armouring
       if (currentProfileStats.professions.armouring.level == 132) {
-        await bar(ctx, 824, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
+        await bar(ctx, 824, 985, 262, 28, hexToRgb(config.other.colors.blue));
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
