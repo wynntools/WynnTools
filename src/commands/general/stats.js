@@ -61,7 +61,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -83,7 +83,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

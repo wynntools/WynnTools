@@ -48,7 +48,7 @@ cron.schedule(
       const row = new ActionRowBuilder().addComponents(invite, source);
       var embed = new EmbedBuilder()
         .setTitle(`WynnTools Stats`)
-        .setColor(config.other.colors.green.hex)
+        .setColor(config.other.colors.green)
         .setTimestamp()
         .addFields(
           {

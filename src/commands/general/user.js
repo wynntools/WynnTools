@@ -21,7 +21,7 @@ module.exports = {
       var blacklist = JSON.parse(fs.readFileSync('data/blacklist.json'));
       if (userData[user.id] == undefined) {
         const invalid = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setDescription('User has no data')
           .setFooter({
             text: `by @kathund. | ${config.discord.supportInvite} for support`,
@@ -47,7 +47,7 @@ module.exports = {
         if (blacklist[user.id]) {
           embed = new EmbedBuilder()
             .setTitle(`Information for ${user.username} | ${user.id}`)
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setTimestamp()
             .addFields({
               name: 'General',
@@ -73,7 +73,7 @@ module.exports = {
         } else {
           embed = new EmbedBuilder()
             .setTitle(`Information for ${user.username} | ${user.id}`)
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setTimestamp()
             .addFields({
               name: 'General',
@@ -111,7 +111,7 @@ module.exports = {
             });
             if (confirmation.customId == 'deleteData') {
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.red.hex)
+                .setColor(config.other.colors.red)
                 .setTimestamp()
                 .setDescription('Are you sure you want to delete your data? **THIS CANNOT BE UNDONE!**');
               await confirmation.update({ embeds: [updatedEmbed], components: [confirmRow] });
@@ -125,13 +125,13 @@ module.exports = {
                   delete userData[user.id];
                   fs.writeFileSync('data/userData.json', JSON.stringify(userData));
                   const updatedEmbed = new EmbedBuilder()
-                    .setColor(config.other.colors.red.hex)
+                    .setColor(config.other.colors.red)
                     .setTimestamp()
                     .setDescription('Data deleted');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
                 } else if (confirmation.customId == 'cancel') {
                   const updatedEmbed = new EmbedBuilder()
-                    .setColor(config.other.colors.red.hex)
+                    .setColor(config.other.colors.red)
                     .setTimestamp()
                     .setDescription('Cancelled');
                   return await confirmation.update({ embeds: [updatedEmbed], components: [] });
@@ -155,7 +155,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -173,7 +173,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

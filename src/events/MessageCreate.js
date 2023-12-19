@@ -18,7 +18,7 @@ module.exports = {
       );
       const responseEmbed = new EmbedBuilder()
         .setTitle('WynnTools')
-        .setColor(config.other.colors.aqua.hex)
+        .setColor(config.other.colors.aqua)
         .setDescription(
           `Hello! I am WynnTools, a bot made by <@${config.discord.devId}> to help with WynnCraft related things.\n\nI use the \`/\` Prefix to run my commands.\nSome commands that you can use to try out the bot are </stats:${config.discord.commands.stats}> (Udderly_cool For example)\n\nFor any questions related to the bot please join the support server using the button below`
         )
@@ -41,7 +41,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -63,7 +63,7 @@ module.exports = {
         errorMessage(`Error ID: ${errorIdCheck}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

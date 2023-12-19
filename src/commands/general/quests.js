@@ -183,7 +183,7 @@ module.exports = {
             levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
           }
           const questEmbed = new EmbedBuilder()
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
             .setDescription(
               `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -259,7 +259,7 @@ module.exports = {
                   levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
                 }
                 const questEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
                   .setDescription(
                     `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -317,7 +317,7 @@ module.exports = {
                   levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
                 }
                 const questEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
                   .setDescription(
                     `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -379,7 +379,7 @@ module.exports = {
             levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
           }
           const questEmbed = new EmbedBuilder()
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
             .setDescription(
               `\` • \` **Quest Filters:** ${filtersString}\n${sort !== 'name' ? `\` • \` **Sort:** ${sort}` : ''}`
@@ -454,7 +454,7 @@ module.exports = {
                   levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
                 }
                 const questEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
                   .setDescription(
                     `\` • \` **Quest Filters:** ${filtersString}\n${sort !== 'name' ? `\` • \` **Sort:** ${sort}` : ''}`
@@ -511,7 +511,7 @@ module.exports = {
                   levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
                 }
                 const questEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`Quests - ${num + 1}/${sortedQuests.length}`)
                   .setDescription(
                     `\` • \` **Quest Filters:** ${filtersString}\n${sort !== 'name' ? `\` • \` **Sort:** ${sort}` : ''}`
@@ -729,7 +729,7 @@ module.exports = {
           levelReqs.push(`\` • \`   **Fishing:** ${currentQuest.fishingMinLvl}`);
         }
         const responseEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.green.hex)
+          .setColor(config.other.colors.green)
           .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
           .setDescription(
             `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -808,7 +808,7 @@ module.exports = {
               }
 
               const questEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
                 .setDescription(
                   `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -868,7 +868,7 @@ module.exports = {
               }
 
               const questEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setTitle(`Best Quests to get to level ${level} - ${num + 1}/${filteredQuests.length}`)
                 .setDescription(
                   `\` • \` **Quest Filters:** ${filtersString}\n\` • \` **Completed:** ${
@@ -917,7 +917,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -935,7 +935,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

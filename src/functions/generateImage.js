@@ -1,4 +1,4 @@
-const { getRelativeTime, generateDate, getMaxMembers, generateID } = require('./helper.js');
+const { getRelativeTime, generateDate, getMaxMembers, generateID, hexToRgb } = require('./helper.js');
 const { cacheMessage, errorMessage } = require('../functions/logger.js');
 const { registerFont, createCanvas, loadImage } = require('canvas');
 const { getStats } = require('../api/wynnCraftAPI.js');
@@ -15,7 +15,7 @@ registerFont('src/fonts/Karla-Regular.ttf', { family: 'Karla Regular' });
 
 async function bar(ctx, rectX, rectY, rectWidth, rectHeight, color) {
   if (rectWidth == 0) return;
-  if (color == null) color = `rgb(${config.other.colors.salmonPink.rgb})`;
+  if (color == null) color = `rgb(${hexToRgb(config.other.colors.salmonPink)})`;
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   var cornerRadius = 28;
@@ -235,7 +235,7 @@ async function generateProfileImage(uuid, profileId) {
       // ? Combat
       ctx.fillText(`Combat ${currentProfileStats.level}`, 168, 662);
       if (currentProfileStats.level == 106) {
-        await bar(ctx, 140, 689, 946, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 140, 689, 946, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 661);
         ctx.textAlign = 'right';
         ctx.fillStyle = 'black';
@@ -253,7 +253,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Mining
       if (currentProfileStats.professions.mining.level == 132) {
-        await bar(ctx, 140, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 140, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -273,7 +273,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Farming
       if (currentProfileStats.professions.farming.level == 132) {
-        await bar(ctx, 483, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 483, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -293,7 +293,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Woodcutting
       if (currentProfileStats.professions.woodcutting.level == 132) {
-        await bar(ctx, 824, 769, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 824, 769, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 741);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -313,7 +313,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Fishing
       if (currentProfileStats.professions.fishing.level == 132) {
-        await bar(ctx, 140, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 140, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -333,7 +333,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Scribing
       if (currentProfileStats.professions.scribing.level == 132) {
-        await bar(ctx, 483, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 483, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -353,7 +353,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Jeweling
       if (currentProfileStats.professions.jeweling.level == 132) {
-        await bar(ctx, 824, 841, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 824, 841, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 813);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -373,7 +373,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Alchemism
       if (currentProfileStats.professions.alchemism.level == 132) {
-        await bar(ctx, 140, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 140, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -393,7 +393,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Cooking
       if (currentProfileStats.professions.cooking.level == 132) {
-        await bar(ctx, 483, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 483, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -413,7 +413,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Weaponsmithing
       if (currentProfileStats.professions.weaponsmithing.level == 132) {
-        await bar(ctx, 824, 913, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 824, 913, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 885);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -439,7 +439,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Tailoring
       if (currentProfileStats.professions.tailoring.level == 132) {
-        await bar(ctx, 140, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 140, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 104, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -459,7 +459,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Woodworking
       if (currentProfileStats.professions.woodworking.level == 132) {
-        await bar(ctx, 483, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 483, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 447, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -479,7 +479,7 @@ async function generateProfileImage(uuid, profileId) {
 
       // ? Armouring
       if (currentProfileStats.professions.armouring.level == 132) {
-        await bar(ctx, 824, 985, 262, 28, `rgb(${config.other.colors.blue.rgb})`);
+        await bar(ctx, 824, 985, 262, 28, `rgb(${hexToRgb(config.other.colors.blue)})`);
         ctx.drawImage(professionsIconBackgroundMaxLevel, 791, 957);
         ctx.fillStyle = 'black';
         ctx.textAlign = 'right';
@@ -836,12 +836,12 @@ async function generateServerChart(data) {
               {
                 display: true,
                 gridLines: { display: false },
-                ticks: { fontColor: config.other.colors.white.hex, fontSize: 16 },
+                ticks: { fontColor: config.other.colors.white, fontSize: 16 },
                 scaleLabel: {
                   display: true,
                   labelString: '# Time ago (H = hours, M = minutes)',
                   fontSize: 16,
-                  fontColor: config.other.colors.white.hex,
+                  fontColor: config.other.colors.white,
                   fontStyle: 'bold',
                 },
               },
@@ -851,7 +851,7 @@ async function generateServerChart(data) {
                 display: true,
                 gridLines: { display: false },
                 ticks: {
-                  fontColor: config.other.colors.white.hex,
+                  fontColor: config.other.colors.white,
                   min: Math.min(...playerCounts) - 3,
                   max: Math.max(...playerCounts) + 3,
                   fontSize: 16,
@@ -860,16 +860,16 @@ async function generateServerChart(data) {
                   display: true,
                   labelString: '# of Players',
                   fontSize: 16,
-                  fontColor: config.other.colors.white.hex,
+                  fontColor: config.other.colors.white,
                   fontStyle: 'bold',
                 },
               },
             ],
           },
-          legend: { labels: { fontColor: config.other.colors.white.hex } },
+          legend: { labels: { fontColor: config.other.colors.white } },
         },
         plugins: {
-          tooltip: { backgroundColor: config.other.colors.white.hex, borderColor: config.other.colors.white.hex },
+          tooltip: { backgroundColor: config.other.colors.white, borderColor: config.other.colors.white },
         },
       })
       .setWidth(1136)

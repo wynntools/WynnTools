@@ -82,7 +82,7 @@ module.exports = {
         if (disable == null) disable = false;
         if (funFactsConfig[interaction.guild.id]) {
           const embed = new EmbedBuilder()
-            .setColor(config.other.colors.red.hex)
+            .setColor(config.other.colors.red)
             .setDescription(
               `This guild already has a config set for fun facts\nIts currently set to:\n**Channel:**<#${
                 funFactsConfig[interaction.guildId].channelId
@@ -128,7 +128,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Secondary);
               const confirmRow = new ActionRowBuilder().addComponents(confirmOverrideYes, confirmOverrideCancel);
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.red.hex)
+                .setColor(config.other.colors.red)
                 .setTimestamp()
                 .setFooter({
                   text: `by @kathund. | ${config.discord.supportInvite} for support`,
@@ -153,7 +153,7 @@ module.exports = {
                     setup: { by: interaction.user.id, at: toFixed(new Date().getTime() / 1000, 0) },
                   });
                   const overrideSuccessfully = new EmbedBuilder()
-                    .setColor(config.other.colors.green.hex)
+                    .setColor(config.other.colors.green)
                     .setDescription(
                       `Data has been updated\n\n**New Data:**\n**Channel:**<#${channel.id}>\n**Role:** ${
                         role != null ? `<@&${role.id}>` : 'None'
@@ -169,7 +169,7 @@ module.exports = {
                   return await confirmOverrideConfirmation.update({ embeds: [overrideSuccessfully], components: [] });
                 } else if (confirmOverrideConfirmation.customId == 'funFactsSetupConfirmOverrideCancel') {
                   const overrideCancel = new EmbedBuilder()
-                    .setColor(config.other.colors.red.hex)
+                    .setColor(config.other.colors.red)
                     .setDescription('Data override cancelled')
                     .setTimestamp()
                     .setFooter({
@@ -183,7 +183,7 @@ module.exports = {
                 errorMessage(`Error Id - ${errorIdSetup}`);
                 errorMessage(error);
                 const overrideCancel = new EmbedBuilder()
-                  .setColor(config.other.colors.red.hex)
+                  .setColor(config.other.colors.red)
                   .setDescription('Data override cancelled')
                   .setTimestamp()
                   .setFooter({
@@ -194,7 +194,7 @@ module.exports = {
               }
             } else if (confirmation.customId == 'funFactsSetupOverrideNo') {
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.red.hex)
+                .setColor(config.other.colors.red)
                 .setDescription('Data override cancelled')
                 .setTimestamp()
                 .setFooter({
@@ -208,7 +208,7 @@ module.exports = {
             errorMessage(`Error ID: ${errorIdSetupOverride}`);
             errorMessage(error);
             const updatedEmbed = new EmbedBuilder()
-              .setColor(config.other.colors.red.hex)
+              .setColor(config.other.colors.red)
               .setDescription('Data override cancelled')
               .setTimestamp()
               .setFooter({
@@ -228,7 +228,7 @@ module.exports = {
             .setStyle(ButtonStyle.Danger);
           const exampleRow = new ActionRowBuilder().addComponents(exampleYes, exampleNo);
           const embed = new EmbedBuilder()
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setDescription(
               `Successfully set the fun facts channel to:\n**Channel:**<#${channel.id}>\n**Role:** ${
                 role != null ? `<@&${role.id}>` : 'None'
@@ -258,7 +258,7 @@ module.exports = {
             });
             if (confirmation.customId == 'funFactsSetupYes') {
               const exampleEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setTitle('Fun Fact')
                 .setDescription('This is an example of a fun fact')
                 .setTimestamp()
@@ -278,7 +278,7 @@ module.exports = {
                 await channel.send({ content: `<@&${role.id}>`, embeds: [exampleEmbed], components: [row] });
               }
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setDescription(
                   `Successfully sent the example fun fact to <#${channel.id}> ${
                     role != null ? `and pinged <@&${role.id}>` : ''
@@ -291,7 +291,7 @@ module.exports = {
               await confirmation.update({ embeds: [updatedEmbed], components: [] });
             } else if (confirmation.customId == 'funFactsSetupNo') {
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setDescription(
                   `Successfully set the fun facts channel to <#${channel.id}> ${
                     role != null ? `and set the role to <@&${role.id}>` : ''
@@ -316,7 +316,7 @@ module.exports = {
         if (funFactsConfig[interaction.guild.id]) {
           if (!funFactsConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
-              .setColor(config.other.colors.red.hex)
+              .setColor(config.other.colors.red)
               .setDescription(
                 'Fun Facts have been disabled. Do you want to delete your config? **THIS CANNOT BE UNDONE!**'
               )
@@ -357,7 +357,7 @@ module.exports = {
                 delete funFactsConfig[interaction.guild.id];
                 fs.writeFileSync('data/funFacts/config.json', JSON.stringify(funFactsConfig));
                 const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setDescription('Successfully Deleted this servers config.')
                   .setTimestamp()
                   .setFooter({
@@ -367,7 +367,7 @@ module.exports = {
                 return await confirmation.update({ embeds: [updatedEmbed], components: [] });
               } else if (confirmation.customId == 'funFactsDeleteConfigNo') {
                 const updatedEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setDescription('Config not deleted and fun facts disabled.')
                   .setTimestamp()
                   .setFooter({
@@ -381,7 +381,7 @@ module.exports = {
               errorMessage(`Error ID: ${errorIdDisable}`);
               errorMessage(error);
               const updatedEmbed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setDescription('Fun facts have been disabled')
                 .setTimestamp()
                 .setFooter({
@@ -392,7 +392,7 @@ module.exports = {
             }
           } else {
             const embed = new EmbedBuilder()
-              .setColor(config.other.colors.red.hex)
+              .setColor(config.other.colors.red)
               .setDescription(
                 `Fun facts are already disabled in this server\nUse </fun-facts enable:${config.discord.commands['fun-facts']}> to enable them`
               )
@@ -405,7 +405,7 @@ module.exports = {
           }
         } else {
           const failEmbed = new EmbedBuilder()
-            .setColor(config.other.colors.red.hex)
+            .setColor(config.other.colors.red)
             .setDescription('This server does not have a config set for fun facts')
             .setTimestamp()
             .setFooter({
@@ -421,7 +421,7 @@ module.exports = {
         if (funFactsConfig[interaction.guild.id]) {
           if (funFactsConfig[interaction.guild.id].disabled) {
             const embed = new EmbedBuilder()
-              .setColor(config.other.colors.green.hex)
+              .setColor(config.other.colors.green)
               .setDescription('Fun Facts have been enabled')
               .setTimestamp()
               .setFooter({
@@ -431,7 +431,7 @@ module.exports = {
             await interaction.reply({ embeds: [embed] });
           } else {
             const embed = new EmbedBuilder()
-              .setColor(config.other.colors.red.hex)
+              .setColor(config.other.colors.red)
               .setDescription(
                 `Fun facts are already enabled in this server\nUse </fun-facts disable:${config.discord.commands['fun-facts']}> to disable them`
               )
@@ -447,7 +447,7 @@ module.exports = {
         var fact = interaction.options.getString('fact');
         if (fact.length >= 1024) {
           const embed = new EmbedBuilder()
-            .setColor(config.other.colors.red.hex)
+            .setColor(config.other.colors.red)
             .setDescription('The fun fact you suggested is too long please keep it under 1024 characters')
             .setTimestamp()
             .setFooter({
@@ -457,7 +457,7 @@ module.exports = {
           return await interaction.reply({ embeds: [embed] });
         }
         const embed = new EmbedBuilder()
-          .setColor(config.other.colors.green.hex)
+          .setColor(config.other.colors.green)
           .setDescription(
             'Suggestions are not guaranteed to be added to the bot and are not anonymous. Suggestions must follow the rules of the Support discord failure to do so will result in a blacklist from using the bot. These are the important rules and there title - **Rule #1 - Rudeness/Slurs, Rule #2 - Spamming, Rule #3 - No advertising, Rule #5 - English only, Rule #7 - Threats** If you wish to read more please join the support discord with the button below\nDo you wish to continue?'
           )
@@ -488,7 +488,7 @@ module.exports = {
           });
           if (confirmation.customId == 'funFactsSuggestYes') {
             const notifyEmbed = new EmbedBuilder()
-              .setColor(config.other.colors.green.hex)
+              .setColor(config.other.colors.green)
               .setDescription('Do you want to be notified when your fun fact is added?')
               .setTimestamp()
               .setFooter({
@@ -508,7 +508,7 @@ module.exports = {
             const collectorFilter = (i) => i.user.id === interaction.user.id;
             try {
               const embed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setDescription('Your fun fact has been submitted')
                 .setTimestamp()
                 .setFooter({
@@ -531,7 +531,7 @@ module.exports = {
                   id: generatedFactId,
                 });
                 suggestionEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`New Fun Fact Suggestion - ${generatedFactId}`)
                   .setDescription(
                     `**Suggested By:** <@${interaction.user.id}> (${interaction.user.id}\n**Wants to get Notified**\n**Suggestion:** ${fact}`
@@ -552,7 +552,7 @@ module.exports = {
                   id: generatedFactId,
                 });
                 suggestionEmbed = new EmbedBuilder()
-                  .setColor(config.other.colors.green.hex)
+                  .setColor(config.other.colors.green)
                   .setTitle(`New Fun Fact Suggestion - ${generatedFactId}`)
                   .setDescription(
                     `**Suggested By:** <@${interaction.user.id}> (${interaction.user.id}\n**Suggestion:** ${fact}`
@@ -570,7 +570,7 @@ module.exports = {
               errorMessage(`Error ID: ${errorIdSuggest}`);
               errorMessage(error);
               const embed = new EmbedBuilder()
-                .setColor(config.other.colors.green.hex)
+                .setColor(config.other.colors.green)
                 .setDescription('Fun fact suggestion cancelled')
                 .setTimestamp()
                 .setFooter({
@@ -583,7 +583,7 @@ module.exports = {
             await confirmation.update({ embeds: [embed], components: [] });
           } else if (confirmation.customId == 'funFactsSuggestNo') {
             const embed = new EmbedBuilder()
-              .setColor(config.other.colors.green.hex)
+              .setColor(config.other.colors.green)
               .setDescription('Fun fact suggestion cancelled')
               .setTimestamp()
               .setFooter({
@@ -597,7 +597,7 @@ module.exports = {
           errorMessage(`Error ID: ${errorIdSuggestNotify}`);
           errorMessage(error);
           const embed = new EmbedBuilder()
-            .setColor(config.other.colors.green.hex)
+            .setColor(config.other.colors.green)
             .setDescription('Fun fact suggestion cancelled')
             .setTimestamp()
             .setFooter({
@@ -608,7 +608,7 @@ module.exports = {
         }
       } else if (subcommand === 'setup-guide') {
         var guideEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.green.hex)
+          .setColor(config.other.colors.green)
           .setDescription(`To have daily fun facts posted in your discord server its made super easy!\nRead Below`)
           .addFields(
             {
@@ -655,7 +655,7 @@ module.exports = {
           });
           if (confirmation.customId == 'quickSetupFunFacts') {
             const updatedEmbed = new EmbedBuilder()
-              .setColor(config.other.colors.red.hex)
+              .setColor(config.other.colors.red)
               .setTimestamp()
               .setDescription(
                 `Default config has been saved - The next fun fact will be posted <t:${funFactsList.next}:R>\n\n**Channel:** <#${interaction.channel.id}>\n**Role:** Null\n**nGhost Ping:** ${config.other.emojis.no}\n**Delete Msgs:** ${config.other.emojis.no}`
@@ -678,7 +678,7 @@ module.exports = {
         }
       } else if (subcommand === 'button-setup-guide') {
         var guildButtonEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.green.hex)
+          .setColor(config.other.colors.green)
           .setDescription(`To have daily fun facts posted in your discord server its made super easy!\nRead Below`)
           .addFields(
             {
@@ -718,7 +718,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -736,7 +736,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Use </report-bug:${

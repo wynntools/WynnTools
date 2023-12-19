@@ -68,7 +68,7 @@ module.exports = {
         const whenDidThisHappen = interaction.fields.getTextInputValue('whenDidThisHappen');
         const stepsToReproduce = interaction.fields.getTextInputValue('stepsToReproduce');
         const embed = new EmbedBuilder()
-          .setColor(config.other.colors.green.hex)
+          .setColor(config.other.colors.green)
           .setAuthor({ name: 'Bug Report Submitted' })
           .setDescription(`Your bug report has been successfully sent to the dev.`)
           .setFooter({
@@ -76,7 +76,7 @@ module.exports = {
             iconURL: config.other.logo,
           });
         const bugReportEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle(`BUG REPORT`)
           .setDescription(`Reported by ${interaction.user.id} | <@${interaction.user.id}>`)
           .addFields(
@@ -114,7 +114,7 @@ module.exports = {
       if (String(error).includes('NO_ERROR_ID_')) {
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(`Error Info - \`${cleanMessage(error)}\``)
           .setFooter({
@@ -132,7 +132,7 @@ module.exports = {
         errorMessage(`Error Id - ${errorId}`);
         errorMessage(error);
         const errorEmbed = new EmbedBuilder()
-          .setColor(config.other.colors.red.hex)
+          .setColor(config.other.colors.red)
           .setTitle('An error occurred')
           .setDescription(
             `Please join the support discord and make a ticket in <#${

@@ -79,7 +79,7 @@ cron.schedule(
         requestedByString = `Requested by ${await getDiscordUsername(funFact.requestedBy)} | `;
       }
       const funFactEmbed = new EmbedBuilder()
-        .setColor(config.other.colors.green.hex)
+        .setColor(config.other.colors.green)
         .setDescription(
           `**Today's Fun fact is** \n${funFact.fact}\n\n${requestedByString}Next fun fact <t:${startTime + 86400}:R>`
         )
