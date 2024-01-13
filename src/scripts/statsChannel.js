@@ -4,7 +4,6 @@ const { generateID } = require('../functions/helper.js');
 const packageJson = require('../../package.json');
 const config = require('../../config.json');
 const cron = require('node-cron');
-const path = require('path');
 const fs = require('fs');
 
 let timezoneStuff = null;
@@ -28,13 +27,13 @@ cron.schedule(
         totalCommandsRun += userData[entry].commandsRun;
       }
       const genCommands = [];
-      fs.readdirSync(path.resolve(__dirname, '../commands/general')).forEach((file) => {
+      fs.readdirSync('./src/commands/general').forEach((file) => {
         if (!file.endsWith('.js')) return;
         if (file.toLowerCase().includes('disabled')) return;
         genCommands.push(file);
       });
       const devCommands = [];
-      fs.readdirSync(path.resolve(__dirname, '../commands/dev')).forEach((file) => {
+      fs.readdirSync('./src/commands/dev').forEach((file) => {
         if (!file.endsWith('.js')) return;
         if (file.toLowerCase().includes('disabled')) return;
         devCommands.push(file);
@@ -51,13 +50,15 @@ cron.schedule(
         .setTimestamp()
         .addFields({
           name: 'General',
-          value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
-            genCommands.length
-          } (${
-            devCommands.length
-          } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
+          value: `<:Dev:${config.other.emojis.dev}> Developer - \`@kathund.\`\n<:commands:${
+            config.other.emojis.commands
+          }> Commands - \`${genCommands.length} (${devCommands.length} dev commands)\`\n<:commands:${
+            config.other.emojis.commands
+          }> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:${config.other.emojis.bullet}> Version \`${
             packageJson.version
-          }\`\nServers - \`${await client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
+          }\`\n<:bullet:${config.other.emojis.bullet}> Servers - \`${await client.guilds.cache.size}\`\n<:bullet:${
+            config.other.emojis.bullet
+          }> Uptime - <t:${global.uptime}:R>`,
           inline: true,
         })
         .setFooter({

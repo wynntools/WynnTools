@@ -1,7 +1,6 @@
 {
   "discord": {
     "token": "DISCORD_TOKEN",
-    "clientId": "DISCORD_BOT_CLIENT_ID",
     "devServer": "DEV_SERVER_ID_FOR_TESTING",
     "devId": "DEV_USER_ID",
     "channels": {

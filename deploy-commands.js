@@ -36,9 +36,12 @@ function deployCommands() {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands and skipped over ${skipped} commands.`
       );
-      const data = await rest.put(Routes.applicationCommands(config.discord.clientId), {
-        body: commands,
-      });
+      const data = await rest.put(
+        Routes.applicationCommands(Buffer.from(config.discord.token.split('.')[0], 'base64').toString('ascii')),
+        {
+          body: commands,
+        }
+      );
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands and skipped over ${skipped} commands.`
       );
@@ -81,9 +84,15 @@ function deployDevCommands() {
       discordMessage(
         `Started refreshing ${commands.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );
-      const data = await rest.put(Routes.applicationGuildCommands(config.discord.clientId, config.discord.devServer), {
-        body: commands,
-      });
+      const data = await rest.put(
+        Routes.applicationGuildCommands(
+          Buffer.from(config.discord.token.split('.')[0], 'base64').toString('ascii'),
+          config.discord.devServer
+        ),
+        {
+          body: commands,
+        }
+      );
       discordMessage(
         `Successfully reloaded ${data.length} application (/) commands to the dev server and skipped over ${skipped} commands.`
       );

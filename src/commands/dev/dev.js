@@ -1500,7 +1500,7 @@ module.exports = {
           });
           const invite = new ButtonBuilder()
             .setLabel('invite')
-            .setURL('https://discord.com/api/oauth2/authorize?client_id=1127383186683465758&permissions=8&scope=bot')
+            .setURL(config.discord.botInvite)
             .setStyle(ButtonStyle.Link);
           const source = new ButtonBuilder()
             .setLabel('source')
@@ -1513,13 +1513,14 @@ module.exports = {
             .setTimestamp()
             .addFields({
               name: 'General',
-              value: `<:Dev:1130772126769631272> Developer - \`@kathund.\`\n<:commands:1130772895891738706> Commands - \`${
-                genCommands.length
-              } (${
-                devCommands.length
-              } dev commands)\`\n<:commands:1130772895891738706> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:1064700156789927936> Version \`${
+              value: `<:Dev:${config.other.emojis.dev}> Developer - \`@kathund.\`\n<:commands:${
+                config.other.emojis.commands
+              }> Commands - \`${genCommands.length} (${devCommands.length} dev commands)\`\n<:commands:${
+                config.other.emojis.commands
+              }> Total Commands Run - \`${totalCommandsRun}\`\n<:bullet:${config.other.emojis.bullet}> Version \`${
                 packageJson.version
-              }\`\nServers - \`${await interaction.client.guilds.cache.size}\`\nUptime - <t:${global.uptime}:R>`,
+              }\`\n<:bullet:${config.other.emojis.bullet}> Servers - \`${await interaction.client.guilds.cache
+                .size}\`\n<:bullet:${config.other.emojis.bullet}> Uptime - <t:${global.uptime}:R>`,
               inline: true,
             })
             .setFooter({

@@ -12,10 +12,10 @@
     "commands": { "fun-facts": 3 }
   },
   "964967961263767652": {
-    "commandsRun": 2,
+    "commandsRun": 3,
     "firstCommand": "1690284549",
-    "lastUpdated": "1690285115",
-    "commands": { "fun-facts": 2 }
+    "lastUpdated": "1698960318",
+    "commands": { "fun-facts": 2, "stats": 1 }
   },
   "933349617054126110": {
     "commandsRun": 6,
@@ -24,16 +24,16 @@
     "commands": { "fun-facts": 5, "fun-facts-dev": 1 }
   },
   "619208257721860108": {
-    "commandsRun": 7,
+    "commandsRun": 9,
     "firstCommand": "1691199840",
-    "lastUpdated": "1695897302",
-    "commands": { "report-bug": 1, "about": 2, "stats": 2, "quests": 2 }
+    "lastUpdated": "1704385452",
+    "commands": { "report-bug": 1, "about": 3, "stats": 3, "quests": 2 }
   },
   "468043261911498767": {
-    "commandsRun": 15,
+    "commandsRun": 17,
     "firstCommand": "1694910944",
-    "lastUpdated": "1695081467",
-    "commands": { "about": 1, "guild": 1, "stats": 3, "report-bug": 10 }
+    "lastUpdated": "1701012840",
+    "commands": { "about": 1, "guild": 1, "stats": 3, "report-bug": 12 }
   },
   "728254498018951238": {
     "commandsRun": 1,
@@ -48,9 +48,33 @@
     "commands": { "stats": 3, "report-bug": 1 }
   },
   "608584543506530314": {
-    "commandsRun": 2,
+    "commandsRun": 5,
     "firstCommand": "1696393141",
-    "lastUpdated": "1696393204",
-    "commands": { "stats": 2 }
+    "lastUpdated": "1697980454",
+    "commands": { "stats": 3, "fun-facts": 2 }
+  },
+  "1169174913832202306": {
+    "commandsRun": 13,
+    "firstCommand": "1699535438",
+    "lastUpdated": "1702947587",
+    "commands": { "stats": 11, "about": 1, "user": 1 }
+  },
+  "622326625530544128": {
+    "commandsRun": 4,
+    "firstCommand": "1699721794",
+    "lastUpdated": "1699721934",
+    "commands": { "about": 1, "user": 1, "stats": 2 }
+  },
+  "881385608046592051": {
+    "commandsRun": 1,
+    "firstCommand": "1699751335",
+    "lastUpdated": "1699751335",
+    "commands": { "stats": 1 }
+  },
+  "1167397655039713311": {
+    "commandsRun": 1,
+    "firstCommand": "1702955927",
+    "lastUpdated": "1702955927",
+    "commands": { "report-bug": 1 }
   }
 }
